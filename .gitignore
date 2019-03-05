@@ -108,3 +108,6 @@ data
 
 # libtcod libs
 *libtcod*
+
+# Vim swap files
+*.swp

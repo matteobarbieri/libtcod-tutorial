@@ -29,5 +29,13 @@ Navigate to build/autotools folder
 
 Copy all required files in project root folder
 
-`cp -dr build/autotools/.libs/libtcod.so* data ./`
+```shell
+cp -dr \
+	libtcod/data \
+	libtcod/python/libtcodpy \
+	./
+
+# Move .so files in python package root folder
+cp libtcod/build/autotools/.libs/libtcod.so* libtcodpy/
+```
 

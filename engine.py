@@ -5,6 +5,8 @@ from input_handlers import handle_keys
 from fov_functions import initialize_fov, recompute_fov
 from render_functions import clear_all, render_all
 from map_objects.game_map import GameMap
+from game_states import GameStates
+
 
 
 def main():
@@ -87,6 +89,8 @@ def main():
     key = libtcod.Key()
     mouse = libtcod.Mouse()
 
+    game_state = GameStates.PLAYERS_TURN
+
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
 
@@ -115,7 +119,7 @@ def main():
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
 
-        if move:
+        if move and game_state == GameStates.PLAYERS_TURN:
             dx, dy = move
             destination_x = player.x + dx
             destination_y = player.y + dy
@@ -130,12 +134,21 @@ def main():
 
                     fov_recompute = True
 
+                game_state = GameStates.ENEMY_TURN
+
         # if key.vk == libtcod.KEY_ESCAPE:
         if exit:
             return True
 
         if fullscreen:
             libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
+
+        if game_state == GameStates.ENEMY_TURN:
+            for entity in entities:
+                if entity != player:
+                    print('The ' + entity.name + ' ponders the meaning of its existence.')
+
+            game_state = GameStates.PLAYERS_TURN
 
 if __name__ == '__main__':
     main()

@@ -23,6 +23,8 @@ def main():
     fov_light_walls = True
     fov_radius = 10
 
+    max_monsters_per_room = 3
+
     colors = {
         'dark_wall': libtcod.Color(0, 0, 100),
         'dark_ground': libtcod.Color(50, 50, 150),
@@ -34,20 +36,21 @@ def main():
     # player_y = int(screen_height / 2)
 
     player = Entity(
-            int(screen_width/2),
-            int(screen_height/2),
+            0,
+            0,
             '@',
             libtcod.white
     )
 
-    npc = Entity(
-            int(screen_width/2 -5),
-            int(screen_height/2),
-            '@',
-            libtcod.yellow
-    )
+    # npc = Entity(
+            # int(screen_width/2 -5),
+            # int(screen_height/2),
+            # '@',
+            # libtcod.yellow
+    # )
 
-    entities = [npc, player]
+    # entities = [npc, player]
+    entities = [player]
 
     libtcod.console_set_custom_font(
             'data/fonts/arial10x10.png', 
@@ -70,7 +73,9 @@ def main():
             room_max_size, 
             map_width, 
             map_height, 
-            player
+            player,
+            entities,
+            max_monsters_per_room
     )
 
     fov_recompute = True

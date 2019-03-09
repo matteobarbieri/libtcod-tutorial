@@ -7,6 +7,8 @@ from components.fighter import Fighter
 
 from random import randint
 
+from render_functions import RenderOrder
+
 import libtcodpy as libtcod
 
 class GameMap:
@@ -119,6 +121,7 @@ class GameMap:
                             'o', libtcod.desaturated_green, 
                             'Orc', 
                             blocks=True,
+                            render_order=RenderOrder.ACTOR,
                             fighter=fighter_component,
                             ai=ai_component
                     )
@@ -134,6 +137,7 @@ class GameMap:
                             'T', libtcod.darker_green, 
                             'Troll',
                             blocks=True,
+                            render_order=RenderOrder.ACTOR,
                             fighter=fighter_component,
                             ai=ai_component
                     )

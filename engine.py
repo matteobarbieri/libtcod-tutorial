@@ -5,11 +5,10 @@ from components.fighter import Fighter
 from entity import Entity, get_blocking_entities_at_location
 from input_handlers import handle_keys
 from fov_functions import initialize_fov, recompute_fov
-from render_functions import clear_all, render_all
+from render_functions import clear_all, render_all, RenderOrder
 from map_objects.game_map import GameMap
 from game_states import GameStates
 from death_functions import kill_monster, kill_player
-
 
 
 def main():
@@ -39,6 +38,7 @@ def main():
 
     fighter_component = Fighter(hp=30, defense=2, power=5)
 
+    # Create the Player object
     player = Entity(
             0,
             0,
@@ -46,6 +46,7 @@ def main():
             libtcod.white,
             'Player',
             blocks=True,
+            render_order=RenderOrder.ACTOR,
             fighter=fighter_component
     )
 
@@ -99,7 +100,8 @@ def main():
                     fov_algorithm
             )
 
-        render_all(con, entities, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
+        # render_all(con, entities, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
+        render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
 
         fov_recompute = False
 

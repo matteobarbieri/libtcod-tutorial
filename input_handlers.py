@@ -1,5 +1,6 @@
 import libtcodpy as libtcod
 
+
 def handle_keys(key):
     # Movement keys
     key_char = chr(key.c)

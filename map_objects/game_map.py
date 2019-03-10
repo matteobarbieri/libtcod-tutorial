@@ -11,6 +11,7 @@ from render_functions import RenderOrder
 
 import libtcodpy as libtcod
 
+
 class GameMap:
     def __init__(self, width, height):
         self.width = width
@@ -20,13 +21,22 @@ class GameMap:
     def initialize_tiles(self):
         tiles = [
                 [
-                        Tile(True) for y in range(self.height)
+                    Tile(True) for y in range(self.height)
                 ] for x in range(self.width)
         ]
 
         return tiles
 
-    def make_map(self, max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities, max_monsters_per_room):
+    def make_map(
+            self,
+            max_rooms,
+            room_min_size,
+            room_max_size,
+            map_width,
+            map_height,
+            player,
+            entities,
+            max_monsters_per_room):
 
         rooms = []
         num_rooms = 0
@@ -42,7 +52,8 @@ class GameMap:
             # "Rect" class makes rectangles easier to work with
             new_room = Rect(x, y, w, h)
 
-            # run through the other rooms and see if they intersect with this one
+            # run through the other rooms and see if they intersect with this
+            # one
             for other_room in rooms:
                 if new_room.intersect(other_room):
                     break
@@ -82,7 +93,6 @@ class GameMap:
                 rooms.append(new_room)
                 num_rooms += 1
 
-
     def create_room(self, room):
         # go through the tiles in the rectangle and make them passable
         for x in range(room.x1 + 1, room.x2):
@@ -109,21 +119,22 @@ class GameMap:
             x = randint(room.x1 + 1, room.x2 - 1)
             y = randint(room.y1 + 1, room.y2 - 1)
 
-            if not any([entity for entity in entities if entity.x == x and entity.y == y]):
+            if not any(
+                    [entity for entity in entities if entity.x == x and entity.y == y]):
                 if randint(0, 100) < 80:
                     # Spawn an orc
-                    
+
                     fighter_component = Fighter(hp=10, defense=0, power=3)
                     ai_component = BasicMonster()
 
                     monster = Entity(
-                            x, y, 
-                            'o', libtcod.desaturated_green, 
-                            'Orc', 
-                            blocks=True,
-                            render_order=RenderOrder.ACTOR,
-                            fighter=fighter_component,
-                            ai=ai_component
+                        x, y,
+                        'o', libtcod.desaturated_green,
+                        'Orc',
+                        blocks=True,
+                        render_order=RenderOrder.ACTOR,
+                        fighter=fighter_component,
+                        ai=ai_component
                     )
 
                 else:
@@ -133,13 +144,13 @@ class GameMap:
                     ai_component = BasicMonster()
 
                     monster = Entity(
-                            x, y, 
-                            'T', libtcod.darker_green, 
-                            'Troll',
-                            blocks=True,
-                            render_order=RenderOrder.ACTOR,
-                            fighter=fighter_component,
-                            ai=ai_component
+                        x, y,
+                        'T', libtcod.darker_green,
+                        'Troll',
+                        blocks=True,
+                        render_order=RenderOrder.ACTOR,
+                        fighter=fighter_component,
+                        ai=ai_component
                     )
 
                 entities.append(monster)

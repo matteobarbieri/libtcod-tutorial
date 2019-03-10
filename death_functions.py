@@ -14,11 +14,14 @@ def kill_player(player):
     # Create and return message for the log
     return Message('You died!', libtcod.red), GameStates.PLAYER_DEAD
 
+
 def kill_monster(monster):
 
     # Create message for the log
-    death_message = Message('{0} is dead!'.format(monster.name.capitalize()), libtcod.orange)
-
+    death_message = Message(
+        '{0} is dead!'.format(
+            monster.name.capitalize()),
+        libtcod.orange)
 
     monster.char = '%'
     monster.color = libtcod.dark_red

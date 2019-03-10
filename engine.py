@@ -12,6 +12,7 @@ from death_functions import kill_monster, kill_player
 
 from game_messages import MessageLog
 
+
 def main():
 
     # Size of the game screen
@@ -58,30 +59,30 @@ def main():
 
     # Create the Player object
     player = Entity(
-            0,
-            0,
-            '@',
-            libtcod.white,
-            'Player',
-            blocks=True,
-            render_order=RenderOrder.ACTOR,
-            fighter=fighter_component
+        0,
+        0,
+        '@',
+        libtcod.white,
+        'Player',
+        blocks=True,
+        render_order=RenderOrder.ACTOR,
+        fighter=fighter_component
     )
 
     entities = [player]
 
     # Set font
     libtcod.console_set_custom_font(
-            'data/fonts/arial10x10.png', 
-            libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD
+        'data/fonts/arial10x10.png',
+        libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD
     )
 
     # Initialize main window
     libtcod.console_init_root(
-            screen_width, 
-            screen_height, 
-            'libtcod tutorial revised', 
-            False
+        screen_width,
+        screen_height,
+        'libtcod tutorial revised',
+        False
     )
 
     # The main game screen
@@ -93,14 +94,14 @@ def main():
     # Create the game map
     game_map = GameMap(map_width, map_height)
     game_map.make_map(
-            max_rooms, 
-            room_min_size, 
-            room_max_size, 
-            map_width, 
-            map_height, 
-            player,
-            entities,
-            max_monsters_per_room
+        max_rooms,
+        room_min_size,
+        room_max_size,
+        map_width,
+        map_height,
+        player,
+        entities,
+        max_monsters_per_room
     )
 
     # When the game starts the fov must be computed for the first time
@@ -122,26 +123,38 @@ def main():
     while not libtcod.console_is_window_closed():
 
         # Wait for an event (keyboard or mouse)
-        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-
+        libtcod.sys_check_for_event(
+            libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
 
         # If the fov needs to be recomputed (for instance, because the player
         # moved, do it
         if fov_recompute:
             recompute_fov(
-                    fov_map, 
-                    player.x, 
-                    player.y, 
-                    fov_radius, 
-                    fov_light_walls, 
-                    fov_algorithm
+                fov_map,
+                player.x,
+                player.y,
+                fov_radius,
+                fov_light_walls,
+                fov_algorithm
             )
 
         # Render all entities on the map
-        # render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, screen_width,
-                   # screen_height, bar_width, panel_height, panel_y, colors)
-        render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, screen_width,
-                   screen_height, bar_width, panel_height, panel_y, mouse, colors)
+        render_all(
+            con,
+            panel,
+            entities,
+            player,
+            game_map,
+            fov_map,
+            fov_recompute,
+            message_log,
+            screen_width,
+            screen_height,
+            bar_width,
+            panel_height,
+            panel_y,
+            mouse,
+            colors)
 
         # Reset fov_recompute to False
         fov_recompute = False
@@ -166,9 +179,9 @@ def main():
             destination_x = player.x + dx
             destination_y = player.y + dy
 
-            
             if not game_map.is_blocked(destination_x, destination_y):
-                target = get_blocking_entities_at_location(entities, destination_x, destination_y)
+                target = get_blocking_entities_at_location(
+                    entities, destination_x, destination_y)
 
                 # There is a blocking entity in destination tile
                 if target:
@@ -219,7 +232,8 @@ def main():
                 if entity.ai:
 
                     # Get the results of an enemy's action
-                    enemy_turn_results = entity.ai.take_turn(player, fov_map, game_map, entities)
+                    enemy_turn_results = entity.ai.take_turn(
+                        player, fov_map, game_map, entities)
 
                     for enemy_turn_result in enemy_turn_results:
                         message = enemy_turn_result.get('message')
@@ -243,10 +257,11 @@ def main():
                         # Player's dead
                         break
 
-            # for-else loop end: switch back to player's turn after all entities
-            # have performed their action
+            # for-else loop end: switch back to player's turn after all
+            # entities have performed their action
             else:
                 game_state = GameStates.PLAYERS_TURN
+
 
 if __name__ == '__main__':
     main()

@@ -21,7 +21,8 @@ class MessageLog:
         new_msg_lines = textwrap.wrap(message.text, self.width)
 
         for line in new_msg_lines:
-            # If the buffer is full, remove the first line to make room for the new one
+            # If the buffer is full, remove the first line to make room for the
+            # new one
             if len(self.messages) == self.height:
                 del self.messages[0]
 

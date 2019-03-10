@@ -16,8 +16,14 @@ def main():
     screen_width = 80
     screen_height = 50
 
+
+    bar_width = 20
+    panel_height = 7
+    panel_y = screen_height - panel_height
+
+
     map_width = 80
-    map_height = 45
+    map_height = 43
 
     room_max_size = 10
     room_min_size = 6
@@ -64,7 +70,12 @@ def main():
             False
     )
 
+
+    # The main game screen
     con = libtcod.console_new(screen_width, screen_height)
+
+    # The UI screen
+    panel = libtcod.console_new(screen_width, panel_height)
 
     game_map = GameMap(map_width, map_height)
     game_map.make_map(
@@ -100,8 +111,9 @@ def main():
                     fov_algorithm
             )
 
-        # render_all(con, entities, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
-        render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
+        # render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
+        render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height,
+                   bar_width, panel_height, panel_y, colors)
 
         fov_recompute = False
 

@@ -121,8 +121,9 @@ def main():
     # Main loop
     while not libtcod.console_is_window_closed():
 
-        # Wait for an event
-        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
+        # Wait for an event (keyboard or mouse)
+        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+
 
         # If the fov needs to be recomputed (for instance, because the player
         # moved, do it
@@ -137,10 +138,10 @@ def main():
             )
 
         # Render all entities on the map
-        # render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height,
-                   # bar_width, panel_height, panel_y, colors)
+        # render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, screen_width,
+                   # screen_height, bar_width, panel_height, panel_y, colors)
         render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, screen_width,
-                   screen_height, bar_width, panel_height, panel_y, colors)
+                   screen_height, bar_width, panel_height, panel_y, mouse, colors)
 
         # Reset fov_recompute to False
         fov_recompute = False

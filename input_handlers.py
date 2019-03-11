@@ -17,7 +17,8 @@ def handle_keys(key, game_state):
     return {}
 
 def handle_inventory_keys(key):
-    index = key.c - ord('a')
+
+    index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1
 
     if index >= 0:
         return {'inventory_index': index}
@@ -33,7 +34,7 @@ def handle_inventory_keys(key):
 
 def handle_player_turn_keys(key):
     # Movement keys
-    key_char = chr(key.c)
+    key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
 
     if key.vk == libtcod.KEY_UP or key_char == 'k':
         return {'move': (0, -1)}
@@ -75,7 +76,8 @@ def handle_player_dead_keys(key):
 
     Can only see the inventory and toggle fullscreen.
     """
-    key_char = chr(key.c)
+
+    key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
 
     if key_char == 'i':
         return {'show_inventory': True}

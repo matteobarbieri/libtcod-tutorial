@@ -45,6 +45,7 @@ def main():
 
     # Maximum number of monsters per room
     max_monsters_per_room = 3
+    max_items_per_room = 2
 
     # Colors for rooms in and out of fov
     colors = {
@@ -101,7 +102,8 @@ def main():
         map_height,
         player,
         entities,
-        max_monsters_per_room
+        max_monsters_per_room,
+        max_items_per_room
     )
 
     # When the game starts the fov must be computed for the first time

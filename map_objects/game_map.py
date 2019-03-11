@@ -4,6 +4,7 @@ from map_objects.rectangle import Rect
 
 from components.ai import BasicMonster
 from components.fighter import Fighter
+from components.item import Item
 
 from random import randint
 
@@ -168,11 +169,13 @@ class GameMap:
 
             if not any(
                     [entity for entity in entities if entity.x == x and entity.y == y]):
-
+ 
+                item_component = Item()
                 item = Entity(
                         x, y, '!', libtcod.violet,
                         'Healing Potion',
-                        render_order=RenderOrder.ITEM)
+                        render_order=RenderOrder.ITEM,
+                        item=item_component)
 
                 entities.append(item)
 

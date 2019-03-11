@@ -125,6 +125,7 @@ def main():
 
     # Begin the game in player's turn
     game_state = GameStates.PLAYERS_TURN
+    previous_game_state = game_state
 
     # Main loop
     while not libtcod.console_is_window_closed():
@@ -161,7 +162,9 @@ def main():
             panel_height,
             panel_y,
             mouse,
-            colors)
+            colors,
+            game_state,
+            )
 
         # Reset fov_recompute to False
         fov_recompute = False
@@ -172,10 +175,12 @@ def main():
         clear_all(con, entities)
 
         # Detect player's action
-        action = handle_keys(key)
+        action = handle_keys(key, game_state)
 
         move = action.get('move')
         pickup = action.get('pickup')
+        show_inventory = action.get('show_inventory')
+        inventory_index = action.get('inventory_index')
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
 
@@ -215,10 +220,24 @@ def main():
             else:
                 message_log.add_message(Message('There is nothing here to pick up.', libtcod.yellow))
 
+        # Show the inventory
+        if show_inventory:
+            previous_game_state = game_state
+            game_state = GameStates.SHOW_INVENTORY
+
+        # Choose a specific item in the inventory
+        if inventory_index is not None and previous_game_state != GameStates.PLAYER_DEAD and inventory_index < len(
+                player.inventory.items):
+            item = player.inventory.items[inventory_index]
+            print(item)
+
 
         # if key.vk == libtcod.KEY_ESCAPE:
         if exit:
-            return True
+            if game_state == GameStates.SHOW_INVENTORY:
+                game_state = previous_game_state
+            else:
+                return True
 
         # Toggle full screen
         if fullscreen:

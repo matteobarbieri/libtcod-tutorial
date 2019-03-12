@@ -1,6 +1,6 @@
 from entity import Entity
 
-from item_functions import heal
+from item_functions import heal, cast_lightning
 
 from map_objects.tile import Tile
 from map_objects.rectangle import Rect
@@ -125,6 +125,7 @@ class GameMap:
         number_of_monsters = randint(0, max_monsters_per_room)
         number_of_items = randint(0, max_items_per_room)
 
+        # Spawn monsters in the room
         for i in range(number_of_monsters):
             # Choose a random location in the room
             x = randint(room.x1 + 1, room.x2 - 1)
@@ -166,18 +167,33 @@ class GameMap:
 
                 entities.append(monster)
 
+        # Spawn items in the room
         for i in range(number_of_items):
             x = randint(room.x1 + 1, room.x2 - 1)
             y = randint(room.y1 + 1, room.y2 - 1)
 
+            # Only in empty spaces
             if not any(
                     [entity for entity in entities if entity.x == x and entity.y == y]):
  
-                item_component = Item(use_function=heal, amount=4)
-                item = Entity(
-                        x, y, '!', libtcod.violet,
-                        'Healing Potion',
-                        render_order=RenderOrder.ITEM,
+                item_chance = randint(0, 100)
+
+                if item_chance < 70:
+
+                    item_component = Item(use_function=heal, amount=4)
+                    item = Entity(
+                            x, y, '!', libtcod.violet,
+                            'Healing Potion',
+                            render_order=RenderOrder.ITEM,
+                            item=item_component)
+                else:
+                    item_component = Item(
+                        use_function=cast_lightning, 
+                        damage=20, maximum_range=5)
+
+                    item = Entity(
+                        x, y, '#', libtcod.yellow, 
+                        'Lightning Scroll', render_order=RenderOrder.ITEM,
                         item=item_component)
 
                 entities.append(item)

@@ -3,7 +3,7 @@ import libtcodpy as libtcod
 from components.fighter import Fighter
 
 from entity import Entity, get_blocking_entities_at_location
-from input_handlers import handle_keys
+from input_handlers import handle_keys, handle_mouse
 from fov_functions import initialize_fov, recompute_fov
 from render_functions import clear_all, render_all, RenderOrder
 from map_objects.game_map import GameMap
@@ -127,6 +127,9 @@ def main():
     game_state = GameStates.PLAYERS_TURN
     previous_game_state = game_state
 
+    # Required for targeting system
+    targeting_item = None
+
     # Main loop
     while not libtcod.console_is_window_closed():
 
@@ -176,6 +179,7 @@ def main():
 
         # Detect player's action
         action = handle_keys(key, game_state)
+        mouse_action = handle_mouse(mouse)
 
         move = action.get('move')
         pickup = action.get('pickup')
@@ -184,6 +188,10 @@ def main():
         inventory_index = action.get('inventory_index')
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
+
+        # Click and right click actions
+        left_click = mouse_action.get('left_click')
+        right_click = mouse_action.get('right_click')
 
         player_turn_results = []
 
@@ -244,14 +252,33 @@ def main():
             elif game_state == GameStates.DROP_INVENTORY:
                 player_turn_results.extend(player.inventory.drop_item(item))
 
-
+        # Exit game
         if exit:
             if game_state in (
                     GameStates.SHOW_INVENTORY,
                     GameStates.DROP_INVENTORY):
                 game_state = previous_game_state
+            # Cancel targeting if in TARGETING state
+            elif game_state == GameStates.TARGETING:
+                player_turn_results.append({'targeting_cancelled': True})
             else:
                 return True
+        
+        # If in targeting, fire item
+        if game_state == GameStates.TARGETING:
+            # Fire whatever it is on left click
+            if left_click:
+                target_x, target_y = left_click
+
+                item_use_results = player.inventory.use(
+                    targeting_item, entities=entities, fov_map=fov_map,
+                    target_x=target_x, target_y=target_y)
+
+                player_turn_results.extend(item_use_results)
+            # Cancel action with right click
+            elif right_click:
+                player_turn_results.append({'targeting_cancelled': True})
+
 
         # Toggle full screen
         if fullscreen:
@@ -264,9 +291,16 @@ def main():
             item_added = player_turn_result.get('item_added')
             item_consumed = player_turn_result.get('item_consumed')
             item_dropped = player_turn_result.get('item_dropped')
+            targeting = player_turn_result.get('targeting')
+            targeting_cancelled = player_turn_result.get('targeting_cancelled')
 
             if message:
                 message_log.add_message(message)
+
+            if targeting_cancelled:
+                game_state = previous_game_state
+
+                message_log.add_message(Message('Targeting cancelled'))
 
             # Handle death of entities
             if dead_entity:
@@ -284,6 +318,15 @@ def main():
 
             if item_consumed:
                 game_state = GameStates.ENEMY_TURN
+
+            if targeting:
+                previous_game_state = GameStates.PLAYERS_TURN
+                game_state = GameStates.TARGETING
+
+                targeting_item = targeting
+
+                message_log.add_message(targeting_item.item.targeting_message)
+
 
             if item_dropped:
                 entities.append(item_dropped)

@@ -1,42 +1,20 @@
 import libtcodpy as libtcod
 
-from components.fighter import Fighter
-
-from entity import Entity, get_blocking_entities_at_location
+from entity import get_blocking_entities_at_location
 from input_handlers import handle_keys, handle_mouse
-from loader_functions.initialize_new_game import get_constants
+from loader_functions.initialize_new_game import get_constants, get_game_variables
 from fov_functions import initialize_fov, recompute_fov
-from render_functions import clear_all, render_all, RenderOrder
-from map_objects.game_map import GameMap
+from render_functions import clear_all, render_all
 from game_states import GameStates
 from death_functions import kill_monster, kill_player
-from components.inventory import Inventory
 
-from game_messages import Message, MessageLog
+from game_messages import Message
 
 
 def main():
 
     constants = get_constants()
 
-    # Fighter component for player
-    fighter_component = Fighter(hp=30, defense=2, power=5)
-    
-    # Inventory component for the player
-    inventory_component = Inventory(26)
-
-    # Create the Player object
-    player = Entity(
-        0,
-        0,
-        '@',
-        libtcod.white,
-        'Player',
-        blocks=True,
-        render_order=RenderOrder.ACTOR,
-        fighter=fighter_component,
-        inventory=inventory_component
-    )
 
     entities = [player]
 
@@ -55,27 +33,15 @@ def main():
     # The UI screen
     panel = libtcod.console_new(constants['screen_width'], constants['panel_height'])
 
-    # Create the game map
-    game_map = GameMap(constants['map_width'], constants['map_height'])
-    game_map.make_map(constants['max_rooms'], constants['room_min_size'], constants['room_max_size'],
-                      constants['map_width'], constants['map_height'], player, entities,
-                      constants['max_monsters_per_room'], constants['max_items_per_room'])
-
-
     # When the game starts the fov must be computed for the first time
     fov_recompute = True
 
     fov_map = initialize_fov(game_map)
 
-    # Initialize message log
-    message_log = MessageLog(constants['message_x'], constants['message_width'], constants['message_height'])
-
     # Handles for keyboard and mouse inputs
     key = libtcod.Key()
     mouse = libtcod.Mouse()
 
-    # Begin the game in player's turn
-    game_state = GameStates.PLAYERS_TURN
     previous_game_state = game_state
 
     # Required for targeting system

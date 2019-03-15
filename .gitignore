@@ -111,3 +111,6 @@ data
 
 # Vim swap files
 *.swp
+
+# Save files
+savegame.dat.*

@@ -151,9 +151,9 @@ class GameMap:
             if not any(
                     [entity for entity in entities if entity.x == x and entity.y == y]):
                 if randint(0, 100) < 80:
-                    # Spawn an orc
 
-                    fighter_component = Fighter(hp=10, defense=0, power=3)
+                    # Spawn an orc
+                    fighter_component = Fighter(hp=10, defense=0, power=3, xp=35)
                     ai_component = BasicMonster()
 
                     monster = Entity(
@@ -169,7 +169,7 @@ class GameMap:
                 else:
                     # Spawn a Troll
 
-                    fighter_component = Fighter(hp=16, defense=1, power=4)
+                    fighter_component = Fighter(hp=16, defense=1, power=4, xp=100)
                     ai_component = BasicMonster()
 
                     monster = Entity(

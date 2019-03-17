@@ -4,7 +4,7 @@ from enum import Enum, auto
 
 from game_states import GameStates
 
-from menus import inventory_menu
+from menus import character_screen, inventory_menu, level_up_menu
 
 class RenderOrder(Enum):
     STAIRS = auto()
@@ -169,6 +169,7 @@ def render_all(
         0,
         panel_y)
 
+    # Show inventory menu
     if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
         if game_state == GameStates.SHOW_INVENTORY:
             inventory_title = 'Press the key next to an item to use it, or Esc to cancel.\n'
@@ -176,6 +177,16 @@ def render_all(
             inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
 
         inventory_menu(con, inventory_title, player.inventory, 50, screen_width, screen_height)
+
+    # Show level up menu
+    elif game_state == GameStates.LEVEL_UP:
+        level_up_menu(
+                con, 'Level up! Choose a stat to raise:', 
+                player, 40, screen_width, screen_height)
+
+    # Show character screen
+    elif game_state == GameStates.CHARACTER_SCREEN:
+        character_screen(player, 30, 10, screen_width, screen_height)
 
 def clear_all(con, entities):
     for entity in entities:

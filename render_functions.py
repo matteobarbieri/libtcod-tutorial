@@ -1,15 +1,16 @@
 import libtcodpy as libtcod
 
-from enum import Enum
+from enum import Enum, auto
 
 from game_states import GameStates
 
 from menus import inventory_menu
 
 class RenderOrder(Enum):
-    CORPSE = 1
-    ITEM = 2
-    ACTOR = 3
+    STAIRS = auto()
+    CORPSE = auto()
+    ITEM = auto()
+    ACTOR = auto()
 
 
 def get_names_under_mouse(mouse, entities, fov_map):
@@ -109,7 +110,7 @@ def render_all(
 
     # Draw all entities in the list in the correct order
     for entity in entities_in_render_order:
-        draw_entity(con, entity, fov_map)
+        draw_entity(con, entity, fov_map, game_map)
 
     libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
@@ -130,6 +131,7 @@ def render_all(
             message.text)
         y += 1
 
+    # Render the HP bar
     render_bar(
         panel,
         1,
@@ -140,6 +142,10 @@ def render_all(
         player.fighter.max_hp,
         libtcod.light_red,
         libtcod.darker_red)
+
+    # Show current dungeon level
+    libtcod.console_print_ex(panel, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT,
+                             'Dungeon level: {0}'.format(game_map.dungeon_level))
 
     libtcod.console_set_default_foreground(panel, libtcod.light_gray)
     libtcod.console_print_ex(
@@ -176,10 +182,11 @@ def clear_all(con, entities):
         clear_entity(con, entity)
 
 
-def draw_entity(con, entity, fov_map):
+def draw_entity(con, entity, fov_map, game_map):
 
     # Only draw entities that are in player's fov
-    if libtcod.map_is_in_fov(fov_map, entity.x, entity.y):
+    if libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or (entity.stairs and game_map.tiles[entity.x][entity.y].explored):
+
         libtcod.console_set_default_foreground(con, entity.color)
         libtcod.console_put_char(
             con,

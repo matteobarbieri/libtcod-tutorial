@@ -1,11 +1,14 @@
 import libtcodpy as libtcod
 
 from components.equipment import Equipment
+from components.equippable import Equippable
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 
 from entity import Entity
+
+from equipment_slots import EquipmentSlots
 
 from game_messages import MessageLog
 
@@ -88,7 +91,7 @@ def get_constants():
 def get_game_variables(constants):
 
     # Fighter component for player
-    fighter_component = Fighter(hp=100, defense=1, power=4)
+    fighter_component = Fighter(hp=100, defense=1, power=2)
     
     # Inventory component for the player
     inventory_component = Inventory(26)
@@ -115,6 +118,15 @@ def get_game_variables(constants):
     )
 
     entities = [player]
+
+    # Give a starting item, a dagger
+    equippable_component = Equippable(
+        EquipmentSlots.MAIN_HAND, power_bonus=2)
+    dagger = Entity(
+        0, 0, '-', libtcod.sky, 'Dagger', 
+        equippable=equippable_component)
+    player.inventory.add_item(dagger)
+    player.equipment.toggle_equip(dagger)
 
     # Create the game map
     game_map = GameMap(constants['map_width'], constants['map_height'])

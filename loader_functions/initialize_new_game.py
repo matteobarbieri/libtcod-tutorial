@@ -1,5 +1,6 @@
 import libtcodpy as libtcod
 
+from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
@@ -95,6 +96,9 @@ def get_game_variables(constants):
     # The level component for leveling up
     level_component = Level()
 
+    # The equipment component, for equippable items
+    equipment_component = Equipment()
+
     # Create the Player object
     player = Entity(
         0,
@@ -106,7 +110,8 @@ def get_game_variables(constants):
         render_order=RenderOrder.ACTOR,
         fighter=fighter_component,
         inventory=inventory_component,
-        level=level_component
+        level=level_component,
+        equipment=equipment_component
     )
 
     entities = [player]

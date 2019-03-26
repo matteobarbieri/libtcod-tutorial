@@ -8,6 +8,8 @@ from map_objects.tile import Tile
 from map_objects.rectangle import Rect
 
 from components.ai import BasicMonster
+from components.equipment import EquipmentSlots
+from components.equippable import Equippable
 from components.fighter import Fighter
 from components.item import Item
 from components.stairs import Stairs
@@ -150,9 +152,16 @@ class GameMap:
 
         item_chances = {
             'healing_potion': 35,
-            'lightning_scroll': from_dungeon_level([[25, 4]], self.dungeon_level),
-            'fireball_scroll': from_dungeon_level([[25, 6]], self.dungeon_level),
-            'confusion_scroll': from_dungeon_level([[10, 2]], self.dungeon_level)
+            'sword': from_dungeon_level(
+                [[5, 4]], self.dungeon_level),
+            'shield': from_dungeon_level(
+                [[15, 8]], self.dungeon_level),
+            'lightning_scroll': from_dungeon_level(
+                [[25, 4]], self.dungeon_level),
+            'fireball_scroll': from_dungeon_level(
+                [[25, 6]], self.dungeon_level),
+            'confusion_scroll': from_dungeon_level(
+                [[10, 2]], self.dungeon_level)
         }
 
 
@@ -167,8 +176,6 @@ class GameMap:
 
                 # Pic a random monster
                 monster_choice = random_choice_from_dict(monster_chances)
-
-                # if randint(0, 100) < 80:
 
                 if monster_choice == 'orc':
 
@@ -215,10 +222,10 @@ class GameMap:
                     [entity for entity in entities if entity.x == x and entity.y == y]):
  
                 # item_chance = randint(0, 100)
-                item_choice = random_choice_from_dict(item_chances)
+                item_choice = random_choice_from_dict(
+                    item_chances)
 
                 # Spawn a healing potion
-                # if item_chance < 70:
                 if item_choice == 'healing_potion':
 
                     item_component = Item(
@@ -229,9 +236,25 @@ class GameMap:
                         render_order=RenderOrder.ITEM,
                         item=item_component)
 
+                # Spawn a sword
+                elif item_choice == 'sword':
+                    equippable_component = Equippable(
+                        EquipmentSlots.MAIN_HAND, power_bonus=3)
+                    item = Entity(
+                        x, y, '/', libtcod.sky, 
+                        'Sword', equippable=equippable_component)
+
+                # Spawn a shield
+                elif item_choice == 'shield':
+                    equippable_component = Equippable(
+                        EquipmentSlots.OFF_HAND, defense_bonus=1)
+                    item = Entity(
+                        x, y, '[', libtcod.darker_orange, 
+                        'Shield', 
+                        equippable=equippable_component)
+
                 # Spawn a Fireball scroll
-                # elif item_chance < 80:
-                if item_choice == 'fireball_scroll':
+                elif item_choice == 'fireball_scroll':
 
                     item_component = Item(
                         use_function=cast_fireball, 
@@ -244,7 +267,6 @@ class GameMap:
                                   item=item_component)
 
                 # Spawn a "Confuse monster" scroll
-                # elif item_chance < 90:
                 elif item_choice == 'confusion_scroll':
 
                     item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message(

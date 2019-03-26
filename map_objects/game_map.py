@@ -263,8 +263,11 @@ class GameMap:
                             'Left-click a target tile for the fireball, or right-click to cancel.', 
                             libtcod.light_cyan),
                         damage=25, radius=3)
-                    item = Entity(x, y, '#', libtcod.red, 'Fireball Scroll', render_order=RenderOrder.ITEM,
-                                  item=item_component)
+                    item = Entity(
+                        x, y, '#', libtcod.red, 
+                        'Fireball Scroll', 
+                        render_order=RenderOrder.ITEM,
+                        item=item_component)
 
                 # Spawn a "Confuse monster" scroll
                 elif item_choice == 'confusion_scroll':

@@ -176,7 +176,9 @@ def render_all(
         else:
             inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
 
-        inventory_menu(con, inventory_title, player.inventory, 50, screen_width, screen_height)
+        inventory_menu(
+            con, inventory_title, player, 
+            50, screen_width, screen_height)
 
     # Show level up menu
     elif game_state == GameStates.LEVEL_UP:

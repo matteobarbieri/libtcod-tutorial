@@ -4,7 +4,7 @@ from game_messages import Message
 
 from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
 
-from map_objects.tile import Tile
+from map_objects.tile import Tile, Wall, Floor
 from map_objects.rectangle import Rect
 
 from components.ai import BasicMonster
@@ -39,15 +39,10 @@ class GameMap:
 
         return tiles
 
-    def make_map(
-            self,
-            max_rooms,
-            room_min_size,
-            room_max_size,
-            map_width,
-            map_height,
-            player,
-            entities):
+    def make_map(self, max_rooms, 
+                 room_min_size, room_max_size,
+                 map_width, map_height, 
+                 player, entities):
 
         rooms = []
         num_rooms = 0
@@ -59,6 +54,7 @@ class GameMap:
             # random width and height
             w = randint(room_min_size, room_max_size)
             h = randint(room_min_size, room_max_size)
+
             # random position without going out of the boundaries of the map
             x = randint(0, map_width - w - 1)
             y = randint(0, map_height - h - 1)
@@ -117,21 +113,56 @@ class GameMap:
 
 
     def create_room(self, room):
-        # go through the tiles in the rectangle and make them passable
+
+        ### Create passable terrain in room space
         for x in range(room.x1 + 1, room.x2):
             for y in range(room.y1 + 1, room.y2):
-                self.tiles[x][y].blocked = False
-                self.tiles[x][y].block_sight = False
+                self.tiles[x][y] = Floor(bg_color=libtcod.silver)
+
+        ### Create walls around the room
+
+        # Top and bottom
+        for x in range(room.x1, room.x2+1):
+            for y in [room.y1, room.y2]:
+
+                # Only create walls in unassigned tiles
+                if type(self.tiles[x][y]) == Tile:
+                    self.tiles[x][y] = Wall.create()
+
+        # Left and right
+        for x in [room.x1, room.x2]:
+            for y in range(room.y1+1, room.y2):
+
+                # Only create walls in unassigned tiles
+                if type(self.tiles[x][y]) == Tile:
+                    self.tiles[x][y] = Wall.create()
+
 
     def create_h_tunnel(self, x1, x2, y):
         for x in range(min(x1, x2), max(x1, x2) + 1):
-            self.tiles[x][y].blocked = False
-            self.tiles[x][y].block_sight = False
+            self.tiles[x][y] = Floor(bg_color=libtcod.silver)
+
+            # Make borders Wall classes
+            self.tiles[x][y-1] = \
+                Wall.create() if type(self.tiles[x][y-1]) == Tile \
+                else self.tiles[x][y-1]
+            self.tiles[x][y+1] = \
+                Wall.create() if type(self.tiles[x][y+1]) == Tile \
+                else self.tiles[x][y+1]
+
 
     def create_v_tunnel(self, y1, y2, x):
         for y in range(min(y1, y2), max(y1, y2) + 1):
-            self.tiles[x][y].blocked = False
-            self.tiles[x][y].block_sight = False
+            self.tiles[x][y] = Floor(bg_color=libtcod.silver)
+
+            # Make borders Wall classes
+            self.tiles[x-1][y] = \
+                Wall.create() if type(self.tiles[x-1][y]) == Tile \
+                else self.tiles[x-1][y]
+
+            self.tiles[x+1][y] = \
+                Wall.create() if type(self.tiles[x+1][y]) == Tile \
+                else self.tiles[x+1][y]
 
     def place_entities(self, room, entities):
             

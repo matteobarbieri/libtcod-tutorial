@@ -1,5 +1,7 @@
 import libtcodpy as libtcod
 
+from map_objects.tile import Wall
+
 from enum import Enum, auto
 
 from game_states import GameStates
@@ -23,16 +25,9 @@ def get_names_under_mouse(mouse, entities, fov_map):
     return names.capitalize()
 
 
-def render_bar(
-        panel,
-        x,
-        y,
-        total_width,
-        name,
-        value,
-        maximum,
-        bar_color,
-        back_color):
+def render_bar(panel, x, y, total_width,
+               name, value, maximum,
+               bar_color, back_color):
 
     # Compute bar width, based on current value and maximum
     bar_width = int(float(value) / maximum * total_width)
@@ -61,68 +56,28 @@ def render_bar(
                                                    maximum))
 
 
-def render_all(
-        con,
-        panel,
-        entities,
-        player,
-        game_map,
-        fov_map,
-        fov_recompute,
-        message_log,
-        screen_width,
-        screen_height,
-        bar_width,
-        panel_height,
-        panel_y,
-        mouse,
-        colors,
-        game_state,
-        ):
+def render_all(con, panel,
+               entities, player,
+               game_map, fov_map, fov_recompute,
+               message_log,
+               screen_width, screen_height, bar_width,
+               panel_height, panel_y,
+               mouse, colors, game_state):
 
     if fov_recompute:
         # Draw all the tiles in the game map
         for y in range(game_map.height):
             for x in range(game_map.width):
                 visible = libtcod.map_is_in_fov(fov_map, x, y)
-                wall = game_map.tiles[x][y].block_sight
 
                 if visible:
-                    if wall:
-                        libtcod.console_set_char_background(
-                            con, x, y, colors.get('light_wall'), libtcod.BKGND_SET)
-
-                        libtcod.console_set_default_foreground(
-                            con,
-                            libtcod.white)
-                        libtcod.console_put_char(
-                            con,
-                            x,
-                            y,
-                            '#',
-                            libtcod.BKGND_NONE)
-                    else:
-                        libtcod.console_set_char_background(
-                            con, x, y, colors.get('light_ground'), libtcod.BKGND_SET)
-
+                    # Render it as visible
+                    game_map.tiles[x][y].render_at(con, x, y, visible)
                     game_map.tiles[x][y].explored = True
-                elif game_map.tiles[x][y].explored:
-                    if wall:
-                        libtcod.console_set_char_background(
-                            con, x, y, colors.get('dark_wall'), libtcod.BKGND_SET)
 
-                        libtcod.console_set_default_foreground(
-                            con,
-                            libtcod.white)
-                        libtcod.console_put_char(
-                            con,
-                            x,
-                            y,
-                            '#',
-                            libtcod.BKGND_NONE)
-                    else:
-                        libtcod.console_set_char_background(
-                            con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)
+                elif game_map.tiles[x][y].explored:
+                    # Render as currently out of sight
+                    game_map.tiles[x][y].render_at(con, x, y, visible)
 
     # Sort entities by their associated render order
     entities_in_render_order = sorted(

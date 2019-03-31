@@ -113,4 +113,4 @@ data
 *.swp
 
 # Save files
-savegame.dat.*
+savegame.*

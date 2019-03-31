@@ -12,7 +12,11 @@ from death_functions import kill_monster, kill_player
 
 from game_messages import Message
 
-def play_game(player, entities, game_map, message_log, game_state, con, panel, constants):
+
+def play_game(player, entities, game_map, 
+              message_log, game_state, con, 
+              panel, constants):
+
     fov_recompute = True
 
     fov_map = initialize_fov(game_map)
@@ -32,9 +36,12 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
             recompute_fov(fov_map, player.x, player.y, constants['fov_radius'], constants['fov_light_walls'],
                           constants['fov_algorithm'])
 
-        render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log,
-                   constants['screen_width'], constants['screen_height'], constants['bar_width'],
-                   constants['panel_height'], constants['panel_y'], mouse, constants['colors'], game_state)
+        render_all(con, panel, entities, player, game_map, 
+                   fov_map, fov_recompute, message_log,
+                   constants['screen_width'], constants['screen_height'], 
+                   constants['bar_width'], constants['panel_height'], 
+                   constants['panel_y'], mouse, constants['colors'], 
+                   game_state)
 
         fov_recompute = False
 
@@ -295,12 +302,24 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
 def main():
     constants = get_constants()
 
-    libtcod.console_set_custom_font('data/fonts/arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    # libtcod.console_set_custom_font('data/fonts/arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    libtcod.console_set_custom_font(
+        'data/fonts/brogue/font-6.png', 
+        libtcod.FONT_TYPE_GREYSCALE |
+        libtcod.FONT_LAYOUT_ASCII_INROW
+        )
 
-    libtcod.console_init_root(constants['screen_width'], constants['screen_height'], constants['window_title'], False)
+    libtcod.console_init_root(
+        constants['screen_width'], constants['screen_height'], 
+        constants['window_title'], False)
 
-    con = libtcod.console_new(constants['screen_width'], constants['screen_height'])
-    panel = libtcod.console_new(constants['screen_width'], constants['panel_height'])
+    con = libtcod.console_new(
+        constants['screen_width'], 
+        constants['screen_height'])
+    
+    panel = libtcod.console_new(
+        constants['screen_width'], 
+        constants['panel_height'])
 
     player = None
     entities = []
@@ -311,7 +330,7 @@ def main():
     show_main_menu = True
     show_load_error_message = False
 
-    main_menu_background_image = libtcod.image_load('menu_background.png')
+    main_menu_background_image = libtcod.image_load('menu_background1.png')
 
     key = libtcod.Key()
     mouse = libtcod.Mouse()

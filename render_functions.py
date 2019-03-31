@@ -91,6 +91,16 @@ def render_all(
                     if wall:
                         libtcod.console_set_char_background(
                             con, x, y, colors.get('light_wall'), libtcod.BKGND_SET)
+
+                        libtcod.console_set_default_foreground(
+                            con,
+                            libtcod.white)
+                        libtcod.console_put_char(
+                            con,
+                            x,
+                            y,
+                            '#',
+                            libtcod.BKGND_NONE)
                     else:
                         libtcod.console_set_char_background(
                             con, x, y, colors.get('light_ground'), libtcod.BKGND_SET)
@@ -100,6 +110,16 @@ def render_all(
                     if wall:
                         libtcod.console_set_char_background(
                             con, x, y, colors.get('dark_wall'), libtcod.BKGND_SET)
+
+                        libtcod.console_set_default_foreground(
+                            con,
+                            libtcod.white)
+                        libtcod.console_put_char(
+                            con,
+                            x,
+                            y,
+                            '#',
+                            libtcod.BKGND_NONE)
                     else:
                         libtcod.console_set_char_background(
                             con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)

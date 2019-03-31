@@ -15,7 +15,7 @@ def load_game():
     if not os.path.isfile('savegame.dat'):
         raise FileNotFoundError
 
-    with shelve.open('savegame.dat', 'r') as data_file:
+    with shelve.open('savegame', 'r') as data_file:
         player_index = data_file['player_index']
         entities = data_file['entities']
         game_map = data_file['game_map']

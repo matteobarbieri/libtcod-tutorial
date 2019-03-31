@@ -9,12 +9,12 @@
 ### Time
 
 Time in the game flows in turns. The minimum amount of turns required for taking
-an action is **one** turn. As a reference, let's say that 20 turns are roughly
+an action is **one** turn. As a reference, let's say that 10 turns are roughly
 equal to one second (so that quicker actions can be properly divided and require
 a smaller amount of turns to be completed).
 
-Any action requires a given amount of time, for instance on a medium/light load
-moving one tile (while **walking** normally) takes 20 turns.
+Any action requires a given amount of time, for instance on a medium load
+moving one tile takes 10 turns.
 
 Non-combat action are usually interrupted (and items used in the process,
 if any, are lost). So maybe find a nice quite spot to tend to that wound ;)
@@ -64,7 +64,7 @@ if any, are lost). So maybe find a nice quite spot to tend to that wound ;)
    and damage. At higher levels grants a small chance to vanquish smaller
    creatures (like 5 levels below player's level) on hit (no need to roll
    for damage).
- * **Point blank**: use your gun(s) while in melee combat without suffering from
+ * **Point blank**: (requires _gun_) use your gun(s) while in melee combat without suffering from
    negative modifiers due to being in melee.
 
 ##### Misc
@@ -73,8 +73,8 @@ if any, are lost). So maybe find a nice quite spot to tend to that wound ;)
 
 #### Survival
 
- * Discover traps/secret doors
- * Stealth (*passive*): make less noise while moving, other entities do not see
+ * Discover traps/secret doors (_passive_)
+ * Stealth (_passive_): make less noise while moving, other entities do not see
    you if you're too far away.
 
 ### Spells
@@ -82,8 +82,8 @@ if any, are lost). So maybe find a nice quite spot to tend to that wound ;)
  * Light: creates a source of light attached to an entity. At higher levels has
    a chance to blind if cast directly on a creature.
  * Lightning: chance to stun the enemy for a given number of turns.
- * Fireball:
- * Ice blast: deal cold
+ * Fireball: deal fire damage in an area.
+ * Ice blast: deal cold damage to a single target
 
 ## Combat system
 
@@ -98,7 +98,9 @@ An attack (either a melee or a ranged one) works in the following way:
     1. Start from base damage (based on weapon)
     2. Apply modifiers (from either player or weapon)
 
-_Environment_ modifiers might be for instance being close to a wall (and the wall being between you and the target, or being hidden in a thick bush or in a cloud of smoke).
+_Environment_ modifiers might be for instance being close to a wall (and the 
+wall being between you and the target, or being hidden in a thick bush or 
+in a cloud of smoke).
 
 Damage is divided based on its type:
 
@@ -106,7 +108,7 @@ Damage is divided based on its type:
  * Elemental: one of several types
    - Fire: chance to **ignite** target.
    - Cold: chance to **chill** target.
-   - Electricity: chance to **shock** target.
+   - Electricity: chance to **stun** target.
  * Arcane: caused by spells mostly
 
 ### Ailments
@@ -118,7 +120,7 @@ Most of them cause the player to lose a certain amount of health every turn,
 and must be treated by using the appropriate item/skill.
 
  * Burning: every turn the entity receives damage.
- * Bleeding:
+ * Bleeding: 
  * Chilled:
  * Poisoned:
  * Blinded: reduced vision of the surroundings, plus can only shoot at a

@@ -306,12 +306,18 @@ def play_game(player, entities, game_map,
 def main():
     constants = get_constants()
 
-    # libtcod.console_set_custom_font('data/fonts/arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    # libtcod.console_set_custom_font(
+        # 'data/fonts/arial12x12.png', 
+        # libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+
     libtcod.console_set_custom_font(
-        'data/fonts/brogue/font-6.png', 
-        libtcod.FONT_TYPE_GREYSCALE |
-        libtcod.FONT_LAYOUT_ASCII_INROW
-        )
+        'data/fonts/Bisasam_20x20_ascii.png', 
+        libtcod.FONT_LAYOUT_ASCII_INROW)
+
+    # libtcod.console_set_custom_font(
+        # 'data/fonts/brogue/font-6.png', 
+        # libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW
+        # )
 
     libtcod.console_init_root(
         constants['screen_width'], constants['screen_height'], 

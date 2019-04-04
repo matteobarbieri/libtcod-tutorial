@@ -117,7 +117,7 @@ class GameMap:
         ### Create passable terrain in room space
         for x in range(room.x1 + 1, room.x2):
             for y in range(room.y1 + 1, room.y2):
-                self.tiles[x][y] = Floor(bg_color=libtcod.silver)
+                self.tiles[x][y] = Floor()
 
         ### Create walls around the room
 
@@ -142,7 +142,7 @@ class GameMap:
 
     def create_h_tunnel(self, x1, x2, y):
         for x in range(min(x1, x2), max(x1, x2) + 1):
-            self.tiles[x][y] = Floor(bg_color=libtcod.silver)
+            self.tiles[x][y] = Floor()
 
             # Make borders Wall classes
             self.tiles[x][y-1] = \
@@ -155,7 +155,7 @@ class GameMap:
 
     def create_v_tunnel(self, y1, y2, x):
         for y in range(min(y1, y2), max(y1, y2) + 1):
-            self.tiles[x][y] = Floor(bg_color=libtcod.silver)
+            self.tiles[x][y] = Floor()
 
             # Make borders Wall classes
             self.tiles[x-1][y] = \

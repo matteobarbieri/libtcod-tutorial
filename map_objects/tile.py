@@ -43,7 +43,7 @@ class Tile:
         if self.fg_symbol is not None:
             # Set color for foreground symbol
             libtcod.console_set_default_foreground(
-                con, libtcod.black)
+                con, self.fg_color)
 
             # Draw symbol on foreground
             libtcod.console_put_char(
@@ -55,12 +55,16 @@ class Floor(Tile):
     A block representing traversable terrain
     """
 
-    def __init__(self, bg_color=libtcod.black, fg_symbol=None,
-                 fg_color=None):
+    def __init__(self, bg_color=libtcod.Color(20, 20, 20), fg_symbol=250,
+                 fg_color=libtcod.lighter_gray):
 
         # Declare it as non-blocking
         super().__init__(False)
 
+        # self.bg_color = libtcod.black
+        # self.bg_color = libtcod.Color(10, 10, 10)
+        # self.bg_color = libtcod.Color(32, 32, 32)
+        # self.bg_color = libtcod.Color(16, 16, 16)
         self.bg_color = bg_color
         self.fg_color = fg_color
         self.fg_symbol = fg_symbol

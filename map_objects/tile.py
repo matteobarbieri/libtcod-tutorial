@@ -2,9 +2,19 @@ import random
 
 import libtcodpy as libtcod
 
+GRAY_PALETTE = [
+    # libtcod.Color(242, 242, 242),
+    libtcod.Color(204, 204, 204),
+    libtcod.Color(165, 165, 165),
+    libtcod.Color(127, 127, 127),
+    libtcod.Color(89, 89, 89),
+]
+
+
 class Tile:
     """
-    A tile on a map. It may or may not be blocked, and may or may not block sight.
+    A tile on a map. It may or may not be blocked, and may or may not block
+    sight.
     """
 
     def __init__(self, blocked, block_sight=None):
@@ -18,7 +28,6 @@ class Tile:
 
         self.explored = False
 
-    
     def render_at(self, con, x, y, visible):
         """
         Render a tile at position x, y
@@ -56,6 +65,7 @@ class Floor(Tile):
         self.fg_color = fg_color
         self.fg_symbol = fg_symbol
 
+
 class Wall(Tile):
     """
     A block of wall
@@ -70,10 +80,18 @@ class Wall(Tile):
         self.fg_color = fg_color
         self.fg_symbol = fg_symbol
 
+    def create_from_palette(palette=GRAY_PALETTE):
+        """
+        palette: list
+            Each element is a libtcod.Color object
+        """
+
+        return Wall(random.choice(palette))
+
     def create(base_color=libtcod.Color(159, 89, 66), color_variance=20):
 
         # Extract colors
-        b , g , r = base_color.b, base_color.g, base_color.r
+        b, g, r = base_color.b, base_color.g, base_color.r
 
         # Slightly alter them
         b += random.randint(-color_variance, color_variance)
@@ -87,5 +105,5 @@ class Wall(Tile):
         r += random.randint(-color_variance, color_variance)
         r = max(0, r)
         r = min(255, r)
-    
+
         return Wall(libtcod.Color(b, g, r))

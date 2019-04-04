@@ -127,7 +127,8 @@ class GameMap:
 
                 # Only create walls in unassigned tiles
                 if type(self.tiles[x][y]) == Tile:
-                    self.tiles[x][y] = Wall.create()
+                    # self.tiles[x][y] = Wall.create()
+                    self.tiles[x][y] = Wall.create_from_palette()
 
         # Left and right
         for x in [room.x1, room.x2]:
@@ -135,7 +136,8 @@ class GameMap:
 
                 # Only create walls in unassigned tiles
                 if type(self.tiles[x][y]) == Tile:
-                    self.tiles[x][y] = Wall.create()
+                    # self.tiles[x][y] = Wall.create()
+                    self.tiles[x][y] = Wall.create_from_palette()
 
 
     def create_h_tunnel(self, x1, x2, y):
@@ -144,10 +146,10 @@ class GameMap:
 
             # Make borders Wall classes
             self.tiles[x][y-1] = \
-                Wall.create() if type(self.tiles[x][y-1]) == Tile \
+                Wall.create_from_palette() if type(self.tiles[x][y-1]) == Tile \
                 else self.tiles[x][y-1]
             self.tiles[x][y+1] = \
-                Wall.create() if type(self.tiles[x][y+1]) == Tile \
+                Wall.create_from_palette() if type(self.tiles[x][y+1]) == Tile \
                 else self.tiles[x][y+1]
 
 
@@ -157,11 +159,11 @@ class GameMap:
 
             # Make borders Wall classes
             self.tiles[x-1][y] = \
-                Wall.create() if type(self.tiles[x-1][y]) == Tile \
+                Wall.create_from_palette() if type(self.tiles[x-1][y]) == Tile \
                 else self.tiles[x-1][y]
 
             self.tiles[x+1][y] = \
-                Wall.create() if type(self.tiles[x+1][y]) == Tile \
+                Wall.create_from_palette() if type(self.tiles[x+1][y]) == Tile \
                 else self.tiles[x+1][y]
 
     def place_entities(self, room, entities):

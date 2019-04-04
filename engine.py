@@ -311,7 +311,12 @@ def main():
         # libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
 
     libtcod.console_set_custom_font(
-        'data/fonts/Bisasam_20x20_ascii.png', 
+        # 'data/fonts/Yayo-c64-640x200.png', 
+        # 'data/fonts/Yayo-c64-1280x400-83b157.png', 
+        # 'data/fonts/Alloy-curses-12x12.png', 
+        # 'data/fonts/terminal16x16_gs_ro.png', 
+        'data/fonts/16x16-sb-ascii.png', # good!
+        # 'data/fonts/16x16-RogueYun-AgmEdit.png', # good!
         libtcod.FONT_LAYOUT_ASCII_INROW)
 
     # libtcod.console_set_custom_font(

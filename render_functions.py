@@ -76,12 +76,12 @@ def render_all(con, panel,
 
     top_y = int(player.y - screen_height/2)
     top_y = max(0, top_y)
-    top_y = min(game_map.height - screen_height, top_y)
+    top_y = min(game_map.height - screen_height + panel_height, top_y)
 
     if fov_recompute:
         # for y in range(game_map.height):
             # for x in range(game_map.width):
-        for y in range(top_y, top_y + screen_height):
+        for y in range(top_y, top_y + screen_height - panel_height):
             for x in range(top_x, top_x + screen_width):
                 visible = libtcod.map_is_in_fov(fov_map, x, y)
 
@@ -203,13 +203,6 @@ def draw_entity(con, entity, fov_map, game_map, top_x=0, top_y=0):
             entity.y-top_y,
             entity.char,
             libtcod.BKGND_NONE)
-
-
-def clear_screen(con, screen_width, screen_height):
-    for y in range(screen_height): 
-        for x in range(screen_width): 
-            libtcod.console_put_char(
-                con, x, y, ' ', libtcod.BKGND_SET)
 
 def clear_entity(con, entity, top_x=0, top_y=0):
     # erase the character that represents this object

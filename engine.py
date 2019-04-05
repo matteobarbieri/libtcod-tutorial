@@ -6,7 +6,7 @@ from loader_functions.initialize_new_game import get_constants, get_game_variabl
 from loader_functions.data_loaders import load_game, save_game
 from menus import main_menu, message_box
 from fov_functions import initialize_fov, recompute_fov
-from render_functions import clear_all, render_all, clear_screen
+from render_functions import clear_all, render_all
 from game_states import GameStates
 from death_functions import kill_monster, kill_player
 
@@ -42,7 +42,7 @@ def play_game(player, entities, game_map,
                           constants['fov_algorithm'])
 
             # Completly clear screen
-            clear_screen(con, constants['screen_width'], constants['screen_height'])
+            libtcod.console_clear(con)
 
         render_all(con, panel, entities, player, game_map, 
                    fov_map, fov_recompute, message_log,

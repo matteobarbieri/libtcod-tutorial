@@ -23,8 +23,10 @@ def get_constants():
     window_title = 'Roguelike Tutorial Revised'
 
     # Size of the game screen
-    screen_width = 80
-    screen_height = 50
+    # screen_width = 80
+    # screen_height = 50
+    screen_width = 110
+    screen_height = 60
 
     # Size of the panel containing health bar and log
     bar_width = 20

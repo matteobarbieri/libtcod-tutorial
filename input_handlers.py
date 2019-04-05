@@ -77,6 +77,10 @@ def handle_player_turn_keys(key):
     # Movement keys
     key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
 
+    if key.vk == libtcod.KEY_ENTER and key.lalt:
+        # Alt+Enter: toggle full screen
+        return {'fullscreen': True}
+
     if key.vk == libtcod.KEY_UP or key_char == 'k':
         return {'move': (0, -1)}
     elif key.vk == libtcod.KEY_DOWN or key_char == 'j':
@@ -105,10 +109,6 @@ def handle_player_turn_keys(key):
         return {'take_stairs': True}
     elif key_char == 'c':
         return {'show_character_screen': True}
-
-    if key.vk == libtcod.KEY_ENTER and key.lalt:
-        # Alt+Enter: toggle full screen
-        return {'fullscreen': True}
 
     elif key.vk == libtcod.KEY_ESCAPE:
         # Exit the game

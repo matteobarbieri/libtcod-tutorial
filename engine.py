@@ -17,6 +17,7 @@ def play_game(player, entities, game_map,
               message_log, game_state, con, 
               panel, constants):
 
+    # At the beginning of the game, recompute fov
     fov_recompute = True
 
     fov_map = initialize_fov(game_map)
@@ -113,8 +114,12 @@ def play_game(player, entities, game_map,
             previous_game_state = game_state
             game_state = GameStates.DROP_INVENTORY
 
-        if inventory_index is not None and previous_game_state != GameStates.PLAYER_DEAD and inventory_index < len(
-                player.inventory.items):
+        if (inventory_index is not None and \
+            previous_game_state != GameStates.PLAYER_DEAD and \
+            inventory_index < len(player.inventory.items)):
+
+            # An item has been selected, either use it or drop it
+            # (depending on the context)
             item = player.inventory.items[inventory_index]
 
             if game_state == GameStates.SHOW_INVENTORY:
@@ -179,10 +184,12 @@ def play_game(player, entities, game_map,
                 save_game(player, entities, game_map, message_log, game_state)
 
                 return True
-
+        
+        # Toggle fullscreen
         if fullscreen:
             libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
 
+        # Handle results from player actions
         for player_turn_result in player_turn_results:
             message = player_turn_result.get('message')
             dead_entity = player_turn_result.get('dead')
@@ -194,9 +201,11 @@ def play_game(player, entities, game_map,
             targeting_cancelled = player_turn_result.get('targeting_cancelled')
             xp = player_turn_result.get('xp')
 
+            # Add a message to the game log
             if message:
                 message_log.add_message(message)
 
+            # Somebody has died
             if dead_entity:
                 if dead_entity == player:
                     message, game_state = kill_player(dead_entity)
@@ -306,12 +315,23 @@ def play_game(player, entities, game_map,
 def main():
     constants = get_constants()
 
-    # libtcod.console_set_custom_font('data/fonts/arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    # libtcod.console_set_custom_font(
+        # 'data/fonts/arial12x12.png', 
+        # libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+
     libtcod.console_set_custom_font(
-        'data/fonts/brogue/font-6.png', 
-        libtcod.FONT_TYPE_GREYSCALE |
-        libtcod.FONT_LAYOUT_ASCII_INROW
-        )
+        # 'data/fonts/Yayo-c64-640x200.png', 
+        # 'data/fonts/Yayo-c64-1280x400-83b157.png', 
+        # 'data/fonts/Alloy-curses-12x12.png', 
+        # 'data/fonts/terminal16x16_gs_ro.png', 
+        'data/fonts/16x16-sb-ascii.png', # good!
+        # 'data/fonts/16x16-RogueYun-AgmEdit.png', # good!
+        libtcod.FONT_LAYOUT_ASCII_INROW)
+
+    # libtcod.console_set_custom_font(
+        # 'data/fonts/brogue/font-6.png', 
+        # libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW
+        # )
 
     libtcod.console_init_root(
         constants['screen_width'], constants['screen_height'], 

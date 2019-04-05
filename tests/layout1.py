@@ -14,8 +14,8 @@ def main():
 
     # libtcod.console_set_custom_font('data/fonts/arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
     libtcod.console_set_custom_font(
-        'data/fonts/brogue/font-6.png', 
-        libtcod.FONT_TYPE_GREYSCALE |
+        # 'data/fonts/Alloy-curses-12x12.png', 
+        'data/fonts/16x16-sb-ascii.png', # good!
         libtcod.FONT_LAYOUT_ASCII_INROW
         )
 
@@ -38,6 +38,10 @@ def main():
         int(screen_width), 
         10)
 
+    ui_over = libtcod.console_new(
+        int(screen_width/2), 
+        screen_height-10)
+    
     libtcod.console_set_default_background(ui_left, libtcod.red)
     libtcod.console_rect(ui_left, 0, 0, 40, 20, False, libtcod.BKGND_SET)
 
@@ -47,19 +51,32 @@ def main():
     libtcod.console_set_default_background(ui_panel, libtcod.green)
     libtcod.console_rect(ui_panel, 0, 0, 80, 10, False, libtcod.BKGND_SET)
 
+    libtcod.console_set_default_background(ui_over, libtcod.yellow)
+    libtcod.console_set_key_color(ui_over, libtcod.black)
+    libtcod.console_rect(ui_over, 2, 2, 2, 2, False, libtcod.BKGND_SET)
+
     libtcod.console_set_default_foreground(ui_left, libtcod.white)
     libtcod.console_put_char(ui_left, 2, 2, '@', libtcod.BKGND_DEFAULT)
 
+    # Blit left on root
     libtcod.console_blit(
         ui_left, 0, 0, 
         40, 20, 0, 
         0, 0)
 
+    # Blit over on right
+    libtcod.console_blit(
+        ui_over, 0, 0, 
+        40, 20, ui_right, 
+        0, 0)
+
+    # Blit right on root
     libtcod.console_blit(
         ui_right, 0, 0, 
         40, 20, 0, 
         40, 0)
 
+    # Blit console on root
     libtcod.console_blit(
         ui_panel, 0, 0, 
         80, 10, 0, 

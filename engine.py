@@ -14,11 +14,14 @@ from game_messages import Message
 
 
 def play_game(player, entities, game_map, 
-              message_log, game_state, con, 
+              message_log, game_state, 
+              terrain_layer, entities_layer,
               panel, constants):
 
     # At the beginning of the game, recompute fov
     fov_recompute = True
+    redraw_terrain = True
+    redraw_entities = True
 
     fov_map = initialize_fov(game_map)
 
@@ -38,24 +41,31 @@ def play_game(player, entities, game_map,
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
 
         if fov_recompute:
-            recompute_fov(fov_map, player.x, player.y, constants['fov_radius'], constants['fov_light_walls'],
-                          constants['fov_algorithm'])
+            recompute_fov(
+                fov_map, player.x, player.y, 
+                constants['fov_radius'], constants['fov_light_walls'],
+                constants['fov_algorithm'])
 
-            # Completly clear screen
-            libtcod.console_clear(con)
+        # render_all(terrain_layer, entities_layer, panel, entities, player, 
+                   # game_map, fov_map, fov_recompute, message_log,
+                   # constants['screen_width'], constants['screen_height'], 
+                   # constants['bar_width'], constants['panel_height'], 
+                   # constants['panel_y'], mouse,
+                   # game_state)
 
-        render_all(con, panel, entities, player, game_map, 
-                   fov_map, fov_recompute, message_log,
-                   constants['screen_width'], constants['screen_height'], 
-                   constants['bar_width'], constants['panel_height'], 
-                   constants['panel_y'], mouse, constants['colors'], 
+        render_all(terrain_layer, entities_layer, panel, entities, player, 
+                   game_map, fov_map, fov_recompute, 
+                   redraw_terrain, redraw_entities, message_log,
+                   constants, mouse,
                    game_state)
 
         fov_recompute = False
+        redraw_terrain = False
+        redraw_entities = False
 
         libtcod.console_flush()
 
-        # clear_all(con, entities)
+        # clear_all(terrain_layer, entities)
 
         action = handle_keys(key, game_state)
         mouse_action = handle_mouse(mouse)
@@ -93,6 +103,7 @@ def play_game(player, entities, game_map,
                     player.move(dx, dy)
 
                     fov_recompute = True
+                    redraw_terrain = True
 
                 game_state = GameStates.ENEMY_TURN
 
@@ -137,7 +148,7 @@ def play_game(player, entities, game_map,
                     entities = game_map.next_floor(player, message_log, constants)
                     fov_map = initialize_fov(game_map)
                     fov_recompute = True
-                    libtcod.console_clear(con)
+                    libtcod.console_clear(terrain_layer)
 
                     break
             else:
@@ -181,6 +192,8 @@ def play_game(player, entities, game_map,
                 GameStates.CHARACTER_SCREEN):
 
                 game_state = previous_game_state
+
+                redraw_terrain = True
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
@@ -215,6 +228,7 @@ def play_game(player, entities, game_map,
                 else:
                     message = kill_monster(dead_entity)
 
+                redraw_entities = True
                 message_log.add_message(message)
 
             # An item has been picked up
@@ -313,6 +327,8 @@ def play_game(player, entities, game_map,
                         break
             else:
                 game_state = GameStates.PLAYERS_TURN
+                redraw_entities = True
+
 
 
 def main():
@@ -331,18 +347,20 @@ def main():
         # 'data/fonts/16x16-RogueYun-AgmEdit.png', # good!
         libtcod.FONT_LAYOUT_ASCII_INROW)
 
-    # libtcod.console_set_custom_font(
-        # 'data/fonts/brogue/font-6.png', 
-        # libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW
-        # )
-
     libtcod.console_init_root(
         constants['screen_width'], constants['screen_height'], 
         constants['window_title'], False)
 
-    con = libtcod.console_new(
+    terrain_layer = libtcod.console_new(
         constants['screen_width'], 
         constants['screen_height'])
+    
+    entities_layer = libtcod.console_new(
+        constants['screen_width'], 
+        constants['screen_height'])
+
+    # Set black as transparent color
+    libtcod.console_set_key_color(entities_layer, libtcod.black)
     
     panel = libtcod.console_new(
         constants['screen_width'], 
@@ -366,11 +384,11 @@ def main():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
 
         if show_main_menu:
-            main_menu(con, main_menu_background_image, constants['screen_width'],
+            main_menu(terrain_layer, main_menu_background_image, constants['screen_width'],
                       constants['screen_height'])
 
             if show_load_error_message:
-                message_box(con, 'No save game to load', 50, constants['screen_width'], constants['screen_height'])
+                message_box(terrain_layer, 'No save game to load', 50, constants['screen_width'], constants['screen_height'])
 
             libtcod.console_flush()
 
@@ -397,8 +415,10 @@ def main():
                 break
 
         else:
-            libtcod.console_clear(con)
-            play_game(player, entities, game_map, message_log, game_state, con, panel, constants)
+            libtcod.console_clear(terrain_layer)
+            play_game(
+                player, entities, game_map, message_log, game_state,
+                terrain_layer, entities_layer, panel, constants)
 
             show_main_menu = True
 

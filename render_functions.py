@@ -64,28 +64,48 @@ def render_all(con, panel,
                panel_height, panel_y,
                mouse, colors, game_state):
 
+    #########################################
+    ######### Render terrain first ##########
+    #########################################
+
+    # First compute the part of visible map, based on the player's position
+    # Compute top left corner coordinates
+    top_x = int(player.x - screen_width/2)
+    top_x = max(0, top_x)
+    top_x = min(game_map.width - screen_width, top_x)
+
+    top_y = int(player.y - screen_height/2)
+    top_y = max(0, top_y)
+    top_y = min(game_map.height - screen_height, top_y)
+
     if fov_recompute:
-        # Draw all the tiles in the game map
-        for y in range(game_map.height):
-            for x in range(game_map.width):
+        # for y in range(game_map.height):
+            # for x in range(game_map.width):
+        for y in range(top_y, top_y + screen_height):
+            for x in range(top_x, top_x + screen_width):
                 visible = libtcod.map_is_in_fov(fov_map, x, y)
 
                 if visible:
                     # Render it as visible
-                    game_map.tiles[x][y].render_at(con, x, y, visible)
+                    # game_map.tiles[x][y].render_at(con, x, y, visible)
+                    game_map.tiles[x][y].render_at(con, x-top_x, y-top_y, visible)
                     game_map.tiles[x][y].explored = True
 
                 elif game_map.tiles[x][y].explored:
                     # Render as currently out of sight
-                    game_map.tiles[x][y].render_at(con, x, y, visible)
+                    game_map.tiles[x][y].render_at(con, x-top_x, y-top_y, visible)
 
+    #########################################
+    ######### Render entities first #########
+    #########################################
     # Sort entities by their associated render order
     entities_in_render_order = sorted(
         entities, key=lambda x: x.render_order.value)
 
     # Draw all entities in the list in the correct order
     for entity in entities_in_render_order:
-        draw_entity(con, entity, fov_map, game_map)
+        # draw_entity(con, entity, fov_map, game_map)
+        draw_entity(con, entity, fov_map, game_map, top_x, top_y)
 
     libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
@@ -165,12 +185,13 @@ def render_all(con, panel,
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
 
-def clear_all(con, entities):
+def clear_all(con, entities, top_x=0, top_y=0):
     for entity in entities:
-        clear_entity(con, entity)
+        clear_entity(con, entity, top_x, top_y)
 
 
-def draw_entity(con, entity, fov_map, game_map):
+# def draw_entity(con, entity, fov_map, game_map):
+def draw_entity(con, entity, fov_map, game_map, top_x=0, top_y=0):
 
     # Only draw entities that are in player's fov
     if libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or (entity.stairs and game_map.tiles[entity.x][entity.y].explored):
@@ -178,12 +199,19 @@ def draw_entity(con, entity, fov_map, game_map):
         libtcod.console_set_default_foreground(con, entity.color)
         libtcod.console_put_char(
             con,
-            entity.x,
-            entity.y,
+            entity.x-top_x,
+            entity.y-top_y,
             entity.char,
             libtcod.BKGND_NONE)
 
 
-def clear_entity(con, entity):
+def clear_screen(con, screen_width, screen_height):
+    for y in range(screen_height): 
+        for x in range(screen_width): 
+            libtcod.console_put_char(
+                con, x, y, ' ', libtcod.BKGND_NONE)
+
+def clear_entity(con, entity, top_x=0, top_y=0):
     # erase the character that represents this object
-    libtcod.console_put_char(con, entity.x, entity.y, ' ', libtcod.BKGND_NONE)
+    libtcod.console_put_char(
+        con, entity.x-top_x, entity.y-top_y, ' ', libtcod.BKGND_NONE)

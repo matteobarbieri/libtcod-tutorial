@@ -39,13 +39,15 @@ def get_constants():
     message_height = panel_height - 1
 
     # Size of the playing map
-    map_width = 80
-    map_height = 43
+    # map_width = 80
+    # map_height = 43
+    map_width = 160
+    map_height = 80
 
     # Parameters for rooms generation
     room_max_size = 10
     room_min_size = 6
-    max_rooms = 30
+    max_rooms = 40
 
     # Variables for field of view (FOV)
     fov_algorithm = 0

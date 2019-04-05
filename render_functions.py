@@ -209,7 +209,7 @@ def clear_screen(con, screen_width, screen_height):
     for y in range(screen_height): 
         for x in range(screen_width): 
             libtcod.console_put_char(
-                con, x, y, ' ', libtcod.BKGND_NONE)
+                con, x, y, ' ', libtcod.BKGND_SET)
 
 def clear_entity(con, entity, top_x=0, top_y=0):
     # erase the character that represents this object

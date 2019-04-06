@@ -55,8 +55,17 @@ def main():
     libtcod.console_set_key_color(ui_over, libtcod.black)
     libtcod.console_rect(ui_over, 2, 2, 2, 2, False, libtcod.BKGND_SET)
 
+    # Write @ on left ui part
     libtcod.console_set_default_foreground(ui_left, libtcod.white)
-    libtcod.console_put_char(ui_left, 2, 2, '@', libtcod.BKGND_DEFAULT)
+    libtcod.console_put_char(ui_left, 6, 6, '@', libtcod.BKGND_DEFAULT)
+
+    # Write K on over ui part
+    libtcod.console_set_default_foreground(ui_over, libtcod.pink)
+    libtcod.console_put_char(ui_over, 6, 6, 'K', libtcod.BKGND_DEFAULT)
+    libtcod.console_put_char(ui_over, 3, 3, 'K', libtcod.BKGND_DEFAULT)
+
+    bg_color = libtcod.console_get_char_background(ui_right, 6, 6)
+    libtcod.console_set_char_background(ui_over, 6, 6, bg_color)
 
     # Blit left on root
     libtcod.console_blit(
@@ -64,17 +73,23 @@ def main():
         40, 20, 0, 
         0, 0)
 
-    # Blit over on right
-    libtcod.console_blit(
-        ui_over, 0, 0, 
-        40, 20, ui_right, 
-        0, 0)
+    # # Blit over on right
+    # libtcod.console_blit(
+        # ui_over, 0, 0, 
+        # 40, 20, ui_right, 
+        # 0, 0)
 
     # Blit right on root
     libtcod.console_blit(
         ui_right, 0, 0, 
         40, 20, 0, 
         40, 0)
+
+    libtcod.console_blit(
+        ui_over, 0, 0, 
+        40, 20, 0, 
+        40, 0)
+
 
     # Blit console on root
     libtcod.console_blit(

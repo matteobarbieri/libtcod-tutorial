@@ -73,11 +73,11 @@ def main():
         40, 20, 0, 
         0, 0)
 
-    # # Blit over on right
-    # libtcod.console_blit(
-        # ui_over, 0, 0, 
-        # 40, 20, ui_right, 
-        # 0, 0)
+    # Blit over on right
+    libtcod.console_blit(
+        ui_over, 0, 0, 
+        40, 20, ui_right, 
+        0, 0)
 
     # Blit right on root
     libtcod.console_blit(
@@ -85,10 +85,10 @@ def main():
         40, 20, 0, 
         40, 0)
 
-    libtcod.console_blit(
-        ui_over, 0, 0, 
-        40, 20, 0, 
-        40, 0)
+    # libtcod.console_blit(
+        # ui_over, 0, 0, 
+        # 40, 20, 0, 
+        # 40, 0)
 
 
     # Blit console on root

@@ -1,5 +1,7 @@
 from entity import Entity
 
+from enum import Enum
+
 from game_messages import Message
 
 from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
@@ -22,6 +24,13 @@ import libtcodpy as libtcod
 
 from random_utils import from_dungeon_level, random_choice_from_dict
 
+
+class TileTypes(Enum):
+    
+    FLOOR = 250
+    WALL = '#'
+    
+
 class GameMap:
     def __init__(self, width, height, dungeon_level=1):
         self.width = width
@@ -38,6 +47,26 @@ class GameMap:
         ]
 
         return tiles
+
+    def export_txt(self, txt_file):
+        with open(txt_file, 'w') as tf:
+            for y in range(self.height):
+                for x in range(self.width):
+
+                    c = self.tiles[x][y].fg_symbol
+                    print(type(c))
+                    # if c == TileTypes.FLOOR:
+                    if c == 250:
+                        tf.write(".")
+                        print("a floor!")
+                    elif c == '#':
+                        tf.write("#")
+                        print("a wall!")
+                    else:
+                        tf.write(" ")
+
+                tf.write("\n")
+
 
     def make_map(self, max_rooms, 
                  room_min_size, room_max_size,

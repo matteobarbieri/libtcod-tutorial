@@ -26,6 +26,7 @@ class Tile:
 
         self.block_sight = block_sight
 
+        self.fg_symbol = ' '
         self.explored = False
 
     def render_at(self, con, x, y, visible):
@@ -92,22 +93,22 @@ class Wall(Tile):
 
         return Wall(random.choice(palette))
 
-    def create(base_color=libtcod.Color(159, 89, 66), color_variance=20):
+#     def create(base_color=libtcod.Color(159, 89, 66), color_variance=20):
 
-        # Extract colors
-        b, g, r = base_color.b, base_color.g, base_color.r
+        # # Extract colors
+        # b, g, r = base_color.b, base_color.g, base_color.r
 
-        # Slightly alter them
-        b += random.randint(-color_variance, color_variance)
-        b = max(0, b)
-        b = min(255, b)
+        # # Slightly alter them
+        # b += random.randint(-color_variance, color_variance)
+        # b = max(0, b)
+        # b = min(255, b)
 
-        g += random.randint(-color_variance, color_variance)
-        g = max(0, g)
-        g = min(255, g)
+        # g += random.randint(-color_variance, color_variance)
+        # g = max(0, g)
+        # g = min(255, g)
 
-        r += random.randint(-color_variance, color_variance)
-        r = max(0, r)
-        r = min(255, r)
+        # r += random.randint(-color_variance, color_variance)
+        # r = max(0, r)
+        # r = min(255, r)
 
-        return Wall(libtcod.Color(b, g, r))
+        # return Wall(libtcod.Color(b, g, r))

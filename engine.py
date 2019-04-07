@@ -390,6 +390,8 @@ def main():
                 player, entities, game_map, message_log, game_state = get_game_variables(constants)
                 game_state = GameStates.PLAYERS_TURN
 
+                game_map.export_txt('maps_txt/lastmap.txt')
+
                 show_main_menu = False
             elif load_saved_game:
                 try:

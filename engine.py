@@ -15,7 +15,7 @@ from game_messages import Message
 
 def play_game(player, entities, game_map, 
               message_log, game_state, 
-              terrain_layer, entities_layer,
+              terrain_layer, 
               panel, constants):
 
     # At the beginning of the game, recompute fov
@@ -46,15 +46,8 @@ def play_game(player, entities, game_map,
                 constants['fov_radius'], constants['fov_light_walls'],
                 constants['fov_algorithm'])
 
-        # render_all(terrain_layer, entities_layer, panel, entities, player, 
-                   # game_map, fov_map, fov_recompute, message_log,
-                   # constants['screen_width'], constants['screen_height'], 
-                   # constants['bar_width'], constants['panel_height'], 
-                   # constants['panel_y'], mouse,
-                   # game_state)
-
         render_all(
-            terrain_layer, entities_layer, panel, 
+            terrain_layer, panel, 
             entities, player, game_map, fov_map, fov_recompute, 
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state)
@@ -353,13 +346,6 @@ def main():
         constants['screen_width'], 
         constants['screen_height'])
     
-    entities_layer = libtcod.console_new(
-        constants['screen_width'], 
-        constants['screen_height'])
-
-    # Set black as transparent color
-    libtcod.console_set_key_color(entities_layer, libtcod.black)
-    
     panel = libtcod.console_new(
         constants['screen_width'], 
         constants['panel_height'])
@@ -416,7 +402,7 @@ def main():
             libtcod.console_clear(terrain_layer)
             play_game(
                 player, entities, game_map, message_log, game_state,
-                terrain_layer, entities_layer, panel, constants)
+                terrain_layer, panel, constants)
 
             show_main_menu = True
 

@@ -55,6 +55,27 @@ def render_bar(panel, x, y, total_width,
                                                    value,
                                                    maximum))
 
+def clear_entity(con, entity, game_map, fov_map, top_x=0, top_y=0):
+    # erase the character that represents this object
+    # libtcod.console_put_char(
+        # con, entity.x-top_x, entity.y-top_y, ' ', libtcod.BKGND_NONE)
+
+    # Simply redraw the corresponding map tile above it
+    visible = libtcod.map_is_in_fov(fov_map, entity.x, entity.y)
+
+    if visible or game_map.tiles[entity.x][entity.y].explored:
+        # If visible or explored, redraw map tile
+        game_map.tiles[entity.x][entity.y].render_at(
+            con, entity.x-top_x, entity.y-top_y, visible)
+    else:
+        # Else, just draw a black space at that position
+        libtcod.console_put_char(
+            con, entity.x-top_x, entity.y-top_y, ' ', libtcod.BKGND_DEFAULT)
+
+def clear_all(con, entities, game_map, fov_map, top_x, top_y):
+    for entity in entities:
+        clear_entity(con, entity, game_map, fov_map, top_x, top_y)
+
 def render_all(terrain_layer, entities_layer, panel, entities, player, 
                    game_map, fov_map, fov_recompute, 
                    redraw_terrain, redraw_entities, message_log,
@@ -105,7 +126,7 @@ def render_all(terrain_layer, entities_layer, panel, entities, player,
     ######### Render entities  #########
     #########################################
     if redraw_terrain or redraw_entities:
-        libtcod.console_clear(entities_layer)
+        # libtcod.console_clear(entities_layer)
         # Sort entities by their associated render order
         entities_in_render_order = sorted(
             entities, key=lambda x: x.render_order.value)
@@ -119,6 +140,12 @@ def render_all(terrain_layer, entities_layer, panel, entities, player,
         libtcod.console_blit(entities_layer, 0, 0, screen_width, screen_height,
                 terrain_layer, 0, 0)
         libtcod.console_blit(terrain_layer, 0, 0, screen_width, screen_height, 0, 0, 0)
+
+        # Delete them from the layer right after drawing them
+        # Draw all entities in the list in the correct order
+        for entity in entities_in_render_order:
+            # draw_entity(terrain_layer, entity, fov_map, game_map, top_x, top_y)
+            draw_entity(entities_layer, terrain_layer, entity, fov_map, game_map, top_x, top_y)
 
     # Now render the health bar
     libtcod.console_set_default_background(panel, libtcod.black)
@@ -195,6 +222,10 @@ def render_all(terrain_layer, entities_layer, panel, entities, player,
     # Show character screen
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
+
+    clear_all(terrain_layer, entities, game_map, fov_map, top_x, top_y)
+
+    return top_x, top_y
 
 
 def render_all2(terrain_layer, entities_layer, panel,
@@ -325,10 +356,6 @@ def render_all2(terrain_layer, entities_layer, panel,
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
 
-def clear_all(con, entities, top_x=0, top_y=0):
-    for entity in entities:
-        clear_entity(con, entity, top_x, top_y)
-
 
 # def draw_entity(con, entity, fov_map, game_map, top_x=0, top_y=0):
 
@@ -347,17 +374,19 @@ def draw_entity(entities_layer, terrain_layer, entity,
                 fov_map, game_map, top_x=0, top_y=0):
 
     # Only draw entities that are in player's fov
-    if libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or (entity.stairs and game_map.tiles[entity.x][entity.y].explored):
+    if (libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or \
+        (entity.stairs and game_map.tiles[entity.x][entity.y].explored)):
 
         # Retrieve bg color from upper layer    
-        bg_color = libtcod.console_get_char_background(
-            terrain_layer, entity.x-top_x, entity.y-top_y)
+        # bg_color = libtcod.console_get_char_background(
+            # terrain_layer, entity.x-top_x, entity.y-top_y)
 
         # print("Bgcolor: {}".format(bg_color))
 
         # libtcod.console_set_default_background(entities_layer, bg_color)
         libtcod.console_put_char(
-            entities_layer,
+            # entities_layer,
+            terrain_layer,
             entity.x-top_x,
             entity.y-top_y,
             entity.char,
@@ -365,12 +394,10 @@ def draw_entity(entities_layer, terrain_layer, entity,
 
             
         libtcod.console_set_char_foreground(
-            entities_layer, entity.x-top_x, entity.y-top_y, entity.color)
+            # entities_layer, entity.x-top_x, entity.y-top_y, entity.color)
+            terrain_layer, entity.x-top_x, entity.y-top_y, entity.color)
             
-        libtcod.console_set_char_background(
-            entities_layer, entity.x-top_x, entity.y-top_y, bg_color)
+        # libtcod.console_set_char_background(
+            # entities_layer, entity.x-top_x, entity.y-top_y, bg_color)
 
-def clear_entity(con, entity, top_x=0, top_y=0):
-    # erase the character that represents this object
-    libtcod.console_put_char(
-        con, entity.x-top_x, entity.y-top_y, ' ', libtcod.BKGND_NONE)
+

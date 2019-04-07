@@ -53,19 +53,17 @@ def play_game(player, entities, game_map,
                    # constants['panel_y'], mouse,
                    # game_state)
 
-        render_all(terrain_layer, entities_layer, panel, entities, player, 
-                   game_map, fov_map, fov_recompute, 
-                   redraw_terrain, redraw_entities, message_log,
-                   constants, mouse,
-                   game_state)
+        render_all(
+            terrain_layer, entities_layer, panel, 
+            entities, player, game_map, fov_map, fov_recompute, 
+            redraw_terrain, redraw_entities, message_log,
+            constants, mouse, game_state)
 
         fov_recompute = False
         redraw_terrain = False
         redraw_entities = False
 
         libtcod.console_flush()
-
-        # clear_all(terrain_layer, entities)
 
         action = handle_keys(key, game_state)
         mouse_action = handle_mouse(mouse)

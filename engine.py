@@ -312,9 +312,11 @@ def play_game(player, entities, game_map,
                             message_log.add_message(message)
 
                             if game_state == GameStates.PLAYER_DEAD:
+                                redraw_entities = True
                                 break
 
                     if game_state == GameStates.PLAYER_DEAD:
+                        redraw_entities = True
                         break
             else:
                 game_state = GameStates.PLAYERS_TURN

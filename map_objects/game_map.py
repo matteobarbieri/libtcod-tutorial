@@ -54,14 +54,11 @@ class GameMap:
                 for x in range(self.width):
 
                     c = self.tiles[x][y].fg_symbol
-                    print(type(c))
                     # if c == TileTypes.FLOOR:
                     if c == 250:
                         tf.write(".")
-                        print("a floor!")
                     elif c == '#':
                         tf.write("#")
-                        print("a wall!")
                     else:
                         tf.write(" ")
 

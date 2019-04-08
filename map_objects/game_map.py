@@ -16,7 +16,7 @@ from components.fighter import Fighter
 from components.item import Item
 from components.stairs import Stairs
 
-from random import randint
+import random
 
 from render_functions import RenderOrder
 
@@ -24,6 +24,7 @@ import libtcodpy as libtcod
 
 from random_utils import from_dungeon_level, random_choice_from_dict
 
+from .directions import Direction
 
 class TileTypes(Enum):
     
@@ -31,13 +32,58 @@ class TileTypes(Enum):
     WALL = '#'
     
 
+class MapPart():
+
+    def __init__(self, xy):
+        # self.x1, self.y1, self.x2, self.y2 = xy
+        self.xy = xy
+        self.available_directions = list()
+
+    def pick_starting_point(self):
+        d = random.choice(self.available_directions)
+
+        # Unpack coordinates
+        x1, y1, x2, y2 = self.xy
+
+        if d == Direction.WEST:
+            x = x1
+            y = y1 + int((y2 - y1)/2)
+        elif d == Direction.EAST:
+            x = x2
+            y = y1 + int((y2 - y1)/2)
+        elif d == Direction.NORTH:
+            x = x1 + int((x2- x1)/2)
+            y = y1 
+        elif d == Direction.SOUTH:
+            x = x1 + int((x2- x1)/2)
+            y = y2
+
+        return x, y, d
+
+
+class Room(MapPart):
+
+    def __init__(self, xy):
+        super().__init__(xy)
+
+
+
+class Corridor(MapPart):
+
+    def __init__(self, xy):
+        super().__init__(xy)
+
 class GameMap:
+
+
     def __init__(self, width, height, dungeon_level=1):
         self.width = width
         self.height = height
         self.tiles = self.initialize_tiles()
 
         self.dungeon_level = dungeon_level
+
+        self.ref = None
 
     def initialize_tiles(self):
         tiles = [
@@ -78,12 +124,12 @@ class GameMap:
 
         for r in range(max_rooms):
             # random width and height
-            w = randint(room_min_size, room_max_size)
-            h = randint(room_min_size, room_max_size)
+            w = random.randint(room_min_size, room_max_size)
+            h = random.randint(room_min_size, room_max_size)
 
             # random position without going out of the boundaries of the map
-            x = randint(0, map_width - w - 1)
-            y = randint(0, map_height - h - 1)
+            x = random.randint(0, map_width - w - 1)
+            y = random.randint(0, map_height - h - 1)
 
             # "Rect" class makes rectangles easier to work with
             new_room = Rect(x, y, w, h)
@@ -117,7 +163,7 @@ class GameMap:
                     (prev_x, prev_y) = rooms[num_rooms - 1].center()
 
                     # flip a coin (random number that is either 0 or 1)
-                    if randint(0, 1) == 1:
+                    if random.randint(0, 1) == 1:
                         # first move horizontally, then vertically
                         self.create_h_tunnel(prev_x, new_x, prev_y)
                         self.create_v_tunnel(prev_y, new_y, new_x)
@@ -199,8 +245,8 @@ class GameMap:
 
 
         # Get a random number of monsters
-        number_of_monsters = randint(0, max_monsters_per_room)
-        number_of_items = randint(0, max_items_per_room)
+        number_of_monsters = random.randint(0, max_monsters_per_room)
+        number_of_items = random.randint(0, max_items_per_room)
 
         # Define chances for individual monsters/items
 
@@ -227,8 +273,8 @@ class GameMap:
         # Spawn monsters in the room
         for i in range(number_of_monsters):
             # Choose a random location in the room
-            x = randint(room.x1 + 1, room.x2 - 1)
-            y = randint(room.y1 + 1, room.y2 - 1)
+            x = random.randint(room.x1 + 1, room.x2 - 1)
+            y = random.randint(room.y1 + 1, room.y2 - 1)
 
             if not any(
                     [entity for entity in entities if entity.x == x and entity.y == y]):
@@ -273,14 +319,14 @@ class GameMap:
 
         # Spawn items in the room
         for i in range(number_of_items):
-            x = randint(room.x1 + 1, room.x2 - 1)
-            y = randint(room.y1 + 1, room.y2 - 1)
+            x = random.randint(room.x1 + 1, room.x2 - 1)
+            y = random.randint(room.y1 + 1, room.y2 - 1)
 
             # Only in empty spaces
             if not any(
                     [entity for entity in entities if entity.x == x and entity.y == y]):
  
-                # item_chance = randint(0, 100)
+                # item_chance = random.randint(0, 100)
                 item_choice = random_choice_from_dict(
                     item_chances)
 

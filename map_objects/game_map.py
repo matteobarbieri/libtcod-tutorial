@@ -26,6 +26,8 @@ from random_utils import from_dungeon_level, random_choice_from_dict
 
 from .directions import Direction
 
+from .map_utils import dig_rect
+
 class TileTypes(Enum):
     
     FLOOR = 250
@@ -38,8 +40,6 @@ def _intersection_area(xy1, xy2):
     x11, y11, x12, y12 = xy1
     x21, y21, x22, y22 = xy2
 
-    # dx = min(a.xmax, b.xmax) - max(a.xmin, b.xmin)
-    # dy = min(a.ymax, b.ymax) - max(a.ymin, b.ymin)
     dx = min(x12, x22) - max(x11, x21)
     dy = min(y12, y22) - max(y11, y21)
 
@@ -89,6 +89,15 @@ class MapPart():
 
         return x, y, d
 
+    def create(self, game_map):
+        """
+        Actually create the map part in the game map.
+        """
+        dig_rect(game_map, self.xy)
+
+        # TODO
+        # Do more than this
+
 
 class Room(MapPart):
 
@@ -98,8 +107,15 @@ class Room(MapPart):
 
 class Corridor(MapPart):
 
-    def __init__(self, xy):
+    def __init__(self, xy, horizontal):
         super().__init__(xy)
+
+        # Save the information about the placement of the tunnel
+        self.horizontal = horizontal
+
+    @property
+    def vertical(self):
+        return not self.horizontal
 
 
 class GameMap:

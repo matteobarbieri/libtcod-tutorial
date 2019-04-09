@@ -12,56 +12,11 @@ import logging
 
 import random
 
-
-def area_is_available(game_map, xy):
-    """
-    Check that an area is made of actually empty space
-    """
-
-    # Extract coordinates
-    x1, y1, x2, y2 = xy
-
-    for x in range(x1, x2+1):
-        for y in range(y1, y2+1):
-
-            if type(game_map.tiles[x][y]) != Tile:
-                return False
-
-    return True
-
-def dig_rect(game_map, xy):
-    """
-    Dig a rectangle of empty space in the map
-    """
-
-    # Extract coordinates
-    x1, y1, x2, y2 = xy
-
-    logging.basicConfig(level=logging.DEBUG)
-
-    logger = logging.getLogger()
-    logger.debug("Digging rectangle from ({}, {}) to ({}, {})".format(*xy))
-
-    for x in range(x1, x2+1):
-        for y in range(y1, y2+1):
-
-            game_map.tiles[x][y] = Floor()
-
-    return game_map
+from ..map_utils import area_is_available
 
 
-class Blueprint():
-    """
-    A blueprint for a room, corridor or other
-    """
-
-    def __init__(self, xy):
-
-        self.x1, self.y1, self.x2, self.y2 = xy
-
-    @property
-    def xy(self):
-        return [self.x1, self.y1, self.x2, self.y2]
+class NoMoreSpaceException(Exception):
+    pass
 
 
 class Tunneller():
@@ -103,10 +58,7 @@ class Tunneller():
         1/0
         pass
 
-    def area_is_available(self, game_map, xy):
-        return area_is_available(game_map, xy)
-
-    def dig_starting_room(self, game_map):
+    def create_starting_room(self, game_map):
 
         # Pick room dimensions
         w = random.randint(self.min_room_size, self.max_room_size)
@@ -126,7 +78,7 @@ class Tunneller():
         room.available_directions = list(Direction)
 
         # Actually dig the empty space in the map
-        dig_rect(game_map, xy)
+        room.create(game_map)
 
         # Add the room to the map
         game_map.add_room(room)
@@ -141,7 +93,8 @@ class Tunneller():
         was viable.
         """
 
-        dig_rect(game_map, blueprint.xy)
+        for part in blueprint:
+            part.create(game_map)
 
     def create_junction_blueprint(self, game_map, d):
 
@@ -149,7 +102,7 @@ class Tunneller():
         # Extract directions parameters
         dx, dy = d
 
-    def create_tunnel_blueprint(self, game_map, x, y, d):
+    def create_corridor_blueprint(self, game_map, x, y, d):
 
         # Extract directions parameters
         # dx, dy = d
@@ -171,24 +124,32 @@ class Tunneller():
 
             y1 = y - 1*(int(tunnel_width/2))
             y2 = y + 1*(int(tunnel_width/2))
+
+            horizontal = True
         elif d == Direction.EAST:
             x1 = x + 1
             x2 = x + 1*(tunnel_length)
 
             y1 = y - 1*(int(tunnel_width/2))
             y2 = y + 1*(int(tunnel_width/2))
+
+            horizontal = True
         elif d == Direction.NORTH:
             x1 = x - 1*(int(tunnel_width/2))
             x2 = x + 1*(int(tunnel_width/2))
 
             y1 = y - 1*(tunnel_length)
             y2 = y - 1
+
+            horizontal = False
         elif d == Direction.SOUTH:
             x1 = x - 1*(int(tunnel_width/2))
             x2 = x + 1*(int(tunnel_width/2))
 
             y1 = y + 1
             y2 = y + 1*(tunnel_length)
+
+            horizontal = False
 
         # x1 = self.x + dx*(tunnel_length)
         # x2 = self.x + dx
@@ -199,10 +160,10 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        if self.area_is_available(game_map, xy):
-            return Blueprint(xy)
+        if area_is_available(game_map, xy):
+            return Corridor(xy, horizontal)
         else:
-            raise Exception("Unavailable area")
+            raise NoMoreSpaceException("Unavailable area")
 
     def create_blueprint(self, game_map, x, y, d):
         """
@@ -212,9 +173,12 @@ class Tunneller():
         """
 
         # self.create_junction_blueprint(game_map, d)
-        t_bp = self.create_tunnel_blueprint(game_map, x, y, d)
+        corridor = self.create_corridor_blueprint(game_map, x, y, d)
 
-        return t_bp
+        # TODO this will actually be a better thing in the future
+        bp = [corridor]
+
+        return bp
 
     def step(self, game_map):
 
@@ -223,13 +187,11 @@ class Tunneller():
         try:
             # TODO
             bp = self.create_blueprint(game_map, x, y, d)
-            # new_location, bp = self.create_blueprint(game_map, x, y, d)
 
-        except Exception as e:
+        except NoMoreSpaceException as e:
             print(e)
             # Tunneller was unable to create anything in that direction; try
             # another one
-            pass
         
         # game_map = self.commit(game_map, bp)
         self.commit(game_map, bp)
@@ -237,35 +199,6 @@ class Tunneller():
         # TODO
         # Update current location
         # self.current_location = new_location
-
-    def step2(self, game_map):
-        """
-        Perform a step of dungeon creation
-        """
-
-        # First collect all possible directions in which to go
-        available_directions = list(Direction)
-
-        # Shuffle them
-        random.shuffle(available_directions)
-
-        # Try to build something one direction at a time
-        for d in available_directions:
-
-            try:
-                bp = self.create_blueprint(game_map, d)
-                break
-            except Exception as e:
-                print(e)
-                # Tunneller was unable to create anything in that direction; try
-                # another one
-                pass
-
-        else:
-            raise Exception("No more space")
-        
-        # game_map = self.commit(game_map, bp)
-        self.commit(game_map, bp)
 
 def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
@@ -282,7 +215,7 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
         start_x, start_y, 
         min_tunnel_length=7, max_tunnel_length=20)
 
-    t1.dig_starting_room(level)
+    t1.create_starting_room(level)
 
     t1.step(level)
 

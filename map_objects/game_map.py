@@ -32,12 +32,41 @@ class TileTypes(Enum):
     WALL = '#'
     
 
+def _intersection_area(xy1, xy2):  
+
+    # Unpack coordinates
+    x11, y11, x12, y12 = xy1
+    x21, y21, x22, y22 = xy2
+
+    # dx = min(a.xmax, b.xmax) - max(a.xmin, b.xmin)
+    # dy = min(a.ymax, b.ymax) - max(a.ymin, b.ymin)
+    dx = min(x12, x22) - max(x11, x21)
+    dy = min(y12, y22) - max(y11, y21)
+
+    if (dx>=0) and (dy>=0):
+        return dx*dy
+    else:
+        return 0
+
+
 class MapPart():
 
     def __init__(self, xy):
         # self.x1, self.y1, self.x2, self.y2 = xy
         self.xy = xy
         self.available_directions = list()
+
+        # The list of other parts of the map this one is connected to
+        # (possibly useful later for pathfinding etc.)
+        self.connected_parts = list
+
+    def intersects_with(self, other):
+        """
+        Returns True if the rectangle specified by other_xy has an intersection
+        different than 0 with this map part.
+        """
+
+        return _intersection_area(self.xy, other.xy) > 0
 
     def pick_starting_point(self):
         d = random.choice(self.available_directions)
@@ -67,11 +96,11 @@ class Room(MapPart):
         super().__init__(xy)
 
 
-
 class Corridor(MapPart):
 
     def __init__(self, xy):
         super().__init__(xy)
+
 
 class GameMap:
 
@@ -83,7 +112,29 @@ class GameMap:
 
         self.dungeon_level = dungeon_level
 
-        self.ref = None
+        # Initialize the empty lists of rooms, corridors and junctions
+        self.rooms = list()
+        self.corridors = list()
+        self.junctions = list()
+
+
+    def add_corridor(self, corridor):
+        """
+        """
+
+        self.corridors.append(corridor)
+
+    def add_junction(self, junction):
+        """
+        """
+
+        self.junctions.append(junction)
+
+    def add_room(self, room):
+        """
+        """
+
+        self.rooms.append(room)
 
     def initialize_tiles(self):
         tiles = [

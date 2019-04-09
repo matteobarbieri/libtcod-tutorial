@@ -121,10 +121,15 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
+        # Create the room object
         room = Room(xy)
         room.available_directions = list(Direction)
 
+        # Actually dig the empty space in the map
         dig_rect(game_map, xy)
+
+        # Add the room to the map
+        game_map.add_room(room)
 
         # Set current location as this room
         self.current_location = room

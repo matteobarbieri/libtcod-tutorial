@@ -2,7 +2,7 @@
 Create a dungeon-like map level, using tunnellers
 """
 
-from ..game_map import GameMap, Corridor, Room
+from ..game_map import GameMap, Corridor, Room, Junction
 
 from ..tile import Floor, Tile
 
@@ -26,7 +26,8 @@ class Tunneller():
 
     def __init__(self, x, y, 
                  min_tunnel_length, max_tunnel_length, tunnel_widths=[3,5],
-                 min_room_size=5, max_room_size=10):
+                 min_room_size=5, max_room_size=13,
+                 min_junction_size=5, max_junction_size=10):
         """
         Set tunneller's initial parameters
         """
@@ -46,17 +47,16 @@ class Tunneller():
         self.min_room_size = min_room_size
         self.max_room_size = max_room_size
 
-    def dig_tunnel(self, game_map):
-        1/0
-        pass
+        # Junction minimum and maximum lateral dimensions
+        self.min_junction_size = min_junction_size
+        self.max_junction_size = max_junction_size
 
-    def create_room(self, game_map):
-        1/0
-        pass
+    def move_to(self, map_part):
+        """
+        Move the tunneller to a new part of the map
+        """
+        self.current_location = map_part
 
-    def create_junction(self, game_map):
-        1/0
-        pass
 
     def create_starting_room(self, game_map):
 
@@ -84,8 +84,7 @@ class Tunneller():
         game_map.add_room(room)
 
         # Set current location as this room
-        self.current_location = room
-
+        self.move_to(room)
 
     def commit(self, game_map, blueprint):
         """
@@ -96,13 +95,76 @@ class Tunneller():
         for part in blueprint:
             part.create(game_map)
 
-    def create_junction_blueprint(self, game_map, d):
+    def create_junction_blueprint(self, game_map, x, y, d, blueprint):
+        """
+        blueprint: list
+            A list of elements created to that point
+        """
 
-        1/0
         # Extract directions parameters
-        dx, dy = d
+        # dx, dy = d
 
-    def create_corridor_blueprint(self, game_map, x, y, d):
+        # Pick tunnel length
+        junction_size = random.randint(
+            self.min_junction_size, self.max_junction_size)
+
+        # Generate coordinates of top left and bottom right corner of the
+        # rectangle of the tunnel
+
+        # TODO to improve
+        if d == Direction.WEST:
+            x1 = x - 1*(junction_size)
+            x2 = x - 1
+
+            y1 = y - 1*(int(junction_size/2))
+            y2 = y + 1*(int(junction_size/2))
+        elif d == Direction.EAST:
+            x1 = x + 1
+            x2 = x + 1*(junction_size)
+
+            y1 = y - 1*(int(junction_size/2))
+            y2 = y + 1*(int(junction_size/2))
+        elif d == Direction.NORTH:
+            x1 = x - 1*(int(junction_size/2))
+            x2 = x + 1*(int(junction_size/2))
+
+            y1 = y - 1*(junction_size)
+            y2 = y - 1
+        elif d == Direction.SOUTH:
+            x1 = x - 1*(int(junction_size/2))
+            x2 = x + 1*(int(junction_size/2))
+
+            y1 = y + 1
+            y2 = y + 1*(junction_size)
+
+        # Collect coordinates in a variable
+        xy = [x1, y1, x2, y2]
+
+        junction = Junction(xy)
+
+        # Determine if the area can be dug based on map and blueprint
+        can_dig = area_is_available(game_map, xy)
+
+        if can_dig:
+            for part in blueprint:
+                if junction.intersects_with(part):
+                    can_dig = False
+                    break
+
+        if can_dig:
+
+            # Setup available directions for junction
+            junction.available_directions = list(Direction)
+
+            return junction 
+        else:
+            raise NoMoreSpaceException("Unavailable area")
+
+    def create_corridor_blueprint(self, game_map, x, y, d, blueprint):
+        """
+        blueprint: list
+            A list of elements created to that point
+        """
 
         # Extract directions parameters
         # dx, dy = d
@@ -151,42 +213,100 @@ class Tunneller():
 
             horizontal = False
 
-        # x1 = self.x + dx*(tunnel_length)
-        # x2 = self.x + dx
-
-        # y1 = self.y + dy*(int(tunnel_width/2))
-        # y2 = self.y + dy*(int(tunnel_width/2))
-
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        if area_is_available(game_map, xy):
-            return Corridor(xy, horizontal)
+        corridor = Corridor(xy, horizontal)
+
+        # Determine if the area can be dug based on map and blueprint
+        can_dig = area_is_available(game_map, xy)
+
+        if can_dig:
+            for part in blueprint:
+                if corridor.intersects_with(part):
+                    can_dig = False
+                    break
+
+        if can_dig:
+
+            # Setup available directions for corridor
+            if horizontal:
+                corridor.available_directions = [
+                    Direction.WEST, Direction.EAST]
+            else:
+                corridor.available_directions = [
+                    Direction.NORTH, Direction.SOUTH]
+
+            return corridor
         else:
             raise NoMoreSpaceException("Unavailable area")
 
-    def create_blueprint(self, game_map, x, y, d):
+    def create_blueprint(self, game_map):
         """
         Create a blueprint for a piece of dungeon
-
-        d: direction
         """
 
-        # self.create_junction_blueprint(game_map, d)
-        corridor = self.create_corridor_blueprint(game_map, x, y, d)
+        # TODO connect rooms/corridors/junctions
+
+        blueprint = list()
+
+        ################################
+        ####### Create Corridor ########
+        ################################
+        while self.current_location.has_available_directions():
+            try:
+                x, y, d = self.current_location.pick_starting_point()
+                corridor = self.create_corridor_blueprint(game_map, x, y, d, blueprint)
+                break
+            except NoMoreSpaceException:
+                # This direction didn't work, try another one
+                pass
+        else:
+            raise NoMoreSpaceException("No more space when creating corridor")
+
+        # Add the corridor to current blueprint
+        blueprint.append(corridor)
+
+        # Change tunneller's location to the newly created corridor
+        self.move_to(corridor)
+
+        ################################
+        ######## Create Rooms ##########
+        ################################
+
+        # TODO
+
+        ################################
+        ####### Create Junction ########
+        ################################
+        while self.current_location.has_available_directions():
+            try:
+                x, y, d = self.current_location.pick_starting_point()
+                junction = self.create_junction_blueprint(game_map, x, y, d, blueprint)
+                break
+            except NoMoreSpaceException:
+                # This direction didn't work, try another one
+                pass
+        else:
+            raise NoMoreSpaceException("No more space when creating junction")
+
+        # Add the junction to current blueprint
+        blueprint.append(junction)
+
+        # Change tunneller's location to the newly created junction
+        self.move_to(junction)
+
 
         # TODO this will actually be a better thing in the future
-        bp = [corridor]
 
-        return bp
+        return blueprint
 
     def step(self, game_map):
 
-        x, y, d = self.current_location.pick_starting_point()
 
         try:
             # TODO
-            bp = self.create_blueprint(game_map, x, y, d)
+            bp = self.create_blueprint(game_map)
 
         except NoMoreSpaceException as e:
             print(e)

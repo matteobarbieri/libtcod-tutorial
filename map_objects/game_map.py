@@ -68,6 +68,9 @@ class MapPart():
 
         return _intersection_area(self.xy, other.xy) > 0
 
+    def has_available_directions(self):
+        return len(self.available_directions) > 0
+
     def pick_starting_point(self):
         d = random.choice(self.available_directions)
 
@@ -87,6 +90,9 @@ class MapPart():
             x = x1 + int((x2- x1)/2)
             y = y2
 
+        # Remove option
+        self.available_directions.remove(d)
+
         return x, y, d
 
     def create(self, game_map):
@@ -98,8 +104,13 @@ class MapPart():
         # TODO
         # Do more than this
 
-
 class Room(MapPart):
+
+    def __init__(self, xy):
+        super().__init__(xy)
+
+
+class Junction(MapPart):
 
     def __init__(self, xy):
         super().__init__(xy)

@@ -77,6 +77,34 @@ class MapPart():
 
         return x, y, d
 
+    @property
+    def height(self):
+        # Unpack coordinates
+        y1, y2, = self.xy[1], self.xy[3]
+
+        return y2 - y1
+
+    @property
+    def width(self):
+        # Unpack coordinates
+        x1, x2, = self.xy[0], self.xy[2]
+
+        return x2 - x1
+
+    @property
+    def center(self):
+        """
+        Return the rough coordinates of the center of the room
+        """
+
+        # Unpack coordinates
+        x1, y1, x2, y2 = self.xy
+
+        xc = x1 + int((x2 - x1)/2)
+        yc = y1 + int((y2 - y1)/2)
+
+        return xc, yc
+
     def create(self, game_map):
         """
         Actually create the map part in the game map.

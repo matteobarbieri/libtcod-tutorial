@@ -116,8 +116,24 @@ class MapPart():
 
 class Room(MapPart):
 
-    def __init__(self, xy):
+    def __init__(self, xy, door_xy=None):
         super().__init__(xy)
+
+        self.door_xy = door_xy
+
+    def create(self, game_map):
+        """
+        Actually create the map part in the game map.
+        """
+
+        super().create(game_map)
+
+        # Also dig the door, if there is one
+        if self.door_xy is not None:
+            x, y = self.door_xy
+
+            dig_rect(game_map, [x, y, x, y])
+
 
 
 class Junction(MapPart):
@@ -137,6 +153,39 @@ class Corridor(MapPart):
     @property
     def vertical(self):
         return not self.horizontal
+
+    def pick_room_starting_point(self):
+        """
+        Pick a starting point for a viable room
+        """
+
+        # Unpack coordinates
+        x1, y1, x2, y2 = self.xy
+
+        if self.horizontal:
+            if random.random() < 0.5:
+                # Room on top
+                d = Direction.NORTH
+                y = y1 - 1
+                x = random.randint(x1+1, x2-1)
+            else:
+                # Room on bottom
+                d = Direction.SOUTH
+                y = y2 + 1
+                x = random.randint(x1+1, x2-1)
+        else:
+            if random.random() < 0.5:
+                # Room on the left
+                d = Direction.WEST
+                x = x1 - 1
+                y = random.randint(y1+1, y2-1)
+            else:
+                # Room on the right
+                d = Direction.EAST
+                x = x2 + 1
+                y = random.randint(y1+1, y2-1)
+
+        return x, y, d
 
 
 class GameMap:

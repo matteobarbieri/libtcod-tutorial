@@ -160,6 +160,80 @@ class Tunneller():
         else:
             raise NoMoreSpaceException("Unavailable area")
 
+    def create_room_blueprint(self, game_map, x, y, d, blueprint):
+        """
+        blueprint: list
+            A list of elements created to that point
+
+        x, y : int
+            Position of the door tile leading to the room
+
+        d : Direction
+            The direction of the room w.r.t. the element where it was created
+        """
+
+        # Pick room dimensions
+        w = random.randint(self.min_room_size, self.max_room_size)
+        h = random.randint(self.min_room_size, self.max_room_size)
+
+        # Generate coordinates of top left and bottom right corner of the
+        # room
+
+        # Room coordinates
+        # TODO to improve
+        if d == Direction.NORTH:
+            x1 = x - 1*(int(w/2))
+            x2 = x1 + w
+
+            y1 = y - 1*(h) - 1
+            y2 = y1 + h
+        elif d == Direction.SOUTH:
+            x1 = x - 1*(int(w/2))
+            x2 = x1 + w
+
+            y1 = y + 1*(h) + 1
+            y2 = y1 + h
+        elif d == Direction.WEST:
+            x1 = x - 1*(w) - 1
+            x2 = x - 1
+
+            y1 = y - 1*(int(h/2))
+            y2 = y1 + h
+        elif d == Direction.EAST:
+            x1 = x - 1*(w) - 1
+            x2 = x - 1
+
+            y1 = y - 1*(int(h/2))
+            y2 = y1 + h
+
+        # Collect coordinates in a variable
+        xy = [x1, y1, x2, y2]
+
+        # Also specify the door
+        room = Room(xy, door_xy=[x, y])
+
+        # Determine if the area can be dug based on map and blueprint
+        can_dig = area_is_available(game_map, xy)
+
+        # Also check the door, because why not
+        can_dig = can_dig and area_is_available(
+            game_map, [x, y, x, y])
+
+        if can_dig:
+            for part in blueprint:
+                if room.intersects_with(part):
+                    can_dig = False
+                    break
+
+        if can_dig:
+
+            # Create the room object
+            room.available_directions = list(Direction)
+
+            return room
+        else:
+            raise NoMoreSpaceException("Unavailable area")
+
     def create_corridor_blueprint(self, game_map, x, y, d, blueprint):
         """
         blueprint: list
@@ -264,17 +338,22 @@ class Tunneller():
         else:
             raise NoMoreSpaceException("No more space when creating corridor")
 
+        ################################
+        ######## Create Rooms ##########
+        ################################
+
+
+        x, y, d = corridor.pick_room_starting_point()
+        room = self.create_room_blueprint(game_map, x, y, d, blueprint)
+
+        # Add the room to current blueprint
+        blueprint.append(room)
+
         # Add the corridor to current blueprint
         blueprint.append(corridor)
 
         # Change tunneller's location to the newly created corridor
         self.move_to(corridor)
-
-        ################################
-        ######## Create Rooms ##########
-        ################################
-
-        # TODO
 
         ################################
         ####### Create Junction ########

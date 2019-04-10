@@ -38,4 +38,17 @@ def dig_rect(game_map, xy):
 
     return game_map
 
+def _intersection_area(xy1, xy2):  
+
+    # Unpack coordinates
+    x11, y11, x12, y12 = xy1
+    x21, y21, x22, y22 = xy2
+
+    dx = min(x12, x22) - max(x11, x21)
+    dy = min(y12, y22) - max(y11, y21)
+
+    if (dx>=0) and (dy>=0):
+        return dx*dy
+    else:
+        return 0
 

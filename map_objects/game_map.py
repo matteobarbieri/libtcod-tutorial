@@ -18,6 +18,8 @@ from components.stairs import Stairs
 
 import random
 
+import shelve
+
 from render_functions import RenderOrder
 
 import libtcodpy as libtcod
@@ -26,27 +28,7 @@ from random_utils import from_dungeon_level, random_choice_from_dict
 
 from .directions import Direction
 
-from .map_utils import dig_rect
-
-class TileTypes(Enum):
-    
-    FLOOR = 250
-    WALL = '#'
-    
-
-def _intersection_area(xy1, xy2):  
-
-    # Unpack coordinates
-    x11, y11, x12, y12 = xy1
-    x21, y21, x22, y22 = xy2
-
-    dx = min(x12, x22) - max(x11, x21)
-    dy = min(y12, y22) - max(y11, y21)
-
-    if (dx>=0) and (dy>=0):
-        return dx*dy
-    else:
-        return 0
+from .map_utils import dig_rect, _intersection_area
 
 
 class MapPart():
@@ -172,16 +154,27 @@ class GameMap:
 
         return tiles
 
+    def export_shelf(self, destination):
+        with shelve.open(destination) as db:
+            db['level'] = self
+
     def export_txt(self, txt_file):
         with open(txt_file, 'w') as tf:
             for y in range(self.height):
                 for x in range(self.width):
 
-                    c = self.tiles[x][y].fg_symbol
-                    # if c == TileTypes.FLOOR:
-                    if c == 250:
+                    # c = self.tiles[x][y].fg_symbol
+                    # if c == 250:
+                        # tf.write(".")
+                    # elif c == '#':
+                        # tf.write("#")
+                    # else:
+                        # tf.write(" ")
+
+                    t = self.tiles[x][y]
+                    if type(t) == Floor:
                         tf.write(".")
-                    elif c == '#':
+                    elif type(t) == Wall:
                         tf.write("#")
                     else:
                         tf.write(" ")

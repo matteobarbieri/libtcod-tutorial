@@ -57,7 +57,10 @@ class Floor(Tile):
     """
 
     def __init__(self, bg_color=libtcod.Color(20, 20, 20), fg_symbol=250,
-                 fg_color=libtcod.lighter_gray):
+                 alternate_fg_symbols=['[', ']', '{', '}', '*', '%'],
+                 alternate_symbol_chance=0.1,
+                 # fg_color=libtcod.Color(70, 70, 70)):
+                 fg_color=libtcod.Color(65, 65, 65)):
 
         # Declare it as non-blocking
         super().__init__(False)
@@ -68,7 +71,14 @@ class Floor(Tile):
         # self.bg_color = libtcod.Color(16, 16, 16)
         self.bg_color = bg_color
         self.fg_color = fg_color
-        self.fg_symbol = fg_symbol
+
+        # Choose one of the available symbols every once in a while
+        if random.random() < alternate_symbol_chance:
+            # The alternate symbol
+            self.fg_symbol = random.choice(alternate_fg_symbols)
+        else:
+            # The default symbol
+            self.fg_symbol = fg_symbol
 
 
 class Wall(Tile):

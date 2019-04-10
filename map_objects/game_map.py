@@ -2,6 +2,8 @@ from entity import Entity
 
 from enum import Enum
 
+import logging
+
 from game_messages import Message
 
 from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
@@ -105,11 +107,19 @@ class MapPart():
 
         return xc, yc
 
-    def dig(self, game_map):
+    def dig(self, game_map, pad=0):
         """
         Actually dig the map part in the game map.
         """
-        dig_rect(game_map, self.xy)
+
+        # Unpack coordinates
+        x1, y1, x2, y2 = self.xy
+
+        logger = logging.getLogger()
+        logger.debug("Digging {} at {}".format(
+            type(self), [x1+pad, y1+pad, x2-pad, y2-pad]))
+
+        dig_rect(game_map, [x1+pad, y1+pad, x2-pad, y2-pad])
 
         # TODO
         # Do more than this
@@ -126,14 +136,13 @@ class Room(MapPart):
         Actually dig the map part in the game map.
         """
 
-        super().dig(game_map)
+        super().dig(game_map, pad=1)
 
         # Also dig the door, if there is one
         if self.door_xy is not None:
             x, y = self.door_xy
 
             dig_rect(game_map, [x, y, x, y])
-
 
 
 class Junction(MapPart):

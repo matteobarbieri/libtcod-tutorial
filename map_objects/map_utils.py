@@ -9,6 +9,15 @@ def area_is_available(game_map, xy):
 
     # Extract coordinates
     x1, y1, x2, y2 = xy
+    
+    # Check that it lies within the whole map
+    check_map_area = (
+        x1 > 0 and y1 > 0 and \
+        x2 < (game_map.width - 1) and y2 < (game_map.height - 1)
+    )
+
+    if not check_map_area:
+        return False
 
     for x in range(x1, x2+1):
         for y in range(y1, y2+1):

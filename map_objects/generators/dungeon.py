@@ -25,9 +25,9 @@ class Tunneller():
 
 
     def __init__(self, x, y, 
-                 min_tunnel_length, max_tunnel_length, tunnel_widths=[3,5],
-                 min_room_size=5, max_room_size=13,
-                 min_junction_size=5, max_junction_size=10):
+                 min_tunnel_length, max_tunnel_length, tunnel_widths=[3, 5],
+                 min_room_size=7, max_room_size=11,
+                 min_junction_size=7, max_junction_size=12):
         """
         Set tunneller's initial parameters
         """
@@ -73,18 +73,18 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        # Create the room object
-        room = Room(xy)
-        room.available_directions = list(Direction)
+        # Create the junction object
+        junction = Junction(xy)
+        junction.available_directions = list(Direction)
 
         # Actually dig the empty space in the map
-        room.dig(game_map)
+        junction.dig(game_map)
 
-        # Add the room to the map
-        game_map.add_room(room)
+        # Add the junction to the map
+        game_map.add_junction(junction)
 
-        # Set current location as this room
-        self.move_to(room)
+        # Set current location as this junction
+        self.move_to(junction)
 
     def commit(self, game_map, blueprint):
         """
@@ -185,23 +185,23 @@ class Tunneller():
             x1 = x - 1*(int(w/2))
             x2 = x1 + w
 
-            y1 = y - h
-            y2 = y - 1
+            y1 = y - h + 1
+            y2 = y 
         elif d == Direction.SOUTH:
             x1 = x - 1*(int(w/2))
             x2 = x1 + w
 
-            y1 = y + 1
-            y2 = y + h
+            y1 = y
+            y2 = y + h - 1
         elif d == Direction.WEST:
-            x1 = x - w
-            x2 = x - 1
+            x1 = x - w + 1
+            x2 = x
 
             y1 = y - 1*(int(h/2))
             y2 = y1 + h - 1
         elif d == Direction.EAST:
-            x1 = x + 1
-            x2 = x + w
+            x1 = x
+            x2 = x + w - 1
 
             y1 = y - 1*(int(h/2))
             y2 = y1 + h - 1
@@ -290,10 +290,10 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        corridor = Corridor(xy, horizontal)
-
         # Determine if the area can be dug based on map and blueprint
         can_dig = area_is_available(game_map, xy)
+
+        corridor = Corridor(xy, horizontal)
 
         if can_dig:
             for part in blueprint:
@@ -395,14 +395,14 @@ class Tunneller():
             # TODO
             bp = self.create_blueprint(game_map)
 
+            # Commit changes to the map
+            self.commit(game_map, bp)
+
         except NoMoreSpaceException as e:
             print(e)
             # Tunneller was unable to create anything in that direction; try
             # another one
         
-        # game_map = self.commit(game_map, bp)
-        self.commit(game_map, bp)
-
         # TODO
         # Update current location
         # self.current_location = new_location
@@ -420,7 +420,7 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
     t1 = Tunneller(
         start_x, start_y, 
-        min_tunnel_length=7, max_tunnel_length=20)
+        min_tunnel_length=9, max_tunnel_length=30)
 
     t1.create_starting_room(level)
 

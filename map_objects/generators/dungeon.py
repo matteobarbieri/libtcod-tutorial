@@ -185,26 +185,26 @@ class Tunneller():
             x1 = x - 1*(int(w/2))
             x2 = x1 + w
 
-            y1 = y - 1*(h) - 1
-            y2 = y1 + h
+            y1 = y - h
+            y2 = y - 1
         elif d == Direction.SOUTH:
             x1 = x - 1*(int(w/2))
             x2 = x1 + w
 
-            y1 = y + 1*(h) + 1
-            y2 = y1 + h
+            y1 = y + 1
+            y2 = y + h
         elif d == Direction.WEST:
-            x1 = x - 1*(w) - 1
+            x1 = x - w
             x2 = x - 1
 
             y1 = y - 1*(int(h/2))
-            y2 = y1 + h
+            y2 = y1 + h - 1
         elif d == Direction.EAST:
-            x1 = x - 1*(w) - 1
-            x2 = x - 1
+            x1 = x + 1
+            x2 = x + w
 
             y1 = y - 1*(int(h/2))
-            y2 = y1 + h
+            y2 = y1 + h - 1
 
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
@@ -251,7 +251,7 @@ class Tunneller():
         tunnel_width = random.choice(self.tunnel_widths)
 
         # Generate coordinates of top left and bottom right corner of the
-        # rectangle of the tunnel
+        # rectangle of the corridor
 
         # TODO to improve
         if d == Direction.WEST:
@@ -343,11 +343,19 @@ class Tunneller():
         ################################
 
 
-        x, y, d = corridor.pick_room_starting_point()
-        room = self.create_room_blueprint(game_map, x, y, d, blueprint)
+        # TODO parametrize N of retries
+        # Try 4 times for a suitable place
+        for i in range(4):
+            try:
+                x, y, d = corridor.pick_room_starting_point()
+                room = self.create_room_blueprint(game_map, x, y, d, blueprint)
 
-        # Add the room to current blueprint
-        blueprint.append(room)
+                # Add the room to current blueprint
+                blueprint.append(room)
+                break
+            except NoMoreSpaceException:
+                pass
+
 
         # Add the corridor to current blueprint
         blueprint.append(corridor)
@@ -416,6 +424,7 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
     t1.create_starting_room(level)
 
+    t1.step(level)
     t1.step(level)
 
 

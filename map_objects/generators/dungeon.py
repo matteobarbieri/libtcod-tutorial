@@ -78,7 +78,7 @@ class Tunneller():
         room.available_directions = list(Direction)
 
         # Actually dig the empty space in the map
-        room.create(game_map)
+        room.dig(game_map)
 
         # Add the room to the map
         game_map.add_room(room)
@@ -93,7 +93,7 @@ class Tunneller():
         """
 
         for part in blueprint:
-            part.create(game_map)
+            part.dig(game_map)
 
     def create_junction_blueprint(self, game_map, x, y, d, blueprint):
         """

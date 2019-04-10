@@ -105,9 +105,9 @@ class MapPart():
 
         return xc, yc
 
-    def create(self, game_map):
+    def dig(self, game_map):
         """
-        Actually create the map part in the game map.
+        Actually dig the map part in the game map.
         """
         dig_rect(game_map, self.xy)
 
@@ -121,12 +121,12 @@ class Room(MapPart):
 
         self.door_xy = door_xy
 
-    def create(self, game_map):
+    def dig(self, game_map):
         """
-        Actually create the map part in the game map.
+        Actually dig the map part in the game map.
         """
 
-        super().create(game_map)
+        super().dig(game_map)
 
         # Also dig the door, if there is one
         if self.door_xy is not None:

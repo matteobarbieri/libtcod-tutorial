@@ -57,7 +57,7 @@ class Floor(Tile):
     """
 
     def __init__(self, bg_color=libtcod.Color(20, 20, 20), fg_symbol=250,
-                 fg_color=libtcod.lighter_gray):
+                 fg_color=libtcod.Color(70, 70, 70)):
 
         # Declare it as non-blocking
         super().__init__(False)

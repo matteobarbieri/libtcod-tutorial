@@ -212,6 +212,20 @@ class GameMap:
         self.corridors = list()
         self.junctions = list()
 
+    def add_part(self, part):
+        """
+        Add a part to the map and also dig it
+        """
+        if ( type(part) == Corridor):
+            self.add_corridor(part)
+        elif type(part) == Junction:
+            self.add_junction(part)
+        elif type(part) == Room:
+            self.add_room(part)
+
+        # TODO actually implement the other one
+        part.dig(self)
+        # self.dig(part)
 
     def add_corridor(self, corridor):
         """
@@ -230,6 +244,40 @@ class GameMap:
         """
 
         self.rooms.append(room)
+
+    def can_place(self, part):
+        """
+        Returns True if part can be placed in map (i.e. doesn't intersect with
+        anything which is already present.
+
+        Also needs to be in a valid tile
+
+        Does not depend on tiles array
+        """
+
+        # First check that coordinates refer to a valid tile in the map
+        # Unpack coordinates
+        x1, y1, x2, y2 = part.xy
+
+        # Check that it lies within the whole map
+        geometry_check = (
+            x1 > 0 and y1 > 0 and \
+            x2 < (self.width - 1) and y2 < (self.height - 1)
+        )
+
+        if not geometry_check:
+            return False
+
+        # Then check for potential intersections with other elements of the map
+        
+        # Build the list of alla placed parts
+        placed_parts = self.rooms + self.junctions + self.corridors
+
+        for other in placed_parts:
+            if part.intersects_with(other):
+                return False
+
+        return True
 
     def initialize_tiles(self):
         tiles = [

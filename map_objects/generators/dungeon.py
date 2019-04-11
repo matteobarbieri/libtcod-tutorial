@@ -93,7 +93,8 @@ class Tunneller():
         """
 
         for part in blueprint:
-            part.dig(game_map)
+            game_map.add_part(part)
+            # part.dig(game_map)
 
     def create_junction_blueprint(self, game_map, x, y, d, blueprint):
         """
@@ -143,7 +144,8 @@ class Tunneller():
         junction = Junction(xy)
 
         # Determine if the area can be dug based on map and blueprint
-        can_dig = area_is_available(game_map, xy)
+        # can_dig = area_is_available(game_map, xy)
+        can_dig = game_map.can_place(junction)
 
         if can_dig:
             for part in blueprint:
@@ -213,7 +215,8 @@ class Tunneller():
         room = Room(xy, door_xy=[x, y])
 
         # Determine if the area can be dug based on map and blueprint
-        can_dig = area_is_available(game_map, xy)
+        # can_dig = area_is_available(game_map, xy)
+        can_dig = game_map.can_place(room)
 
         # Also check the door, because why not
         can_dig = can_dig and area_is_available(
@@ -290,10 +293,11 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        # Determine if the area can be dug based on map and blueprint
-        can_dig = area_is_available(game_map, xy)
-
         corridor = Corridor(xy, horizontal)
+
+        # Determine if the area can be dug based on map and blueprint
+        # can_dig = area_is_available(game_map, xy)
+        can_dig = game_map.can_place(corridor)
 
         if can_dig:
             for part in blueprint:

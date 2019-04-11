@@ -219,8 +219,8 @@ class Tunneller():
         can_dig = game_map.can_place(room)
 
         # Also check the door, because why not
-        can_dig = can_dig and area_is_available(
-            game_map, [x, y, x, y])
+        # can_dig = can_dig and area_is_available(
+            # game_map, [x, y, x, y])
 
         if can_dig:
             for part in blueprint:

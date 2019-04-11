@@ -50,12 +50,32 @@ class MapPart():
         different than 0 with this map part.
         """
 
-        return _intersection_area(self.xy, other.xy) > 0
+        does_intersect = _intersection_area(self.xy, other.xy) > 0
+        if does_intersect:
+            text = 'does intersect'
+        else:
+            text = 'does NOT intersect'
+
+        logger = logging.getLogger()
+        logger.debug("{} at {} {} with {} at {}".format(\
+                type(self), self.xy,
+                text,
+                type(other), other.xy,
+            ))
+
+        return does_intersect
+        # return _intersection_area(self.xy, other.xy) > 0
 
     def has_available_directions(self):
         return len(self.available_directions) > 0
 
     def pick_starting_point(self):
+        """
+        Pick a starting point and direction for the next element in the dungeon.
+        The coordinates are supposed to be part of the previous element, i.e.
+        walkable space (a Floor tile, NOT a Wall tile).
+        """
+
         d = random.choice(self.available_directions)
 
         # Unpack coordinates
@@ -84,14 +104,14 @@ class MapPart():
         # Unpack coordinates
         y1, y2, = self.xy[1], self.xy[3]
 
-        return y2 - y1
+        return y2 - y1 + 1
 
     @property
     def width(self):
         # Unpack coordinates
         x1, x2, = self.xy[0], self.xy[2]
 
-        return x2 - x1
+        return x2 - x1 + 1
 
     @property
     def center(self):

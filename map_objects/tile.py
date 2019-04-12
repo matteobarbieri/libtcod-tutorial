@@ -131,7 +131,6 @@ class Door(Tile):
         return not self.is_open
 
 
-
 class Wall(Tile):
     """
     A block of wall

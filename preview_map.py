@@ -57,7 +57,7 @@ def main():
             elif c == '#':
                 draw.rectangle(
                     [img_x1, img_y1, img_x2, img_y2], '#777777')
-            elif c == '+':
+            elif c in ['+', '-']:
                 draw.rectangle(
                     [img_x1, img_y1, img_x2, img_y2], '#FF9800')
 

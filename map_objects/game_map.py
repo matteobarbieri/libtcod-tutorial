@@ -9,6 +9,8 @@ from game_messages import Message
 from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
 
 from map_objects.tile import Tile, Wall, Floor
+from map_objects.tile import Door as DoorTile
+
 from map_objects.rectangle import Rect
 
 from components.ai import BasicMonster
@@ -144,12 +146,35 @@ class MapPart():
         # TODO
         # Do more than this
 
-class Room(MapPart):
+class Door(MapPart):
+    """
+    Represents a door in the dungeon. Can be bigger than one tile (to represent
+    large gates).
+    Has a state, can be open or closed
+    """
 
-    def __init__(self, xy, door_xy=None):
+    def __init__(self, xy, is_open=False):
         super().__init__(xy)
 
-        self.door_xy = door_xy
+        self.is_open = is_open
+
+    def dig(self, game_map):
+        """
+        Create the door in the map
+        """
+
+        # Unpack coordinates
+        x1, y1, x2, y2 = self.xy
+
+        for x in range(x1, x2+1):
+            for y in range(y1, y2+1):
+                game_map.tiles[x][y] = DoorTile()
+
+
+class Room(MapPart):
+
+    def __init__(self, xy):
+        super().__init__(xy)
 
     def dig(self, game_map):
         """
@@ -158,11 +183,11 @@ class Room(MapPart):
 
         super().dig(game_map, pad=1)
 
-        # Also dig the door, if there is one
-        if self.door_xy is not None:
-            x, y = self.door_xy
+        # # Also dig the door, if there is one
+        # if self.door_xy is not None:
+            # x, y = self.door_xy
 
-            dig_rect(game_map, [x, y, x, y])
+            # dig_rect(game_map, [x, y, x, y])
 
 
 class Junction(MapPart):
@@ -229,6 +254,7 @@ class GameMap:
 
         # Initialize the empty lists of rooms, corridors and junctions
         self.rooms = list()
+        self.doors = list()
         self.corridors = list()
         self.junctions = list()
 
@@ -242,10 +268,11 @@ class GameMap:
             self.add_junction(part)
         elif type(part) == Room:
             self.add_room(part)
+        elif type(part) == Door:
+            self.add_door(part)
 
-        # TODO actually implement the other one
+        # Create the tiles accordingly
         part.dig(self)
-        # self.dig(part)
 
     def add_corridor(self, corridor):
         """
@@ -258,6 +285,12 @@ class GameMap:
         """
 
         self.junctions.append(junction)
+
+    def add_door(self, door):
+        """
+        """
+
+        self.doors.append(door)
 
     def add_room(self, room):
         """
@@ -328,6 +361,8 @@ class GameMap:
                     t = self.tiles[x][y]
                     if type(t) == Floor:
                         tf.write(".")
+                    elif type(t) == DoorTile:
+                        tf.write("+")
                     elif type(t) == Wall:
                         tf.write("#")
                     else:

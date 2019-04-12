@@ -57,6 +57,9 @@ def main():
             elif c == '#':
                 draw.rectangle(
                     [img_x1, img_y1, img_x2, img_y2], '#777777')
+            elif c == '+':
+                draw.rectangle(
+                    [img_x1, img_y1, img_x2, img_y2], '#FF9800')
 
     img.save(args.image_file)
 

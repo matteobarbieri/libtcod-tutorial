@@ -18,16 +18,29 @@ class Tile:
     """
 
     def __init__(self, blocked, block_sight=None):
-        self.blocked = blocked
+
+        self._blocked = blocked
 
         # By default, if a tile is blocked, it also blocks sight
         if block_sight is None:
             block_sight = blocked
 
-        self.block_sight = block_sight
+        self._block_sight = block_sight
 
-        self.fg_symbol = ' '
+        self._fg_symbol = ' '
         self.explored = False
+
+    @property
+    def fg_symbol(self):
+        return self._fg_symbol
+
+    @property
+    def blocked(self):
+        return self._blocked
+
+    @property
+    def block_sight(self):
+        return self._block_sight
 
     def render_at(self, con, x, y, visible):
         """
@@ -75,10 +88,48 @@ class Floor(Tile):
         # Choose one of the available symbols every once in a while
         if random.random() < alternate_symbol_chance:
             # The alternate symbol
-            self.fg_symbol = random.choice(alternate_fg_symbols)
+            self._fg_symbol = random.choice(alternate_fg_symbols)
         else:
             # The default symbol
-            self.fg_symbol = fg_symbol
+            self._fg_symbol = fg_symbol
+
+
+class Door(Tile):
+    """
+    A door
+    """
+
+    def __init__(self, bg_color=libtcod.Color(139,69,19), 
+                 fg_color=libtcod.orange, is_open=False):
+
+        # Declare it as blocked
+        super().__init__(False)
+
+        self.bg_color = bg_color
+        self.fg_color = fg_color
+
+        self.is_open = is_open
+
+    def open(self):
+        self.is_open = True
+
+    def close(self):
+        self.is_open = False
+
+    @property
+    def fg_symbol(self):
+        """
+        Return a different symbol based on status
+        """
+        if self.is_open:
+            return '-'
+        else:
+            return '+'
+
+    @property
+    def block_sight(self):
+        return not self.is_open
+
 
 
 class Wall(Tile):
@@ -93,7 +144,7 @@ class Wall(Tile):
 
         self.bg_color = bg_color
         self.fg_color = fg_color
-        self.fg_symbol = fg_symbol
+        self._fg_symbol = fg_symbol
 
     def create_from_palette(palette=GRAY_PALETTE):
         """

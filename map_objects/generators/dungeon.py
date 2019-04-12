@@ -2,7 +2,7 @@
 Create a dungeon-like map level, using tunnellers
 """
 
-from ..game_map import GameMap, Corridor, Room, Junction
+from ..game_map import GameMap, Corridor, Room, Door, Junction
 
 from ..tile import Floor, Tile
 
@@ -211,8 +211,7 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        # Also specify the door
-        room = Room(xy, door_xy=[x, y])
+        room = Room(xy)
 
         # Determine if the area can be dug based on map and blueprint
         # can_dig = area_is_available(game_map, xy)
@@ -233,7 +232,10 @@ class Tunneller():
             # Create the room object
             room.available_directions = list(Direction)
 
-            return room
+            # Also specify the door
+            door = Door([x, y, x, y])
+
+            return room, door
         else:
             raise NoMoreSpaceException("Unavailable area")
 
@@ -352,10 +354,11 @@ class Tunneller():
         for i in range(4):
             try:
                 x, y, d = corridor.pick_room_starting_point()
-                room = self.create_room_blueprint(game_map, x, y, d, blueprint)
+                room, door = self.create_room_blueprint(game_map, x, y, d, blueprint)
 
-                # Add the room to current blueprint
+                # Add room and door to current blueprint
                 blueprint.append(room)
+                blueprint.append(door)
                 break
             except NoMoreSpaceException:
                 pass

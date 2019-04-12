@@ -25,9 +25,11 @@ class Tunneller():
 
 
     def __init__(self, x, y, 
-                 min_tunnel_length, max_tunnel_length, tunnel_widths=[3, 5],
+                 min_tunnel_length=9, max_tunnel_length=20,
+                 tunnel_widths=[1, 3, 5],
                  min_room_size=7, max_room_size=11,
-                 min_junction_size=7, max_junction_size=12):
+                 min_junction_size=5, max_junction_size=9,
+                 max_step_retries=4):
         """
         Set tunneller's initial parameters
         """
@@ -50,6 +52,9 @@ class Tunneller():
         # Junction minimum and maximum lateral dimensions
         self.min_junction_size = min_junction_size
         self.max_junction_size = max_junction_size
+
+        # Max number of times of retry for the step function
+        self.max_step_retries = max_step_retries
 
     def move_to(self, map_part):
         """
@@ -397,22 +402,22 @@ class Tunneller():
 
     def step(self, game_map):
 
+        for i in range(self.max_step_retries):
+            try:
+                bp = self.create_blueprint(game_map)
 
-        try:
-            # TODO
-            bp = self.create_blueprint(game_map)
+                # Commit changes to the map
+                self.commit(game_map, bp)
+                break
 
-            # Commit changes to the map
-            self.commit(game_map, bp)
+            except NoMoreSpaceException as e:
+                print(e)
+                # Tunneller was unable to create anything in that direction; try
+                # another one
+        else:
+            # TODO improve this, possibly change Exception Type
+            raise NoMoreSpaceException("Max number of retries hit")
 
-        except NoMoreSpaceException as e:
-            print(e)
-            # Tunneller was unable to create anything in that direction; try
-            # another one
-        
-        # TODO
-        # Update current location
-        # self.current_location = new_location
 
 def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
@@ -424,16 +429,20 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     # Start with a Junction, roughly in the middle of the map
     # dig_rect(level, [start_x-5, start_y-5, start_x+5, start_y+5])
 
-
     t1 = Tunneller(
         start_x, start_y, 
-        min_tunnel_length=9, max_tunnel_length=30)
+        min_tunnel_length=9, max_tunnel_length=20)
 
+    # Start from a central room
     t1.create_starting_room(level)
 
-    t1.step(level)
-    t1.step(level)
-
+    # Step a few times
+    N_STEPS = 4
+    for _ in range(N_STEPS):
+        try:
+            t1.step(level)
+        except NoMoreSpaceException as e:
+            print(e)
 
     return level
 

@@ -4,7 +4,7 @@ Create a dungeon-like map level, using tunnellers
 
 from ..game_map import GameMap, Corridor, Room, Door, Junction
 
-from ..tile import Floor, Tile
+from ..tile import Floor, Tile, Wall
 
 from ..directions import Direction
 
@@ -423,6 +423,19 @@ class Tunneller():
             # TODO improve this, possibly change Exception Type
             raise NoMoreSpaceException("Max number of retries hit")
 
+def add_walls(level):
+    """
+    Creates walls in all Tile-type tiles adjacent to something non-Tile
+    """
+
+    for X in range(level.width):
+        for Y in range(level.height):
+            for x in range(max(X-1, 0), min(X+2, level.width)):
+                for y in range(max(Y-1, 0), min(Y+2, level.height)):
+                    if (type(level.tiles[X][Y]) == Tile and \
+                       (type(level.tiles[x][y]) not in [Tile, Wall])):
+                       ## Create wall
+                       level.tiles[X][Y] = Wall.create_from_palette()
 
 def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
@@ -448,6 +461,8 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
             t1.step(level)
         except NoMoreSpaceException as e:
             print(e)
+
+    add_walls(level)
 
     return level
 

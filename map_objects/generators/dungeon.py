@@ -23,7 +23,7 @@ class Tunneller():
     last_direction = None
 
 
-    def __init__(self, x, y, 
+    def __init__(self,
                  min_tunnel_length=9, max_tunnel_length=20,
                  tunnel_widths=[1, 3, 5],
                  min_room_size=5, max_room_size=9,
@@ -32,10 +32,6 @@ class Tunneller():
         """
         Set tunneller's initial parameters
         """
-
-        # Initial position
-        self.x = x
-        self.y = y
 
         # Min and max tunnel length
         self.min_tunnel_length = min_tunnel_length
@@ -62,16 +58,16 @@ class Tunneller():
         self.current_location = map_part
 
 
-    def create_starting_room(self, game_map):
+    def create_starting_room(self, x, y, game_map):
 
         # Pick room dimensions
         w = random.randint(self.min_room_size, self.max_room_size)
         h = random.randint(self.min_room_size, self.max_room_size)
 
         # Room coordinates
-        x1 = self.x - int(w/2)
+        x1 = x - int(w/2)
         x2 = x1 + w
-        y1 = self.y - int(h/2)
+        y1 = y - int(h/2)
         y2 = y1 + h 
 
         # Collect coordinates in a variable
@@ -404,6 +400,8 @@ class Tunneller():
 
     def step(self, game_map):
 
+        self.current_location.reset_available_directions()
+
         for i in range(self.max_step_retries):
             try:
                 old_location = self.current_location
@@ -448,19 +446,37 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     # dig_rect(level, [start_x-5, start_y-5, start_x+5, start_y+5])
 
     t1 = Tunneller(
-        start_x, start_y, 
+        min_tunnel_length=9, max_tunnel_length=20)
+    t2 = Tunneller(
+        min_tunnel_length=9, max_tunnel_length=20)
+    t3 = Tunneller(
+        min_tunnel_length=9, max_tunnel_length=20)
+    t4 = Tunneller(
         min_tunnel_length=9, max_tunnel_length=20)
 
     # Start from a central room
-    t1.create_starting_room(level)
+    t1.create_starting_room(start_x, start_y, level)
+
+    # Move the other three to the same room
+    t2.move_to(t1.current_location)
+    t3.move_to(t1.current_location)
+    t4.move_to(t1.current_location)
+
+    tunnellers_list = [t1, t2, t3, t4]
 
     # Step a few times
-    N_STEPS = 4
+    N_STEPS = 4 
     for _ in range(N_STEPS):
-        try:
-            t1.step(level)
-        except NoMoreSpaceException as e:
-            print(e)
+
+        for t in tunnellers_list:
+            try:
+                t.step(level)
+                # t1.step(level)
+                # t2.step(level)
+                # t3.step(level)
+                # t4.step(level)
+            except NoMoreSpaceException as e:
+                print(e)
 
     add_walls(level)
 

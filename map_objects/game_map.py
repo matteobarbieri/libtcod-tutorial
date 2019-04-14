@@ -37,14 +37,22 @@ from .map_utils import dig_rect, _intersection_area
 
 class MapPart():
 
-    def __init__(self, xy):
+    def __init__(self, xy, available_directions=None):
         # self.x1, self.y1, self.x2, self.y2 = xy
         self.xy = xy
-        self.available_directions = list()
+        self.available_directions = available_directions
+
+        # Also keep track of the originals
+        self._available_directions = available_directions
+
 
         # The list of other parts of the map this one is connected to
         # (possibly useful later for pathfinding etc.)
         self.connected_parts = list
+
+    def reset_available_directions(self):
+
+        self. available_directions = list(self._available_directions)
 
     def intersects_with(self, other):
         """
@@ -173,8 +181,8 @@ class Door(MapPart):
 
 class Room(MapPart):
 
-    def __init__(self, xy):
-        super().__init__(xy)
+    def __init__(self, xy, available_directions):
+        super().__init__(xy, available_directions)
 
     def dig(self, game_map):
         """
@@ -192,14 +200,14 @@ class Room(MapPart):
 
 class Junction(MapPart):
 
-    def __init__(self, xy):
-        super().__init__(xy)
+    def __init__(self, xy, available_directions):
+        super().__init__(xy, available_directions)
 
 
 class Corridor(MapPart):
 
-    def __init__(self, xy, horizontal):
-        super().__init__(xy)
+    def __init__(self, xy, available_directions, horizontal):
+        super().__init__(xy, available_directions)
 
         # Save the information about the placement of the tunnel
         self.horizontal = horizontal

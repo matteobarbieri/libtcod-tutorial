@@ -37,10 +37,10 @@ def dig_rect(game_map, xy):
     # Extract coordinates
     x1, y1, x2, y2 = xy
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     logger = logging.getLogger()
-    logger.debug("Digging rectangle from ({}, {}) to ({}, {})".format(*xy))
+    # logger.debug("Digging rectangle from ({}, {}) to ({}, {})".format(*xy))
 
     for x in range(x1, x2+1):
         for y in range(y1, y2+1):

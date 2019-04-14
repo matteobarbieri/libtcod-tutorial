@@ -14,7 +14,6 @@ import random
 
 from ..map_utils import area_is_available
 
-
 class NoMoreSpaceException(Exception):
     pass
 
@@ -27,7 +26,7 @@ class Tunneller():
     def __init__(self, x, y, 
                  min_tunnel_length=9, max_tunnel_length=20,
                  tunnel_widths=[1, 3, 5],
-                 min_room_size=7, max_room_size=11,
+                 min_room_size=5, max_room_size=9,
                  min_junction_size=5, max_junction_size=9,
                  max_step_retries=4):
         """
@@ -79,8 +78,7 @@ class Tunneller():
         xy = [x1, y1, x2, y2]
 
         # Create the junction object
-        junction = Junction(xy)
-        junction.available_directions = list(Direction)
+        junction = Junction(xy, list(Direction))
 
         # Actually dig the empty space in the map
         junction.dig(game_map)
@@ -146,7 +144,7 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        junction = Junction(xy)
+        junction = Junction(xy, list(Direction))
 
         # Determine if the area can be dug based on map and blueprint
         # can_dig = area_is_available(game_map, xy)
@@ -159,9 +157,6 @@ class Tunneller():
                     break
 
         if can_dig:
-
-            # Setup available directions for junction
-            junction.available_directions = list(Direction)
 
             return junction 
         else:
@@ -216,7 +211,7 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        room = Room(xy)
+        room = Room(xy, list(Direction))
 
         # Determine if the area can be dug based on map and blueprint
         # can_dig = area_is_available(game_map, xy)
@@ -234,12 +229,11 @@ class Tunneller():
 
         if can_dig:
 
-            # Create the room object
-            room.available_directions = list(Direction)
-
             # Also specify the door
             door = Door([x, y, x, y])
 
+            logging.getLogger().info(
+                "Creating Room")
             return room, door
         else:
             raise NoMoreSpaceException("Unavailable area")
@@ -300,7 +294,15 @@ class Tunneller():
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
 
-        corridor = Corridor(xy, horizontal)
+        # Setup available directions for corridor
+        if horizontal:
+            corridor_available_directions = [
+                Direction.WEST, Direction.EAST]
+        else:
+            corridor_available_directions = [
+                Direction.NORTH, Direction.SOUTH]
+
+        corridor = Corridor(xy, corridor_available_directions, horizontal)
 
         # Determine if the area can be dug based on map and blueprint
         # can_dig = area_is_available(game_map, xy)
@@ -313,15 +315,9 @@ class Tunneller():
                     break
 
         if can_dig:
-
-            # Setup available directions for corridor
-            if horizontal:
-                corridor.available_directions = [
-                    Direction.WEST, Direction.EAST]
-            else:
-                corridor.available_directions = [
-                    Direction.NORTH, Direction.SOUTH]
-
+            logging.getLogger().info(
+                "Creating Corridor heading {} of length {}".format(
+                    d, tunnel_length))
             return corridor
         else:
             raise NoMoreSpaceException("Unavailable area")
@@ -338,14 +334,21 @@ class Tunneller():
         ################################
         ####### Create Corridor ########
         ################################
-        while self.current_location.has_available_directions():
-            try:
-                x, y, d = self.current_location.pick_starting_point()
-                corridor = self.create_corridor_blueprint(game_map, x, y, d, blueprint)
-                break
-            except NoMoreSpaceException:
-                # This direction didn't work, try another one
-                pass
+        for _ in range(self.max_step_retries):
+            while self.current_location.has_available_directions():
+                try:
+                    x, y, d = self.current_location.pick_starting_point()
+                    corridor = self.create_corridor_blueprint(game_map, x, y, d, blueprint)
+                    break
+                except NoMoreSpaceException:
+                    # This direction didn't work, try another one
+                    pass
+            else:
+                self.current_location.reset_available_directions()
+                continue
+
+            break
+                
         else:
             raise NoMoreSpaceException("No more space when creating corridor")
 
@@ -353,10 +356,8 @@ class Tunneller():
         ######## Create Rooms ##########
         ################################
 
-
-        # TODO parametrize N of retries
         # Try 4 times for a suitable place
-        for i in range(4):
+        for _ in range(self.max_step_retries):
             try:
                 x, y, d = corridor.pick_room_starting_point()
                 room, door = self.create_room_blueprint(game_map, x, y, d, blueprint)
@@ -382,6 +383,7 @@ class Tunneller():
             try:
                 x, y, d = self.current_location.pick_starting_point()
                 junction = self.create_junction_blueprint(game_map, x, y, d, blueprint)
+                logging.getLogger().info("Creating junction")
                 break
             except NoMoreSpaceException:
                 # This direction didn't work, try another one
@@ -404,6 +406,7 @@ class Tunneller():
 
         for i in range(self.max_step_retries):
             try:
+                old_location = self.current_location
                 bp = self.create_blueprint(game_map)
 
                 # Commit changes to the map
@@ -411,6 +414,8 @@ class Tunneller():
                 break
 
             except NoMoreSpaceException as e:
+                self.current_location = old_location
+                self.current_location.reset_available_directions()
                 print(e)
                 # Tunneller was unable to create anything in that direction; try
                 # another one

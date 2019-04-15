@@ -15,11 +15,11 @@ class RenderOrder(Enum):
     ACTOR = auto()
 
 
-def get_names_under_mouse(mouse, entities, fov_map):
+def get_names_under_mouse(mouse, entities, fov_map, top_x, top_y):
     (x, y) = (mouse.cx, mouse.cy)
 
-    names = [entity.name for entity in entities if entity.x == x and entity.y ==
-             y and libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]
+    names = [entity.name for entity in entities if entity.x == (top_x + x) and entity.y ==
+             (top_y + y) and libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]
     names = ', '.join(names)
 
     return names.capitalize()
@@ -196,6 +196,7 @@ def render_all(terrain_layer, panel, entities, player,
     libtcod.console_print_ex(panel, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT,
                              'Dungeon level: {0}'.format(game_map.dungeon_level))
 
+    # Show info about entities under mouse cursor
     libtcod.console_set_default_foreground(panel, libtcod.light_gray)
     libtcod.console_print_ex(
         panel,
@@ -204,9 +205,7 @@ def render_all(terrain_layer, panel, entities, player,
         libtcod.BKGND_NONE,
         libtcod.LEFT,
         get_names_under_mouse(
-            mouse,
-            entities,
-            fov_map))
+            mouse, entities, fov_map, top_x, top_y))
 
     libtcod.console_blit(
         panel,

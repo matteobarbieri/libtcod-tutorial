@@ -51,10 +51,12 @@ class MapPart():
         self.connected_parts = list()
 
     def remove_connection(self, other):
-        self.connected_parts.remove(other)
+        if other in self.connected_parts:
+            self.connected_parts.remove(other)
 
     def connect_to(self, other):
-        self.connected_parts.append(other)
+        if other not in self.connected_parts:
+            self.connected_parts.append(other)
 
     def reset_available_directions(self):
 

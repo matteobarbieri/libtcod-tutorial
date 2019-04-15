@@ -326,6 +326,9 @@ class Tunneller():
 
         blueprint = list()
 
+        # Save reference to starting location
+        starting_location = self.current_location
+
         ################################
         ####### Create Corridor ########
         ################################
@@ -342,8 +345,8 @@ class Tunneller():
                 self.current_location.reset_available_directions()
                 continue
 
+            # Break the outer for loop
             break
-                
         else:
             raise NoMoreSpaceException("No more space when creating corridor")
 
@@ -360,6 +363,10 @@ class Tunneller():
                 # Add room and door to current blueprint
                 blueprint.append(room)
                 blueprint.append(door)
+
+                # Connect room and corridor
+                corridor.connect_to(room)
+                room.connect_to(corridor)
                 break
             except NoMoreSpaceException:
                 pass
@@ -374,27 +381,40 @@ class Tunneller():
         ################################
         ####### Create Junction ########
         ################################
-        while self.current_location.has_available_directions():
-            try:
-                x, y, d = self.current_location.pick_starting_point()
-                junction = self.create_junction_blueprint(game_map, x, y, d, blueprint)
-                logging.getLogger().info("Creating junction")
-                break
-            except NoMoreSpaceException:
-                # This direction didn't work, try another one
-                pass
+        for _ in range(self.max_step_retries):
+            while self.current_location.has_available_directions():
+                try:
+                    x, y, d = self.current_location.pick_starting_point()
+                    junction = self.create_junction_blueprint(game_map, x, y, d, blueprint)
+                    logging.getLogger().info("Creating junction")
+                    break
+                except NoMoreSpaceException:
+                    # This direction didn't work, try another one
+                    pass
+            else:
+                self.current_location.reset_available_directions()
+                continue
+
+            # Break the outer for
+            break
         else:
             raise NoMoreSpaceException("No more space when creating junction")
 
         # Add the junction to current blueprint
         blueprint.append(junction)
 
+        # Connect corridor and junction
+        junction.connect_to(corridor)
+        corridor.connect_to(junction)
+
         # Change tunneller's location to the newly created junction
         self.move_to(junction)
 
+        # Connect first corridor to starting location
+        corridor.connect_to(starting_location)
+        starting_location.connect_to(corridor)
 
         # TODO this will actually be a better thing in the future
-
         return blueprint
 
     def step(self, game_map):

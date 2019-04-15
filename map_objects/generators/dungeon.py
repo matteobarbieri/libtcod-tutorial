@@ -14,6 +14,8 @@ import random
 
 from ..map_utils import area_is_available
 
+import numpy as np
+
 class NoMoreSpaceException(Exception):
     pass
 
@@ -441,6 +443,25 @@ class Tunneller():
             # TODO improve this, possibly change Exception Type
             raise NoMoreSpaceException("Max number of retries hit")
 
+def connect_close_parts(level):
+    
+    # First of all, compute distance matrix
+    N_parts = len(level.all_parts)
+
+    distance_matrix = list()
+    for i in range(N_parts):
+        dm_row = list()
+        for j in range(i+1, N_parts):
+            
+            dm_row.append(
+                level.all_parts[i].distance_from(level.all_parts[j]))
+
+        distance_matrix.append(dm_row)
+
+    # TODO to complete!
+
+    pass
+
 def add_walls(level):
     """
     Creates walls in all Tile-type tiles adjacent to something non-Tile
@@ -516,9 +537,11 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
             print(e)
             # Simply do not append the tunneler to the queue
 
+    # Improve connectivity
+    connect_close_parts(level)
 
     # Add an external layer of walls to rooms
-    add_walls(level)
+    # add_walls(level)
 
     return level
 

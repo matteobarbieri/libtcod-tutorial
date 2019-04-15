@@ -58,6 +58,15 @@ class MapPart():
         if other not in self.connected_parts:
             self.connected_parts.append(other)
 
+    def distance_from(self, other):
+        """
+        Return the euclidean distance from the centers of the two parts
+        """
+        x1, y1 = self.center
+        x2, y2 = other.center
+
+        return ((x2 - x1)**2 + (y2 - y1)**2)**(0.5)
+
     def reset_available_directions(self):
 
         self. available_directions = list(self._available_directions)
@@ -273,6 +282,14 @@ class GameMap:
         self.doors = list()
         self.corridors = list()
         self.junctions = list()
+
+    @property
+    def all_parts():
+        """
+        Returns the list of all major map parts
+        (excludes doors)
+        """
+        return self.junctions + self.corridors + self.rooms
 
     def add_part(self, part):
         """

@@ -58,17 +58,16 @@ class Tunneller():
         self.current_location = map_part
 
 
-    def create_starting_room(self, x, y, game_map):
+    def create_starting_junction(self, x, y, game_map):
 
-        # Pick room dimensions
-        w = random.randint(self.min_room_size, self.max_room_size)
-        h = random.randint(self.min_room_size, self.max_room_size)
+        # Pick junction dimensions
+        size = random.randint(self.min_junction_size, self.max_junction_size)
 
         # Room coordinates
-        x1 = x - int(w/2)
-        x2 = x1 + w
-        y1 = y - int(h/2)
-        y2 = y1 + h 
+        x1 = x - int(size/2)
+        x2 = x1 + size
+        y1 = y - int(size/2)
+        y2 = y1 + size 
 
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
@@ -455,7 +454,7 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
         min_tunnel_length=9, max_tunnel_length=20)
 
     # Start from a central room
-    t1.create_starting_room(start_x, start_y, level)
+    t1.create_starting_junction(start_x, start_y, level)
 
     # Move the other three to the same room
     t2.move_to(t1.current_location)

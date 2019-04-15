@@ -482,25 +482,41 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     t3.move_to(t1.current_location)
     t4.move_to(t1.current_location)
 
-    tunnellers_list = [t1, t2, t3, t4]
+    tunnelers_queue = [t1, t2, t3, t4]
 
     #################################
     ######### THIS WORKS ############
     #################################
 
     # Step a few times
-    N_STEPS = 4 
-    for _ in range(N_STEPS):
+    # N_STEPS = 4 
+    # for _ in range(N_STEPS):
 
-        for t in tunnellers_list:
-            try:
-                t.step(level)
-            except NoMoreSpaceException as e:
-                print(e)
+        # for t in tunnelers_queue:
+            # try:
+                # t.step(level)
+            # except NoMoreSpaceException as e:
+                # print(e)
 
     #################################
     ########### ^^^^^^^^^ ###########
     #################################
+
+    while len(tunnelers_queue) > 0:
+
+        t = tunnelers_queue.pop(0)
+
+        try:
+
+            # Perform one step
+            t.step(level)
+            # Put tunneler at the end of the queue
+            tunnelers_queue.append(t)
+        except NoMoreSpaceException as e:
+            print(e)
+            # Simply do not append the tunneler to the queue
+
+
     # Add an external layer of walls to rooms
     add_walls(level)
 

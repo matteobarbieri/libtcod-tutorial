@@ -332,6 +332,7 @@ class Tunneller():
         ################################
         ####### Create Corridor ########
         ################################
+        self.current_location.reset_available_directions()
         for _ in range(self.max_step_retries):
             while self.current_location.has_available_directions():
                 try:
@@ -381,6 +382,7 @@ class Tunneller():
         ################################
         ####### Create Junction ########
         ################################
+        self.current_location.reset_available_directions()
         for _ in range(self.max_step_retries):
             while self.current_location.has_available_directions():
                 try:
@@ -432,7 +434,6 @@ class Tunneller():
 
             except NoMoreSpaceException as e:
                 self.current_location = old_location
-                self.current_location.reset_available_directions()
                 print(e)
                 # Tunneller was unable to create anything in that direction; try
                 # another one
@@ -483,6 +484,10 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
     tunnellers_list = [t1, t2, t3, t4]
 
+    #################################
+    ######### THIS WORKS ############
+    #################################
+
     # Step a few times
     N_STEPS = 4 
     for _ in range(N_STEPS):
@@ -490,13 +495,13 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
         for t in tunnellers_list:
             try:
                 t.step(level)
-                # t1.step(level)
-                # t2.step(level)
-                # t3.step(level)
-                # t4.step(level)
             except NoMoreSpaceException as e:
                 print(e)
 
+    #################################
+    ########### ^^^^^^^^^ ###########
+    #################################
+    # Add an external layer of walls to rooms
     add_walls(level)
 
     return level

@@ -314,6 +314,22 @@ class GameMap:
         """
         return self.junctions + self.corridors + self.rooms
 
+    def place_player(self, player):
+        """
+        Place player in the map
+        """
+
+        # TODO
+        # Should place him/her in an entry/exit tile (depending on where they
+        # came from).
+        starting_room = random.choice(self.rooms)
+        x, y = starting_room.center 
+        player.x = x
+        player.y = y
+
+        # Add player to list of entities
+        self.entities.append(player)
+
     def add_part(self, part):
         """
         Add a part to the map and also dig it

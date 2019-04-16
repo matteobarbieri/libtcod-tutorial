@@ -13,7 +13,7 @@ from death_functions import kill_monster, kill_player
 from game_messages import Message
 
 
-def play_game(player, entities, game_map, 
+def play_game(player, game_map, 
               message_log, game_state, 
               terrain_layer, 
               panel, constants):
@@ -32,6 +32,8 @@ def play_game(player, entities, game_map,
     previous_game_state = game_state
 
     targeting_item = None
+
+    entities = game_map.entities
 
     ############################################
     ############### MAIN LOOP ##################
@@ -387,7 +389,7 @@ def main():
             if show_load_error_message and (new_game or load_saved_game or exit_game):
                 show_load_error_message = False
             elif new_game:
-                player, entities, game_map, message_log, game_state = get_game_variables(constants)
+                player, game_map, message_log, game_state = get_game_variables(constants)
                 game_state = GameStates.PLAYERS_TURN
 
                 game_map.export_txt('maps_txt/lastmap.txt')
@@ -395,6 +397,7 @@ def main():
                 show_main_menu = False
             elif load_saved_game:
                 try:
+                    # TODO entities are in the map now
                     player, entities, game_map, message_log, game_state = load_game()
                     show_main_menu = False
                 except FileNotFoundError:
@@ -405,7 +408,7 @@ def main():
         else:
             libtcod.console_clear(terrain_layer)
             play_game(
-                player, entities, game_map, message_log, game_state,
+                player, game_map, message_log, game_state,
                 terrain_layer, panel, constants)
 
             show_main_menu = True

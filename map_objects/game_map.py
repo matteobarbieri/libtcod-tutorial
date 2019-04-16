@@ -284,7 +284,7 @@ class GameMap:
         self.junctions = list()
 
     @property
-    def all_parts():
+    def all_parts(self):
         """
         Returns the list of all major map parts
         (excludes doors)

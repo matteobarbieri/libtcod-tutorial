@@ -479,27 +479,25 @@ def connect_parts(level, i, j):
     # Move horizontally first
     while(x != xj):
         x += 1
-        print("{} {}".format(x, xj))
-        if type(level.tiles[x][y]) != Tile:
-            # If it has already been excavated AND it does not belong to one
-            # of the two other parts, raise an exception
-            if not part_i.has_tile(x, y) and not part_j.has_tile(x, y):
-                raise NoMoreSpaceException(
-                    "Unable to connect two parts {}".format(
-                        len(tunnel_skeleton)))
-                # break
-        tunnel_skeleton.append((x, y))
-
-    # Then vertically
-    while(y != yj):
-        y += dy
-        print("{} {}".format(y, yj))
+        # print("{} {}".format(x, xj))
         if type(level.tiles[x][y]) != Tile:
             # If it has already been excavated AND it does not belong to one
             # of the two other parts, raise an exception
             if not part_i.has_tile(x, y) and not part_j.has_tile(x, y):
                 raise NoMoreSpaceException("Unable to connect two parts")
-                # break
+
+        tunnel_skeleton.append((x, y))
+
+    # Then vertically
+    while(y != yj):
+        y += dy
+        # print("{} {}".format(y, yj))
+        if type(level.tiles[x][y]) != Tile:
+            # If it has already been excavated AND it does not belong to one
+            # of the two other parts, raise an exception
+            if not part_i.has_tile(x, y) and not part_j.has_tile(x, y):
+                raise NoMoreSpaceException("Unable to connect two parts")
+
         tunnel_skeleton.append((x, y))
 
     # TODO
@@ -639,7 +637,7 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     connect_close_parts(level)
 
     # Add an external layer of walls to rooms
-    # add_walls(level)
+    add_walls(level)
 
     return level
 

@@ -14,8 +14,6 @@ import random
 
 from ..map_utils import area_is_available
 
-import numpy as np
-
 class NoMoreSpaceException(Exception):
     pass
 

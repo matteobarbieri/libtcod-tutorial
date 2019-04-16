@@ -226,8 +226,7 @@ class Tunneller():
             # Also specify the door
             door = Door([x, y, x, y])
 
-            logging.getLogger().info(
-                "Creating Room")
+            logging.getLogger().debug("Creating Room at {}".format(room.center))
             return room, door
         else:
             raise NoMoreSpaceException("Unavailable area")
@@ -309,9 +308,9 @@ class Tunneller():
                     break
 
         if can_dig:
-            logging.getLogger().info(
-                "Creating Corridor heading {} of length {}".format(
-                    d, tunnel_length))
+            logging.getLogger().debug(
+                "Creating Corridor at {}, heading {} of length {}".format(
+                    corridor.center, d, tunnel_length))
             return corridor
         else:
             raise NoMoreSpaceException("Unavailable area")
@@ -387,7 +386,8 @@ class Tunneller():
                 try:
                     x, y, d = self.current_location.pick_starting_point()
                     junction = self.create_junction_blueprint(game_map, x, y, d, blueprint)
-                    logging.getLogger().info("Creating junction")
+                    logging.getLogger().debug("Creating junction at {}".format(
+                        junction.center))
                     break
                 except NoMoreSpaceException:
                     # This direction didn't work, try another one
@@ -447,10 +447,10 @@ def connect_parts(level, i, j):
     part_i = level.all_parts[i]
     part_j = level.all_parts[j]
 
-    logging.getLogger().info(
-        "Trying to connect a {} and a {} (from {} to {})".format(
-            part_i.__class__.__name__, part_j.__class__.__name__,
-            part_i.center, part_j.center))
+    # logging.getLogger().info(
+        # "Trying to connect a {} and a {} (from {} to {})".format(
+            # part_i.__class__.__name__, part_j.__class__.__name__,
+            # part_i.center, part_j.center))
     
     xi, yi = part_i.center
     xj, yj = part_j.center
@@ -548,7 +548,7 @@ def connect_close_parts(level):
         if not level.all_parts[i].is_connected_to(level.all_parts[j]):
             try:
                 connect_parts(level, i, j)
-                logging.getLogger().info("Connected parts {} and {}".format(i, j))
+                logging.getLogger().debug("Connected parts {} and {}".format(i, j))
                 n_connected += 1
             except NoMoreSpaceException as e:
                 print("While creating connections:")
@@ -575,11 +575,7 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
     level = GameMap(width, height)
 
-    start_x = int(width/2) + random.randint(-10, 10)
-    start_y = int(height/2) + random.randint(-10, 10)
-
-    # Start with a Junction, roughly in the middle of the map
-    # dig_rect(level, [start_x-5, start_y-5, start_x+5, start_y+5])
+    logging.getLogger().info("Initializing tunnelers")
 
     t1 = Tunneller(
         min_tunnel_length=9, max_tunnel_length=20)
@@ -590,7 +586,10 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     t4 = Tunneller(
         min_tunnel_length=9, max_tunnel_length=20)
 
-    # Start from a central room
+    # Start with a Junction, roughly in the middle of the map
+    start_x = int(width/2) + random.randint(-10, 10)
+    start_y = int(height/2) + random.randint(-10, 10)
+
     t1.create_starting_junction(start_x, start_y, level)
 
     # Move the other three to the same room
@@ -600,43 +599,27 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
     tunnelers_queue = [t1, t2, t3, t4]
 
-    #################################
-    ######### THIS WORKS ############
-    #################################
-
-    # Step a few times
-    # N_STEPS = 4 
-    # for _ in range(N_STEPS):
-
-        # for t in tunnelers_queue:
-            # try:
-                # t.step(level)
-            # except NoMoreSpaceException as e:
-                # print(e)
-
-    #################################
-    ########### ^^^^^^^^^ ###########
-    #################################
-
+    logging.getLogger().info("Creating main dungeon structure")
     while len(tunnelers_queue) > 0:
 
         t = tunnelers_queue.pop(0)
 
         try:
-
             # Perform one step
             t.step(level)
+
             # Put tunneler at the end of the queue
             tunnelers_queue.append(t)
         except NoMoreSpaceException as e:
             print(e)
             # Simply do not append the tunneler to the queue
 
-    logging.getLogger().info("Creating additional connections")
     # Improve connectivity
+    logging.getLogger().info("Creating additional connections")
     connect_close_parts(level)
 
     # Add an external layer of walls to rooms
+    logging.getLogger().info("Adding walls")
     add_walls(level)
 
     return level

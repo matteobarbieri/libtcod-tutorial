@@ -2,6 +2,10 @@ import logging
 
 from .tile import Tile, Floor
 
+
+class NoMoreSpaceException(Exception):
+    pass
+
 def area_is_available(game_map, xy):
     """
     Check that an area is made of actually empty space

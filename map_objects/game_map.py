@@ -34,6 +34,8 @@ from .directions import Direction
 
 from .map_utils import dig_rect, _intersection_area
 
+from .map_utils import NoMoreSpaceException
+
 
 class MapPart():
 
@@ -50,9 +52,27 @@ class MapPart():
         # (possibly useful later for pathfinding etc.)
         self.connected_parts = list()
 
+    def has_tile(self, x, y):
+        """
+        Check if a single tile belongs to this map part
+        """
+
+        # Unpack coordinates
+        x1, y1, x2, y2 = self.xy
+
+        return x >= x1 and x <= x2 and y <= y1 and y >= y2
+
+
     def remove_connection(self, other):
         if other in self.connected_parts:
             self.connected_parts.remove(other)
+
+    def is_connected_to(self, other):
+        """
+        Returns True if self is connected to other
+        """
+
+        return other in self.connected_parts
 
     def connect_to(self, other):
         if other not in self.connected_parts:
@@ -284,7 +304,7 @@ class GameMap:
         self.junctions = list()
 
     @property
-    def all_parts():
+    def all_parts(self):
         """
         Returns the list of all major map parts
         (excludes doors)

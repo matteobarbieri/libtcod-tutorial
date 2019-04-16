@@ -60,7 +60,7 @@ class MapPart():
         # Unpack coordinates
         x1, y1, x2, y2 = self.xy
 
-        return x >= x1 and x <= x2 and y <= y1 and y >= y2
+        return x >= x1 and x <= x2 and y >= y1 and y <= y2
 
 
     def remove_connection(self, other):

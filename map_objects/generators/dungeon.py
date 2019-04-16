@@ -512,9 +512,10 @@ def connect_parts(level, i, j):
     part_j.connect_to(part_i)
 
 
-def connect_close_parts(level):
-    
-    # First of all, compute distance matrix
+def compute_sorted_distance_list(level):
+    """
+    """
+
     N_parts = len(level.all_parts)
 
     distance_list = list()
@@ -533,10 +534,19 @@ def connect_close_parts(level):
 
     sorted_distance_list = sorted(distance_list, key=lambda i : i[1])
 
-    n_connected = 0
-    max_connected = 10
-    max_distance = 12
+    return sorted_distance_list
 
+def connect_close_parts(level, sorted_distance_list):
+    
+
+    # TODO these must become parameters
+    max_connected = 10
+    max_distance = 20
+
+    # TODO also do not necessarily proceed from the closest onwards
+    # use chance to skipe some
+
+    n_connected = 0
     for (i, j), d in sorted_distance_list:
 
         # Stop when distance is too high or reach the maximum number of parts
@@ -616,7 +626,10 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
     # Improve connectivity
     logging.getLogger().info("Creating additional connections")
-    connect_close_parts(level)
+
+    sorted_distance_list = compute_sorted_distance_list(level)
+
+    connect_close_parts(level, sorted_distance_list)
 
     # Add an external layer of walls to rooms
     logging.getLogger().info("Adding walls")

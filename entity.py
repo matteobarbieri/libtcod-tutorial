@@ -18,20 +18,47 @@ class Entity:
             ai=None, item=None, inventory=None, stairs=None, 
             level=None, equipment=None, equippable=None):
 
+        # The entity's current position
         self.x = x
         self.y = y
+
+        # The ASCII character representing it
         self.char = char
+
+        # Its color
         self.color = color
+
+        # Its name
         self.name = name
+
+        # Is it a blocking entity?
         self.blocks = blocks
+
+        # Render order
         self.render_order = render_order
+
+        # Fighter component
         self.fighter = fighter
+
+        # AI component
         self.ai = ai
+
+        # Represents an item (weapon, consumable, etc)
         self.item = item
+
+        # The component representing the inventory of the entity
         self.inventory = inventory
+
+        # Component for stairs leading to other levels of the dungeon
         self.stairs = stairs
+
+        # The level of the entity
         self.level = level
+
+        # The entity can wear equipment
         self.equipment = equipment
+
+        # Is it an item that can be equipped?
         self.equippable = equippable
 
         if self.fighter:

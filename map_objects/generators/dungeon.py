@@ -14,8 +14,7 @@ import random
 
 from ..map_utils import area_is_available
 
-class NoMoreSpaceException(Exception):
-    pass
+from ..map_utils import NoMoreSpaceException
 
 
 class Tunneller():
@@ -441,24 +440,124 @@ class Tunneller():
             # TODO improve this, possibly change Exception Type
             raise NoMoreSpaceException("Max number of retries hit")
 
+def connect_parts(level, i, j):
+    """
+    Excavate a tunnel between two map parts
+    """
+    part_i = level.all_parts[i]
+    part_j = level.all_parts[j]
+
+    logging.getLogger().info(
+        "Trying to connect a {} and a {} (from {} to {})".format(
+            part_i.__class__.__name__, part_j.__class__.__name__,
+            part_i.center, part_j.center))
+    
+    xi, yi = part_i.center
+    xj, yj = part_j.center
+
+    # In case xi is greater than xj, swap coordinates
+    if xi > xj:
+        xi, xj = xj, xi
+        yi, yj = yj, yi
+
+    # Determine y direction
+    if yj > yi:
+        dy = +1
+    else:
+        dy = -1
+
+    ### Excavate 1-wide tunnel
+    
+    # A list containing the coordinates of the skeleton of the 
+    # tunnel
+    tunnel_skeleton = list()
+
+    # Start from the left element
+    x = xi
+    y = yi
+
+    # Move horizontally first
+    while(x != xj):
+        x += 1
+        print("{} {}".format(x, xj))
+        if type(level.tiles[x][y]) != Tile:
+            # If it has already been excavated AND it does not belong to one
+            # of the two other parts, raise an exception
+            if not part_i.has_tile(x, y) and not part_j.has_tile(x, y):
+                raise NoMoreSpaceException(
+                    "Unable to connect two parts {}".format(
+                        len(tunnel_skeleton)))
+                # break
+        tunnel_skeleton.append((x, y))
+
+    # Then vertically
+    while(y != yj):
+        y += dy
+        print("{} {}".format(y, yj))
+        if type(level.tiles[x][y]) != Tile:
+            # If it has already been excavated AND it does not belong to one
+            # of the two other parts, raise an exception
+            if not part_i.has_tile(x, y) and not part_j.has_tile(x, y):
+                raise NoMoreSpaceException("Unable to connect two parts")
+                # break
+        tunnel_skeleton.append((x, y))
+
+    # TODO
+    # Enlarge tunnel
+
+    # Do excavate tunnel
+    for x, y in tunnel_skeleton:
+        level.tiles[x][y] = Floor()
+
+    # Mark the two map parts as connected
+    part_i.connect_to(part_j)
+    part_j.connect_to(part_i)
+
+
 def connect_close_parts(level):
     
     # First of all, compute distance matrix
     N_parts = len(level.all_parts)
 
-    distance_matrix = list()
-    for i in range(N_parts):
-        dm_row = list()
-        for j in range(i+1, N_parts):
-            
-            dm_row.append(
-                level.all_parts[i].distance_from(level.all_parts[j]))
+    distance_list = list()
+    # distance_matrix = list()
 
-        distance_matrix.append(dm_row)
+    for i in range(N_parts):
+        # dm_row = list()
+        for j in range(i+1, N_parts):
+
+            d = level.all_parts[i].distance_from(level.all_parts[j])
+            # dm_row.append(d)
+
+            distance_list.append(((i, j), d))
+
+        # distance_matrix.append(dm_row)
+
+    sorted_distance_list = sorted(distance_list, key=lambda i : i[1])
+
+    n_connected = 0
+    max_connected = 10
+    max_distance = 12
+
+    for (i, j), d in sorted_distance_list:
+
+        # Stop when distance is too high or reach the maximum number of parts
+        # connected
+        if d > max_distance or n_connected >= max_connected:
+            break
+
+        # Only try to connect those not already connected
+        if not level.all_parts[i].is_connected_to(level.all_parts[j]):
+            try:
+                connect_parts(level, i, j)
+                logging.getLogger().info("Connected parts {} and {}".format(i, j))
+                n_connected += 1
+            except NoMoreSpaceException as e:
+                print("While creating connections:")
+                print(e)
+
 
     # TODO to complete!
-
-    pass
 
 def add_walls(level):
     """
@@ -535,6 +634,7 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
             print(e)
             # Simply do not append the tunneler to the queue
 
+    logging.getLogger().info("Creating additional connections")
     # Improve connectivity
     connect_close_parts(level)
 

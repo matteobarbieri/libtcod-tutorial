@@ -34,6 +34,8 @@ from .directions import Direction
 
 from .map_utils import dig_rect, _intersection_area
 
+from .map_utils import NoMoreSpaceException
+
 
 class MapPart():
 
@@ -50,9 +52,27 @@ class MapPart():
         # (possibly useful later for pathfinding etc.)
         self.connected_parts = list()
 
+    def has_tile(self, x, y):
+        """
+        Check if a single tile belongs to this map part
+        """
+
+        # Unpack coordinates
+        x1, y1, x2, y2 = self.xy
+
+        return x >= x1 and x <= x2 and y <= y1 and y >= y2
+
+
     def remove_connection(self, other):
         if other in self.connected_parts:
             self.connected_parts.remove(other)
+
+    def is_connected_to(self, other):
+        """
+        Returns True if self is connected to other
+        """
+
+        return other in self.connected_parts
 
     def connect_to(self, other):
         if other not in self.connected_parts:
@@ -290,6 +310,78 @@ class GameMap:
         (excludes doors)
         """
         return self.junctions + self.corridors + self.rooms
+
+    def connect_parts(self, i, j):
+        """
+        Excavate a tunnel between two map parts
+        """
+        part_i = self.all_parts[i]
+        part_j = self.all_parts[j]
+
+        logging.getLogger().info(
+            "Trying to connect a {} and a {}".format(
+                type(part_i), type(part_j)))
+        
+        xi, yi = part_i.center
+        xj, yj = part_j.center
+
+        # In case xi is greater than xj, swap coordinates
+        if xi > xj:
+            xi, xj = xj, xi
+            yi, yj = yj, yi
+
+        # Determine y direction
+        if yj > yi:
+            dy = +1
+        else:
+            dy = -1
+
+        ### Excavate 1-wide tunnel
+        
+        # A list containing the coordinates of the skeleton of the 
+        # tunnel
+        tunnel_skeleton = list()
+
+        # Start from the left element
+        x = xi
+        y = yi
+
+        # Move horizontally first
+        while(x != xj):
+            x += 1
+            print("{} {}".format(x, xj))
+            if type(self.tiles[x][y]) != Tile:
+                # If it has already been excavated AND it does not belong to one
+                # of the two other parts, raise an exception
+                if not part_i.has_tile(x, y) and not part_j.has_tile(x, y):
+                    raise NoMoreSpaceException(
+                        "Unable to connect two parts {}".format(
+                            len(tunnel_skeleton)))
+                    # break
+            tunnel_skeleton.append((x, y))
+
+        # Then vertically
+        while(y != yj):
+            y += dy
+            print("{} {}".format(y, yj))
+            if type(self.tiles[x][y]) != Tile:
+                # If it has already been excavated AND it does not belong to one
+                # of the two other parts, raise an exception
+                if not part_i.has_tile(x, y) and not part_j.has_tile(x, y):
+                    raise NoMoreSpaceException("Unable to connect two parts")
+                    # break
+            tunnel_skeleton.append((x, y))
+
+        # TODO
+        # Enlarge tunnel
+
+        # Do excavate tunnel
+        for x, y in tunnel_skeleton:
+            self.tiles[x][y] = Floor()
+
+        # Mark the two map parts as connected
+        part_i.connect_to(part_j)
+        part_j.connect_to(part_i)
 
     def add_part(self, part):
         """

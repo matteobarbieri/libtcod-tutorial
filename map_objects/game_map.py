@@ -303,6 +303,9 @@ class GameMap:
         self.corridors = list()
         self.junctions = list()
 
+        # Initialize an empty list for entities in this level
+        self.entities = list()
+
     @property
     def all_parts(self):
         """

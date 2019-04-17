@@ -609,7 +609,7 @@ def add_exits(level, sorted_distance_list):
     down_stairs = Entity(
         exit_x, exit_y, '>', 
         libtcod.white, 'Stairs down', render_order=RenderOrder.STAIRS, 
-        stairs=down_stairs_component)
+        components=dict(stairs=down_stairs_component))
 
     level.entities.append(down_stairs)
 
@@ -620,7 +620,7 @@ def add_exits(level, sorted_distance_list):
     up_stairs = Entity(
         entry_x, entry_y, '<',
         libtcod.white, 'Stairs up', render_order=RenderOrder.STAIRS,
-        stairs=up_stairs_component)
+        components=dict(stairs=up_stairs_component))
 
     level.entities.append(up_stairs)
 

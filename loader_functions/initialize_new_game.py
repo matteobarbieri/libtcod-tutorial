@@ -5,6 +5,7 @@ from components.equippable import Equippable
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
+from components.item import Item
 
 from entity import Entity
 
@@ -115,18 +116,21 @@ def get_game_variables(constants):
         '@', libtcod.white, 'Player', # Appearance
         blocks=True,
         render_order=RenderOrder.ACTOR,
-        fighter=fighter_component,
-        inventory=inventory_component,
-        level=level_component,
-        equipment=equipment_component
+        components=dict(
+            fighter=fighter_component,
+            inventory=inventory_component,
+            level=level_component,
+            equipment=equipment_component
+        )
     )
 
     # Give a starting item, a dagger
     equippable_component = Equippable(
         EquipmentSlots.MAIN_HAND, power_bonus=2)
     dagger = Entity(
-        0, 0, '-', libtcod.sky, 'Dagger', 
-        equippable=equippable_component)
+        0, 0, '-', libtcod.sky, 'Dagger',
+        components=dict(equippable=equippable_component, item=Item()))
+    
     player.inventory.add_item(dagger)
     player.equipment.toggle_equip(dagger)
 

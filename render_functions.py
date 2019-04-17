@@ -80,8 +80,9 @@ def draw_entity(terrain_layer, entity,
                 fov_map, game_map, top_x=0, top_y=0):
 
     # Only draw entities that are in player's fov
-    if (libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or \
-        (entity.stairs and game_map.tiles[entity.x][entity.y].explored)):
+    if  libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or \
+        (entity.c['stairs'] and game_map.tiles[entity.x][entity.y].explored):
+        # TODO include case for doors
 
         # print("Bgcolor: {}".format(bg_color))
 
@@ -182,15 +183,9 @@ def render_all(terrain_layer, panel, player,
 
     # Render the HP bar
     render_bar(
-        panel,
-        1,
-        1,
-        bar_width,
-        'HP',
-        player.fighter.hp,
-        player.fighter.max_hp,
-        libtcod.light_red,
-        libtcod.darker_red)
+        panel, 1, 1, bar_width,
+        'HP', player.c['fighter'].hp, player.c['fighter'].max_hp,
+        libtcod.light_red, libtcod.darker_red)
 
     # Show current dungeon level
     libtcod.console_print_ex(panel, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT,

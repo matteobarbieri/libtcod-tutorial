@@ -12,11 +12,9 @@ class Entity:
     A generic object to represent players, enemies, items, etc.
     """
 
-    def __init__(
-            self, x, y, char, color, name, blocks=False,
-            render_order=RenderOrder.CORPSE, fighter=None, 
-            ai=None, item=None, inventory=None, stairs=None, 
-            level=None, equipment=None, equippable=None):
+    def __init__(self, x, y, char, color, name, blocks=False,
+                 block_sight=False, render_order=RenderOrder.CORPSE,
+                 components=list()):
 
         # The entity's current position
         self.x = x
@@ -34,61 +32,56 @@ class Entity:
         # Is it a blocking entity?
         self.blocks = blocks
 
+        # Does it block LoS?
+        self.block_sight = block_sight
+
         # Render order
         self.render_order = render_order
+    
+        self.components = dict()
+        # Add components
+        for k, v in components.items():
+            self.add_component(k, v)
 
-        # Fighter component
-        self.fighter = fighter
+    def __getattr__(self, name):
+        """
+        Look through components
+        """
 
-        # AI component
-        self.ai = ai
+        # First check that name is a valid component type
+        # TODO to implement
+        if True:
+            # Return the corresponding component (or None)
+            return self.components.get(name)
+        else:
+            raise AttributeError()
 
-        # Represents an item (weapon, consumable, etc)
-        self.item = item
 
-        # The component representing the inventory of the entity
-        self.inventory = inventory
+    def add_component(self, component_type, component):
+        """
+        Add a component to the entity
+        """
 
-        # Component for stairs leading to other levels of the dungeon
-        self.stairs = stairs
+        def check_component_type(component_type, component):
+            """
+            Check that the component is of the correct type
+            """
 
-        # The level of the entity
-        self.level = level
+            # TODO stub
+            return True
 
-        # The entity can wear equipment
-        self.equipment = equipment
+        check_component_type(component_type, component)
 
-        # Is it an item that can be equipped?
-        self.equippable = equippable
+        component.owner = self
+        self.components[component_type] = component
 
-        if self.fighter:
-            self.fighter.owner = self
 
-        if self.ai:
-            self.ai.owner = self
-
-        if self.item:
-            self.item.owner = self
-
-        if self.inventory:
-            self.inventory.owner = self
-
-        if self.stairs:
-            self.stairs.owner = self
-
-        if self.level:
-            self.level.owner = self
-
-        if self.equipment:
-            self.equipment.owner = self
-
-        if self.equippable:
-            self.equippable.owner = self
-
-            if not self.item:
-                item = Item()
-                self.item = item
-                self.item.owner = self
+    @property
+    def c(self):
+        """
+        Shortcut to components attribute
+        """
+        return self.components
 
     def move(self, dx, dy):
         # Move the entity by a given amount

@@ -10,11 +10,11 @@ class Equipment:
     def max_hp_bonus(self):
         bonus = 0
 
-        if self.main_hand and self.main_hand.equippable:
-            bonus += self.main_hand.equippable.max_hp_bonus
+        if self.main_hand and self.main_hand.c['equippable']:
+            bonus += self.main_hand.c['equippable'].max_hp_bonus
 
-        if self.off_hand and self.off_hand.equippable:
-            bonus += self.off_hand.equippable.max_hp_bonus
+        if self.off_hand and self.off_hand.c['equippable']:
+            bonus += self.off_hand.c['equippable'].max_hp_bonus
 
         return bonus
 
@@ -22,11 +22,11 @@ class Equipment:
     def power_bonus(self):
         bonus = 0
 
-        if self.main_hand and self.main_hand.equippable:
-            bonus += self.main_hand.equippable.power_bonus
+        if self.main_hand and self.main_hand.c['equippable']:
+            bonus += self.main_hand.c['equippable'].power_bonus
 
-        if self.off_hand and self.off_hand.equippable:
-            bonus += self.off_hand.equippable.power_bonus
+        if self.off_hand and self.off_hand.c['equippable']:
+            bonus += self.off_hand.c['equippable'].power_bonus
 
         return bonus
 
@@ -34,18 +34,18 @@ class Equipment:
     def defense_bonus(self):
         bonus = 0
 
-        if self.main_hand and self.main_hand.equippable:
-            bonus += self.main_hand.equippable.defense_bonus
+        if self.main_hand and self.main_hand.c['equippable']:
+            bonus += self.main_hand.c['equippable'].defense_bonus
 
-        if self.off_hand and self.off_hand.equippable:
-            bonus += self.off_hand.equippable.defense_bonus
+        if self.off_hand and self.off_hand.c['equippable']:
+            bonus += self.off_hand.c['equippable'].defense_bonus
 
         return bonus
 
     def toggle_equip(self, equippable_entity):
         results = []
 
-        slot = equippable_entity.equippable.slot
+        slot = equippable_entity.c['equippable'].slot
 
         if slot == EquipmentSlots.MAIN_HAND:
             if self.main_hand == equippable_entity:

@@ -13,8 +13,8 @@ class Fighter:
 
     @property
     def max_hp(self):
-        if self.owner and self.owner.equipment:
-            bonus = self.owner.equipment.max_hp_bonus
+        if self.owner and self.owner.c.get('equipment'):
+            bonus = self.owner.c['equipment'].max_hp_bonus
         else:
             bonus = 0
 
@@ -22,8 +22,8 @@ class Fighter:
 
     @property
     def power(self):
-        if self.owner and self.owner.equipment:
-            bonus = self.owner.equipment.power_bonus
+        if self.owner and self.owner.c.get('equipment'):
+            bonus = self.owner.c['equipment'].power_bonus
         else:
             bonus = 0
 
@@ -31,8 +31,8 @@ class Fighter:
 
     @property
     def defense(self):
-        if self.owner and self.owner.equipment:
-            bonus = self.owner.equipment.defense_bonus
+        if self.owner and self.owner.c.get('equipment'):
+            bonus = self.owner.c['equipment'].defense_bonus
         else:
             bonus = 0
 
@@ -60,13 +60,13 @@ class Fighter:
 
         results = []
 
-        damage = self.power - target.fighter.defense
+        damage = self.power - target.c['fighter'].defense
 
         if damage > 0:
             results.append({'message': Message('{0} attacks {1} for {2} hit points.'.format(
                 self.owner.name.capitalize(), target.name, str(damage)), libtcod.white)})
 
-            results.extend(target.fighter.take_damage(damage))
+            results.extend(target.c['fighter'].take_damage(damage))
         else:
             results.append({'message': Message('{0} attacks {1} but does no damage.'.format(
                 self.owner.name.capitalize(), target.name), libtcod.white)})

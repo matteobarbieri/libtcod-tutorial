@@ -33,7 +33,7 @@ def play_game(player, game_map,
 
     targeting_item = None
 
-    entities = game_map.entities
+    # entities = game_map.entities
 
     ############################################
     ############### MAIN LOOP ##################
@@ -87,7 +87,8 @@ def play_game(player, game_map,
             destination_y = player.y + dy
 
             if not game_map.is_blocked(destination_x, destination_y):
-                target = get_blocking_entities_at_location(entities, destination_x, destination_y)
+                target = get_blocking_entities_at_location(
+                    game_map.entities, destination_x, destination_y)
 
                 if target:
                     attack_results = player.fighter.attack(target)
@@ -104,7 +105,7 @@ def play_game(player, game_map,
             game_state = GameStates.ENEMY_TURN
 
         elif pickup and game_state == GameStates.PLAYERS_TURN:
-            for entity in entities:
+            for entity in game_map.entities:
                 if entity.item and entity.x == player.x and entity.y == player.y:
                     pickup_results = player.inventory.add_item(entity)
                     player_turn_results.extend(pickup_results)
@@ -130,7 +131,9 @@ def play_game(player, game_map,
             item = player.inventory.items[inventory_index]
 
             if game_state == GameStates.SHOW_INVENTORY:
-                player_turn_results.extend(player.inventory.use(item, entities=entities, fov_map=fov_map))
+                player_turn_results.extend(
+                    player.inventory.use(
+                        item, entities=game_map.entities, fov_map=fov_map))
             elif game_state == GameStates.DROP_INVENTORY:
                 player_turn_results.extend(player.inventory.drop_item(item))
 
@@ -138,6 +141,8 @@ def play_game(player, game_map,
         if take_stairs and game_state == GameStates.PLAYERS_TURN:
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
+                    # TODO redo this part
+                    raise Exception("To be implemented")
                     entities = game_map.next_floor(player, message_log, constants)
                     fov_map = initialize_fov(game_map)
                     fov_recompute = True
@@ -190,7 +195,7 @@ def play_game(player, game_map,
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
-                save_game(player, entities, game_map, message_log, game_state)
+                save_game(player, game_map, message_log, game_state)
 
                 return True
         
@@ -294,7 +299,7 @@ def play_game(player, game_map,
                     game_state = GameStates.LEVEL_UP
 
         if game_state == GameStates.ENEMY_TURN:
-            for entity in entities:
+            for entity in game_map.entities:
                 if entity.ai:
                     enemy_turn_results = entity.ai.take_turn(player, fov_map, game_map, entities)
 
@@ -397,8 +402,7 @@ def main():
                 show_main_menu = False
             elif load_saved_game:
                 try:
-                    # TODO entities are in the map now
-                    player, entities, game_map, message_log, game_state = load_game()
+                    player, game_map, message_log, game_state = load_game()
                     show_main_menu = False
                 except FileNotFoundError:
                     show_load_error_message = True

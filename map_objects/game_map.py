@@ -1,4 +1,5 @@
-from entity import Entity
+# TODO temporarily disabled
+# from entity import Entity
 
 from enum import Enum
 
@@ -6,19 +7,18 @@ import logging
 
 from game_messages import Message
 
-from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
+# from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
 
 from map_objects.tile import Tile, Wall, Floor
 from map_objects.tile import Door as DoorTile
 
-from map_objects.rectangle import Rect
-
-from components.ai import BasicMonster
-from components.equipment import EquipmentSlots
-from components.equippable import Equippable
-from components.fighter import Fighter
-from components.item import Item
-from components.stairs import Stairs
+# TODO temporarily disabled
+# from components.ai import BasicMonster
+# from components.equipment import EquipmentSlots
+# from components.equippable import Equippable
+# from components.fighter import Fighter
+# from components.item import Item
+# from components.stairs import Stairs
 
 import random
 
@@ -28,7 +28,8 @@ from render_functions import RenderOrder
 
 import libtcodpy as libtcod
 
-from random_utils import from_dungeon_level, random_choice_from_dict
+# TODO temporarily disabled
+# from random_utils import from_dungeon_level, random_choice_from_dict
 
 from .directions import Direction
 
@@ -40,7 +41,7 @@ from .map_utils import NoMoreSpaceException
 class MapPart():
 
     def __init__(self, xy, available_directions=None):
-        # self.x1, self.y1, self.x2, self.y2 = xy
+
         self.xy = xy
         self.available_directions = available_directions
 

@@ -95,7 +95,7 @@ def draw_entity(terrain_layer, entity,
         libtcod.console_set_char_foreground(
             terrain_layer, entity.x-top_x, entity.y-top_y, entity.color)
             
-def render_all(terrain_layer, panel, entities, player, 
+def render_all(terrain_layer, panel, player, 
                game_map, fov_map, fov_recompute, 
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
@@ -148,7 +148,7 @@ def render_all(terrain_layer, panel, entities, player,
         # libtcod.console_clear(entities_layer)
         # Sort entities by their associated render order
         entities_in_render_order = sorted(
-            entities, key=lambda x: x.render_order.value)
+            game_map.entities, key=lambda x: x.render_order.value)
 
         # Draw all entities in the list in the correct order
         for entity in entities_in_render_order:
@@ -205,7 +205,7 @@ def render_all(terrain_layer, panel, entities, player,
         libtcod.BKGND_NONE,
         libtcod.LEFT,
         get_names_under_mouse(
-            mouse, entities, fov_map, top_x, top_y))
+            mouse, game_map.entities, fov_map, top_x, top_y))
 
     libtcod.console_blit(
         panel,
@@ -238,7 +238,7 @@ def render_all(terrain_layer, panel, entities, player,
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
 
-    clear_all(terrain_layer, entities, game_map, fov_map, top_x, top_y)
+    clear_all(terrain_layer, game_map.entities, game_map, fov_map, top_x, top_y)
 
     return top_x, top_y
 

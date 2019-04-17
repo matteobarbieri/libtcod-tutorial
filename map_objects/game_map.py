@@ -314,6 +314,13 @@ class GameMap:
         """
         return self.junctions + self.corridors + self.rooms
 
+    def get_player_starting_coords(self):
+        
+        # TODO!!!
+        for e in self.entities:
+            if e.char == '<':
+                return e.x, e.y
+
     def place_player(self, player):
         """
         Place player in the map
@@ -322,8 +329,9 @@ class GameMap:
         # TODO
         # Should place him/her in an entry/exit tile (depending on where they
         # came from).
-        starting_room = random.choice(self.rooms)
-        x, y = starting_room.center 
+        # starting_room = random.choice(self.rooms)
+        
+        x, y = self.get_player_starting_coords()
         player.x = x
         player.y = y
 
@@ -418,19 +426,33 @@ class GameMap:
             db['level'] = self
 
     def export_txt(self, txt_file):
+
+        entities_dict = dict()
+
+        for e in self.entities:
+            entities_dict[(e.x, e.y)] = e
+
         with open(txt_file, 'w') as tf:
             for y in range(self.height):
                 for x in range(self.width):
 
-                    t = self.tiles[x][y]
-                    if type(t) == Floor:
-                        tf.write(".")
-                    elif type(t) == DoorTile:
-                        tf.write("+")
-                    elif type(t) == Wall:
-                        tf.write("#")
+                    e = entities_dict.get((x, y))
+
+                    # If there is an entity, show that
+                    if e is not None:
+                        tf.write(e.char)
+
+                    # Else show the terrain element
                     else:
-                        tf.write(" ")
+                        t = self.tiles[x][y]
+                        if type(t) == Floor:
+                            tf.write(".")
+                        elif type(t) == DoorTile:
+                            tf.write("+")
+                        elif type(t) == Wall:
+                            tf.write("#")
+                        else:
+                            tf.write(" ")
 
                 tf.write("\n")
 

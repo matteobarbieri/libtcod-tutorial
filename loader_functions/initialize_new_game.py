@@ -111,11 +111,8 @@ def get_game_variables(constants):
 
     # Create the Player object
     player = Entity(
-        0,
-        0,
-        '@',
-        libtcod.white,
-        'Player',
+        0, 0, # Coordinates - useless here
+        '@', libtcod.white, 'Player', # Appearance
         blocks=True,
         render_order=RenderOrder.ACTOR,
         fighter=fighter_component,

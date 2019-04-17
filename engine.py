@@ -50,7 +50,7 @@ def play_game(player, game_map,
 
         render_all(
             terrain_layer, panel, 
-            entities, player, game_map, fov_map, fov_recompute, 
+            player, game_map, fov_map, fov_recompute, 
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state)
 

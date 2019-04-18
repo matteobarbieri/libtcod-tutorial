@@ -1,5 +1,11 @@
 import libtcodpy as libtcod
 
+import argparse
+
+import random
+
+import sys
+
 from entity import get_blocking_entities_at_location
 from input_handlers import handle_keys, handle_mouse, handle_main_menu
 from loader_functions.initialize_new_game import get_constants, get_game_variables
@@ -11,6 +17,15 @@ from game_states import GameStates
 from death_functions import kill_monster, kill_player
 
 from game_messages import Message
+
+def parse_args():
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--seed', type=int)
+
+    return parser.parse_args()
 
 
 def play_game(player, game_map, 
@@ -332,6 +347,17 @@ def play_game(player, game_map,
 
 
 def main():
+
+    args = parse_args()
+
+    if args.seed is None:
+        args.seed = random.randrange(sys.maxsize)
+
+    # Initialize random number generator
+    print("Seed was:", args.seed)
+    random.seed(args.seed)
+
+
     constants = get_constants()
 
     # libtcod.console_set_custom_font(

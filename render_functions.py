@@ -80,8 +80,9 @@ def draw_entity(terrain_layer, entity,
                 fov_map, game_map, top_x=0, top_y=0):
 
     # Only draw entities that are in player's fov
-    if (libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or \
-        (entity.stairs and game_map.tiles[entity.x][entity.y].explored)):
+    if  libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or \
+        (entity.c['stairs'] and game_map.tiles[entity.x][entity.y].explored):
+        # TODO include case for doors
 
         # print("Bgcolor: {}".format(bg_color))
 
@@ -95,7 +96,7 @@ def draw_entity(terrain_layer, entity,
         libtcod.console_set_char_foreground(
             terrain_layer, entity.x-top_x, entity.y-top_y, entity.color)
             
-def render_all(terrain_layer, panel, entities, player, 
+def render_all(terrain_layer, panel, player, 
                game_map, fov_map, fov_recompute, 
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
@@ -144,11 +145,12 @@ def render_all(terrain_layer, panel, entities, player,
     #########################################
     ######### Render entities  #########
     #########################################
+
     if redraw_terrain or redraw_entities:
         # libtcod.console_clear(entities_layer)
         # Sort entities by their associated render order
         entities_in_render_order = sorted(
-            entities, key=lambda x: x.render_order.value)
+            game_map.entities, key=lambda x: x.render_order.value)
 
         # Draw all entities in the list in the correct order
         for entity in entities_in_render_order:
@@ -157,6 +159,7 @@ def render_all(terrain_layer, panel, entities, player,
 
         libtcod.console_blit(terrain_layer, 0, 0, screen_width, screen_height, 0, 0, 0)
 
+        # TODO why am I doing this twice???
         # Delete them from the layer right after drawing them
         # Draw all entities in the list in the correct order
         for entity in entities_in_render_order:
@@ -182,15 +185,9 @@ def render_all(terrain_layer, panel, entities, player,
 
     # Render the HP bar
     render_bar(
-        panel,
-        1,
-        1,
-        bar_width,
-        'HP',
-        player.fighter.hp,
-        player.fighter.max_hp,
-        libtcod.light_red,
-        libtcod.darker_red)
+        panel, 1, 1, bar_width,
+        'HP', player.c['fighter'].hp, player.c['fighter'].max_hp,
+        libtcod.light_red, libtcod.darker_red)
 
     # Show current dungeon level
     libtcod.console_print_ex(panel, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT,
@@ -205,7 +202,7 @@ def render_all(terrain_layer, panel, entities, player,
         libtcod.BKGND_NONE,
         libtcod.LEFT,
         get_names_under_mouse(
-            mouse, entities, fov_map, top_x, top_y))
+            mouse, game_map.entities, fov_map, top_x, top_y))
 
     libtcod.console_blit(
         panel,
@@ -238,7 +235,7 @@ def render_all(terrain_layer, panel, entities, player,
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
 
-    clear_all(terrain_layer, entities, game_map, fov_map, top_x, top_y)
+    clear_all(terrain_layer, game_map.entities, game_map, fov_map, top_x, top_y)
 
     return top_x, top_y
 

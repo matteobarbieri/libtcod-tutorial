@@ -5,6 +5,7 @@ from components.equippable import Equippable
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
+from components.item import Item
 
 from entity import Entity
 
@@ -18,6 +19,7 @@ from map_objects.old import GameMap
 
 from render_functions import RenderOrder
 
+from map_objects.generators.dungeon import generate_dungeon_level
 
 def get_constants():
     window_title = 'Roguelike Tutorial Revised'
@@ -39,10 +41,9 @@ def get_constants():
     message_height = panel_height - 1
 
     # Size of the playing map
-    # map_width = 80
-    # map_height = 43
-    map_width = 160
-    map_height = 80
+    # Must be greater or equal than screen in order to avoid the "pacman effect"
+    map_width = 110
+    map_height = 100
 
     # Parameters for rooms generation
     room_max_size = 10
@@ -94,6 +95,10 @@ def get_constants():
 
 def get_game_variables(constants):
 
+    # TODO use parameters
+    game_map = generate_dungeon_level(
+        constants['map_width'], constants['map_height'], 10, 20)
+
     # Fighter component for player
     fighter_component = Fighter(hp=100, defense=1, power=2)
     
@@ -108,45 +113,37 @@ def get_game_variables(constants):
 
     # Create the Player object
     player = Entity(
-        0,
-        0,
-        '@',
-        libtcod.white,
-        'Player',
+        0, 0, # Coordinates - useless here
+        '@', libtcod.white, 'Player', # Appearance
         blocks=True,
         render_order=RenderOrder.ACTOR,
-        fighter=fighter_component,
-        inventory=inventory_component,
-        level=level_component,
-        equipment=equipment_component
+        components=dict(
+            fighter=fighter_component,
+            inventory=inventory_component,
+            level=level_component,
+            equipment=equipment_component
+        )
     )
-
-    entities = [player]
 
     # Give a starting item, a dagger
     equippable_component = Equippable(
         EquipmentSlots.MAIN_HAND, power_bonus=2)
     dagger = Entity(
-        0, 0, '-', libtcod.sky, 'Dagger', 
-        equippable=equippable_component)
+        0, 0, '-', libtcod.sky, 'Dagger',
+        components=dict(equippable=equippable_component, item=Item()))
+    
     player.inventory.add_item(dagger)
     player.equipment.toggle_equip(dagger)
 
-    # Create the game map
-    game_map = GameMap(constants['map_width'], constants['map_height'])
-    game_map.make_map(
-        constants['max_rooms'], 
-        constants['room_min_size'], 
-        constants['room_max_size'],
-        constants['map_width'], 
-        constants['map_height'], 
-        player, 
-        entities)
+    # Place player in the map
+    game_map.place_player(player)
 
     # Initialize message log
-    message_log = MessageLog(constants['message_x'], constants['message_width'], constants['message_height'])
+    message_log = MessageLog(
+        constants['message_x'], constants['message_width'],
+        constants['message_height'])
 
     # Begin the game in player's turn
     game_state = GameStates.PLAYERS_TURN
 
-    return player, entities, game_map, message_log, game_state
+    return player, game_map, message_log, game_state

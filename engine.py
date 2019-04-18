@@ -1,5 +1,11 @@
 import libtcodpy as libtcod
 
+import argparse
+
+import random
+
+import sys
+
 from entity import get_blocking_entities_at_location
 from input_handlers import handle_keys, handle_mouse, handle_main_menu
 from loader_functions.initialize_new_game import get_constants, get_game_variables
@@ -12,8 +18,17 @@ from death_functions import kill_monster, kill_player
 
 from game_messages import Message
 
+def parse_args():
 
-def play_game(player, entities, game_map, 
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--seed', type=int)
+
+    return parser.parse_args()
+
+
+def play_game(player, game_map, 
               message_log, game_state, 
               terrain_layer, 
               panel, constants):
@@ -33,6 +48,8 @@ def play_game(player, entities, game_map,
 
     targeting_item = None
 
+    # entities = game_map.entities
+
     ############################################
     ############### MAIN LOOP ##################
     ############################################
@@ -48,7 +65,7 @@ def play_game(player, entities, game_map,
 
         render_all(
             terrain_layer, panel, 
-            entities, player, game_map, fov_map, fov_recompute, 
+            player, game_map, fov_map, fov_recompute, 
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state)
 
@@ -85,7 +102,8 @@ def play_game(player, entities, game_map,
             destination_y = player.y + dy
 
             if not game_map.is_blocked(destination_x, destination_y):
-                target = get_blocking_entities_at_location(entities, destination_x, destination_y)
+                target = get_blocking_entities_at_location(
+                    game_map.entities, destination_x, destination_y)
 
                 if target:
                     attack_results = player.fighter.attack(target)
@@ -102,7 +120,7 @@ def play_game(player, entities, game_map,
             game_state = GameStates.ENEMY_TURN
 
         elif pickup and game_state == GameStates.PLAYERS_TURN:
-            for entity in entities:
+            for entity in game_map.entities:
                 if entity.item and entity.x == player.x and entity.y == player.y:
                     pickup_results = player.inventory.add_item(entity)
                     player_turn_results.extend(pickup_results)
@@ -128,7 +146,9 @@ def play_game(player, entities, game_map,
             item = player.inventory.items[inventory_index]
 
             if game_state == GameStates.SHOW_INVENTORY:
-                player_turn_results.extend(player.inventory.use(item, entities=entities, fov_map=fov_map))
+                player_turn_results.extend(
+                    player.inventory.use(
+                        item, entities=game_map.entities, fov_map=fov_map))
             elif game_state == GameStates.DROP_INVENTORY:
                 player_turn_results.extend(player.inventory.drop_item(item))
 
@@ -136,6 +156,8 @@ def play_game(player, entities, game_map,
         if take_stairs and game_state == GameStates.PLAYERS_TURN:
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
+                    # TODO redo this part
+                    raise Exception("To be implemented")
                     entities = game_map.next_floor(player, message_log, constants)
                     fov_map = initialize_fov(game_map)
                     fov_recompute = True
@@ -188,7 +210,7 @@ def play_game(player, entities, game_map,
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
-                save_game(player, entities, game_map, message_log, game_state)
+                save_game(player, game_map, message_log, game_state)
 
                 return True
         
@@ -292,7 +314,7 @@ def play_game(player, entities, game_map,
                     game_state = GameStates.LEVEL_UP
 
         if game_state == GameStates.ENEMY_TURN:
-            for entity in entities:
+            for entity in game_map.entities:
                 if entity.ai:
                     enemy_turn_results = entity.ai.take_turn(player, fov_map, game_map, entities)
 
@@ -325,6 +347,17 @@ def play_game(player, entities, game_map,
 
 
 def main():
+
+    args = parse_args()
+
+    if args.seed is None:
+        args.seed = random.randrange(sys.maxsize)
+
+    # Initialize random number generator
+    print("Seed was:", args.seed)
+    random.seed(args.seed)
+
+
     constants = get_constants()
 
     # libtcod.console_set_custom_font(
@@ -387,7 +420,7 @@ def main():
             if show_load_error_message and (new_game or load_saved_game or exit_game):
                 show_load_error_message = False
             elif new_game:
-                player, entities, game_map, message_log, game_state = get_game_variables(constants)
+                player, game_map, message_log, game_state = get_game_variables(constants)
                 game_state = GameStates.PLAYERS_TURN
 
                 game_map.export_txt('maps_txt/lastmap.txt')
@@ -395,7 +428,7 @@ def main():
                 show_main_menu = False
             elif load_saved_game:
                 try:
-                    player, entities, game_map, message_log, game_state = load_game()
+                    player, game_map, message_log, game_state = load_game()
                     show_main_menu = False
                 except FileNotFoundError:
                     show_load_error_message = True
@@ -405,7 +438,7 @@ def main():
         else:
             libtcod.console_clear(terrain_layer)
             play_game(
-                player, entities, game_map, message_log, game_state,
+                player, game_map, message_log, game_state,
                 terrain_layer, panel, constants)
 
             show_main_menu = True

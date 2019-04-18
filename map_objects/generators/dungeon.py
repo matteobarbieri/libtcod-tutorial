@@ -16,6 +16,13 @@ from ..map_utils import area_is_available
 
 from ..map_utils import NoMoreSpaceException
 
+import libtcodpy as libtcod
+
+from components.stairs import Stairs
+
+from render_functions import RenderOrder
+
+from entity import Entity
 
 class Tunneller():
 
@@ -581,7 +588,44 @@ def add_walls(level):
                        ## Create wall
                        level.tiles[X][Y] = Wall.create_from_palette()
 
+def add_exits(level, sorted_distance_list):
+    """
+    Add stairs for previous and next dungeon level
+    """
+
+    # Choose and exit room
+    exit_room = random.choice(level.rooms)
+
+    # Choose the entry room (must be different from the exit room)
+    while True:
+        entry_room = random.choice(level.rooms)
+        if entry_room != exit_room:
+            break
+
+    # Create and add exit stairs '>'
+    exit_x, exit_y = exit_room.center
+
+    down_stairs_component = Stairs(level.dungeon_level + 1)
+    down_stairs = Entity(
+        exit_x, exit_y, '>', 
+        libtcod.white, 'Stairs down', render_order=RenderOrder.STAIRS, 
+        components=dict(stairs=down_stairs_component))
+
+    level.entities.append(down_stairs)
+
+    # Create and add entry stairs '<'
+    entry_x, entry_y = entry_room.center
+
+    up_stairs_component = Stairs(level.dungeon_level - 1)
+    up_stairs = Entity(
+        entry_x, entry_y, '<',
+        libtcod.white, 'Stairs up', render_order=RenderOrder.STAIRS,
+        components=dict(stairs=up_stairs_component))
+
+    level.entities.append(up_stairs)
+
 def generate_dungeon_level(width, height, min_room_length, max_room_length):
+    # TODO add parameters (and use them!)
 
     level = GameMap(width, height)
 
@@ -634,6 +678,10 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     # Add an external layer of walls to rooms
     logging.getLogger().info("Adding walls")
     add_walls(level)
+
+    # Add exits
+    logging.getLogger().info("Adding exists")
+    add_exits(level, sorted_distance_list)
 
     return level
 

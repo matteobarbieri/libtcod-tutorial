@@ -1,4 +1,5 @@
-from entity import Entity
+# TODO temporarily disabled
+# from entity import Entity
 
 from enum import Enum
 
@@ -6,19 +7,18 @@ import logging
 
 from game_messages import Message
 
-from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
+# from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
 
 from map_objects.tile import Tile, Wall, Floor
 from map_objects.tile import Door as DoorTile
 
-from map_objects.rectangle import Rect
-
-from components.ai import BasicMonster
-from components.equipment import EquipmentSlots
-from components.equippable import Equippable
-from components.fighter import Fighter
-from components.item import Item
-from components.stairs import Stairs
+# TODO temporarily disabled
+# from components.ai import BasicMonster
+# from components.equipment import EquipmentSlots
+# from components.equippable import Equippable
+# from components.fighter import Fighter
+# from components.item import Item
+# from components.stairs import Stairs
 
 import random
 
@@ -28,7 +28,8 @@ from render_functions import RenderOrder
 
 import libtcodpy as libtcod
 
-from random_utils import from_dungeon_level, random_choice_from_dict
+# TODO temporarily disabled
+# from random_utils import from_dungeon_level, random_choice_from_dict
 
 from .directions import Direction
 
@@ -40,7 +41,7 @@ from .map_utils import NoMoreSpaceException
 class MapPart():
 
     def __init__(self, xy, available_directions=None):
-        # self.x1, self.y1, self.x2, self.y2 = xy
+
         self.xy = xy
         self.available_directions = available_directions
 
@@ -314,6 +315,30 @@ class GameMap:
         """
         return self.junctions + self.corridors + self.rooms
 
+    def get_player_starting_coords(self):
+        
+        # TODO!!!
+        for e in self.entities:
+            if e.char == '<':
+                return e.x, e.y
+
+    def place_player(self, player):
+        """
+        Place player in the map
+        """
+
+        # TODO
+        # Should place him/her in an entry/exit tile (depending on where they
+        # came from).
+        # starting_room = random.choice(self.rooms)
+        
+        x, y = self.get_player_starting_coords()
+        player.x = x
+        player.y = y
+
+        # Add player to list of entities
+        self.entities.append(player)
+
     def add_part(self, part):
         """
         Add a part to the map and also dig it
@@ -402,19 +427,33 @@ class GameMap:
             db['level'] = self
 
     def export_txt(self, txt_file):
+
+        entities_dict = dict()
+
+        for e in self.entities:
+            entities_dict[(e.x, e.y)] = e
+
         with open(txt_file, 'w') as tf:
             for y in range(self.height):
                 for x in range(self.width):
 
-                    t = self.tiles[x][y]
-                    if type(t) == Floor:
-                        tf.write(".")
-                    elif type(t) == DoorTile:
-                        tf.write("+")
-                    elif type(t) == Wall:
-                        tf.write("#")
+                    e = entities_dict.get((x, y))
+
+                    # If there is an entity, show that
+                    if e is not None:
+                        tf.write(e.char)
+
+                    # Else show the terrain element
                     else:
-                        tf.write(" ")
+                        t = self.tiles[x][y]
+                        if type(t) == Floor:
+                            tf.write(".")
+                        elif type(t) == DoorTile:
+                            tf.write("+")
+                        elif type(t) == Wall:
+                            tf.write("#")
+                        else:
+                            tf.write(" ")
 
                 tf.write("\n")
 

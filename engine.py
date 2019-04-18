@@ -57,6 +57,9 @@ def play_game(player, game_map,
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
 
+        ############################################
+        ########### RENDER GAME WINDOW #############
+        ############################################
         if fov_recompute:
             recompute_fov(
                 fov_map, player.x, player.y, 
@@ -75,27 +78,61 @@ def play_game(player, game_map,
 
         libtcod.console_flush()
 
-        action = handle_keys(key, game_state)
-        mouse_action = handle_mouse(mouse)
+        if game_state in [GameStates.PLAYERS_TURN,]:
 
-        move = action.get('move')
-        wait = action.get('wait')
-        pickup = action.get('pickup')
-        show_inventory = action.get('show_inventory')
-        drop_inventory = action.get('drop_inventory')
-        inventory_index = action.get('inventory_index')
-        take_stairs = action.get('take_stairs')
-        level_up = action.get('level_up')
-        exit = action.get('exit')
-        fullscreen = action.get('fullscreen')
-        show_character_screen = action.get('show_character_screen')
-        
+            ############################################
+            ############# EXECUTE ACTIONS ##############
+            ############################################
+            action = handle_keys(key, game_state)
 
-        left_click = mouse_action.get('left_click')
-        right_click = mouse_action.get('right_click')
+            # TODO to restore
+            # mouse_action = handle_mouse(mouse)
 
-        player_turn_results = []
+            ####### UPDATED
 
+            ####### TO UPDATE
+            # move = action.get('move')
+            # wait = action.get('wait')
+            # pickup = action.get('pickup')
+            # show_inventory = action.get('show_inventory')
+            # drop_inventory = action.get('drop_inventory')
+            # inventory_index = action.get('inventory_index')
+            # take_stairs = action.get('take_stairs')
+            # level_up = action.get('level_up')
+            # exit = action.get('exit')
+            # fullscreen = action.get('fullscreen')
+            # show_character_screen = action.get('show_character_screen')
+            
+            # TODO to restore
+            # left_click = mouse_action.get('left_click')
+            # right_click = mouse_action.get('right_click')
+
+            player_turn_results = []
+
+            # Add all objects required to perform any action
+            action.set_context(game_map, player)
+
+            # Execute it
+            outcome = action.execute()
+
+            if outcome is not None:
+                # Update game state and results
+                game_state = outcome['next_state']
+                player_turn_results.extend(outcome['results'])
+                
+                if outcome.get('fov_recompute') is not None:
+                    fov_recompute = outcome.get('fov_recompute')
+
+                if outcome.get('redraw_terrain') is not None:
+                    redraw_terrain = outcome.get('redraw_terrain')
+
+        elif game_state == GameStates.ENEMY_TURN:
+
+            # Simply go back to player's turn state
+            game_state = GameStates.PLAYERS_TURN
+            redraw_entities = True
+
+        """
         if move and game_state == GameStates.PLAYERS_TURN:
             dx, dy = move
             destination_x = player.x + dx
@@ -114,8 +151,13 @@ def play_game(player, game_map,
                     fov_recompute = True
                     redraw_terrain = True
 
-                game_state = GameStates.ENEMY_TURN
+                # TODO uncomment
+                # game_state = GameStates.ENEMY_TURN
 
+        """
+
+        ### COMMENT FROM HERE ###
+        """
         elif wait:
             game_state = GameStates.ENEMY_TURN
 
@@ -344,7 +386,8 @@ def play_game(player, game_map,
                 game_state = GameStates.PLAYERS_TURN
                 redraw_entities = True
 
-
+        """
+        ### COMMENT TO HERE ###
 
 def main():
 

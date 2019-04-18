@@ -2,6 +2,7 @@ import libtcodpy as libtcod
 
 from game_states import GameStates
 
+from actions import *
 
 def handle_keys(key, game_state):
     """
@@ -74,29 +75,49 @@ def handle_character_screen(key):
 
 
 def handle_player_turn_keys(key):
-    # Movement keys
+
+
+    # Code to prevent double input 
     key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
 
+    """
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
         return {'fullscreen': True}
+    """
 
+    #########################################
+    ############## MOVEMENT #################
+    #########################################
     if key.vk == libtcod.KEY_UP or key_char == 'k':
-        return {'move': (0, -1)}
+        # return {'move': (0, -1)}
+        return MoveAction(direction=(0, -1))
     elif key.vk == libtcod.KEY_DOWN or key_char == 'j':
-        return {'move': (0, 1)}
+        # return {'move': (0, 1)}
+        return MoveAction(direction=(0, 1))
     elif key.vk == libtcod.KEY_LEFT or key_char == 'h':
-        return {'move': (-1, 0)}
+        # return {'move': (-1, 0)}
+        return MoveAction(direction=(-1, 0))
     elif key.vk == libtcod.KEY_RIGHT or key_char == 'l':
-        return {'move': (1, 0)}
+        # return {'move': (1, 0)}
+        return MoveAction(direction=(1, 0))
     elif key_char == 'y':
-        return {'move': (-1, -1)}
+        # return {'move': (-1, -1)}
+        return MoveAction(direction=(-1, -1))
     elif key_char == 'u':
-        return {'move': (1, -1)}
+        # return {'move': (1, -1)}
+        return MoveAction(direction=(1, -1))
     elif key_char == 'b':
-        return {'move': (-1, 1)}
+        # return {'move': (-1, 1)}
+        return MoveAction(direction=(-1, 1))
     elif key_char == 'n':
-        return {'move': (1, 1)}
+        # return {'move': (1, 1)}
+        return MoveAction(direction=(1, 1))
+
+    """
+    #########################################
+    ############## MOVEMENT #################
+    #########################################
     elif key_char == 'z':
         return {'wait': True}
     elif key_char == 'g':
@@ -114,8 +135,11 @@ def handle_player_turn_keys(key):
         # Exit the game
         return {'exit': True}
 
+    """
+
     # No key was pressed
-    return {}
+    # return {}
+    return NoopAction()
 
 def handle_targeting_keys(key):
     if key.vk == libtcod.KEY_ESCAPE:

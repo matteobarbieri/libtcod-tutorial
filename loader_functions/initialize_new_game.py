@@ -41,7 +41,8 @@ def get_constants():
     message_height = panel_height - 1
 
     # Size of the playing map
-    map_width = 100
+    # Must be greater or equal than screen in order to avoid the "pacman effect"
+    map_width = 110
     map_height = 100
 
     # Parameters for rooms generation

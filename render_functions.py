@@ -145,6 +145,7 @@ def render_all(terrain_layer, panel, player,
     #########################################
     ######### Render entities  #########
     #########################################
+
     if redraw_terrain or redraw_entities:
         # libtcod.console_clear(entities_layer)
         # Sort entities by their associated render order
@@ -158,6 +159,7 @@ def render_all(terrain_layer, panel, player,
 
         libtcod.console_blit(terrain_layer, 0, 0, screen_width, screen_height, 0, 0, 0)
 
+        # TODO why am I doing this twice???
         # Delete them from the layer right after drawing them
         # Draw all entities in the list in the correct order
         for entity in entities_in_render_order:

@@ -43,6 +43,13 @@ class Entity:
         for k, v in components.items():
             self.add_component(k, v)
 
+    # Fix the NoneType callable  due to overriding __getattr__ method
+    def __getstate__(self):
+        return self.__dict__
+
+    def __setstate__(self, d):
+        self.__dict__.update(d)
+
     def __getattr__(self, name):
         """
         Look through components

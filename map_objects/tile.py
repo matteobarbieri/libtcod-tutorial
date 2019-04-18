@@ -55,13 +55,13 @@ class Tile:
             con, x, y, self.bg_color, libtcod.BKGND_SET)
 
         if self.fg_symbol is not None:
-            # Set color for foreground symbol
-            libtcod.console_set_default_foreground(
-                con, self.fg_color)
 
             # Draw symbol on foreground
             libtcod.console_put_char(
                 con, x, y, self.fg_symbol, libtcod.BKGND_NONE)
+
+            # Set color for foreground symbol
+            libtcod.console_set_char_foreground(con, x, y, self.fg_color)
 
 
 class Floor(Tile):

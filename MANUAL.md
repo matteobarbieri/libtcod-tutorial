@@ -24,9 +24,10 @@ if any, are lost). So maybe find a nice quite spot to tend to that wound ;)
  * **Strength** (**STR**): maximum **load**, melee bonus damage
  * **Dexterity** (**DEX**): melee and ranged toHit modifiers.
  * **Tech** (**TCH**): the ability to handle technological instruments.
- * **Arcane** (**ARN**): determines maximum mana points and their recovery
+ * **Arcane** (**ARC**): determines maximum mana points and their recovery
    rate. Also bonus spell damage.
- * **Constitution** (**CON**): determines maximum health points (**HP**), Stamina points and their recovery rate.
+ * **Constitution** (**CON**): determines maximum health points (**HP**), 
+   Stamina points and their recovery rate.
 
 ### Classes
 

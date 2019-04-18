@@ -34,6 +34,20 @@ There are several factions (not many). Accepting some contracts instead of
 others may influence the _reputation_, which in turns may lock/unlock
 purchasable upgrades.
 
+## Classes
+
+It might make sense to think of four base classes (each based on one of the main
+stats (**STR**, **DEX**, **TCH**, **ARC**) and give the player the possibility
+to choose a sort of a secondary class later in the game.
+
+## Abilities
+
+Divided in three scopes:
+
+ * Offense
+ * Defense
+ * Mobility
+
 ## Strategy Layer
 
 ### Activities

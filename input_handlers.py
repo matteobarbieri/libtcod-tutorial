@@ -89,6 +89,7 @@ def handle_player_turn_keys(key):
     #########################################
     ############## MOVEMENT #################
     #########################################
+
     if key.vk == libtcod.KEY_UP or key_char == 'k':
         # return {'move': (0, -1)}
         return MoveAction(direction=(0, -1))
@@ -114,6 +115,14 @@ def handle_player_turn_keys(key):
         # return {'move': (1, 1)}
         return MoveAction(direction=(1, 1))
 
+    #########################################
+    ########### GO TO MAIN MENU #############
+    #########################################
+
+    elif key.vk == libtcod.KEY_ESCAPE:
+        # Show main menu
+        return ShowMenuAction()
+
     """
     #########################################
     ############## MOVEMENT #################
@@ -131,11 +140,16 @@ def handle_player_turn_keys(key):
     elif key_char == 'c':
         return {'show_character_screen': True}
 
+    # Updated
     elif key.vk == libtcod.KEY_ESCAPE:
         # Exit the game
         return {'exit': True}
-
     """
+
+
+    # elif key_char == 'n':
+        # # return {'move': (1, 1)}
+        # return MoveAction(direction=(1, 1))
 
     # No key was pressed
     # return {}

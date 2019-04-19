@@ -18,6 +18,8 @@ from death_functions import kill_monster, kill_player
 
 from game_messages import Message
 
+from actions import ShowMenuException
+
 def parse_args():
 
     parser = argparse.ArgumentParser()
@@ -110,10 +112,14 @@ def play_game(player, game_map,
             player_turn_results = []
 
             # Add all objects required to perform any action
-            action.set_context(game_map, player)
+            action.set_context(game_map, player, message_log)
 
             # Execute it
-            outcome = action.execute()
+            try:
+                outcome = action.execute()
+            except ShowMenuException:
+                # Exit main game loop and return to main menu
+                return True
 
             if outcome is not None:
                 # Update game state and results
@@ -252,6 +258,7 @@ def play_game(player, game_map,
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
+                # Go back to main menu
                 save_game(player, game_map, message_log, game_state)
 
                 return True

@@ -121,14 +121,24 @@ def play_game(player, game_map,
                 # Exit main game loop and return to main menu
                 return True
 
+            ############################################
+            ############# RESOLVE OUTCOME ##############
+            ############################################
             if outcome is not None:
-                # Update game state and results
-                game_state = outcome['next_state']
-                player_turn_results.extend(outcome['results'])
+
+                # Update game state
+                if outcome.get('next_state') is not None:
+                    game_state = outcome.get('next_state')
+
+                # Update results
+                if outcome.get('results') is not None:
+                    player_turn_results.extend(outcome['results'])
                 
+                # Determine whether to recompute fov...
                 if outcome.get('fov_recompute') is not None:
                     fov_recompute = outcome.get('fov_recompute')
 
+                # Or redraw terrain
                 if outcome.get('redraw_terrain') is not None:
                     redraw_terrain = outcome.get('redraw_terrain')
 

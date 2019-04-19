@@ -123,6 +123,14 @@ def handle_player_turn_keys(key):
         # Show main menu
         return ShowMenuAction()
 
+    #########################################
+    ########## TOGGLE FULLSCREEN ############
+    #########################################
+
+    if key.vk == libtcod.KEY_ENTER and key.lalt:
+        # Alt+Enter: toggle full screen
+        return ToggleFullscreenAction()
+
     """
     #########################################
     ############## MOVEMENT #################

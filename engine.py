@@ -142,6 +142,11 @@ def play_game(player, game_map,
                 if outcome.get('redraw_terrain') is not None:
                     redraw_terrain = outcome.get('redraw_terrain')
 
+                # Add messages to the log
+                if outcome.get('messages') is not None:
+                    for m in outcome.get('messages'):
+                        message_log.add_message(m)
+
         elif game_state == GameStates.ENEMY_TURN:
 
             # Simply go back to player's turn state

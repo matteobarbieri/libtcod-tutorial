@@ -28,6 +28,33 @@ A: ...
   XBOX-like controller (or at least the same amount of inputs).
 - Boss fights?
 
+## Game mechanics
+
+How about NOT having stats at all, meaning that it is automatically assumed that
+a character of a given class would have no reason to increase stats that are not
+their main one?
+
+Or maybe providing sort of templates but not a real class system?
+
+### Combat
+
+ * **Melee**: hitting is relatively easy (let's say base 75% chance), moderate
+   amount of damage.
+ * **Ranged**: hitting is less easy without a decent bonus in precision (given
+   by weapon/stats/range). Firing rate depends on weapon.
+ * **Ability/spell**: hitting is almost automatic, also damage dealt is usually
+   high, however there is a limit to the frequency of attacks due to 
+   _cooldown_/_energy cost_.
+ * **Pets/turrets**: Sort of constant _DOT_, however the final blow most of the
+   times will have to be inflicted by the player.
+
+In case the enemy has multiple viable targets (i.e. the player and his/her
+minions/pets/mercenaries), use a smart threat system to choose the target (and
+possibly stick to it after that, it would not really make sense for a mob to
+continuously switch target).
+
+
+
 ### Factions
 
 There are several factions (not many). Accepting some contracts instead of
@@ -40,13 +67,14 @@ It might make sense to think of four base classes (each based on one of the main
 stats (**STR**, **DEX**, **TCH**, **ARC**) and give the player the possibility
 to choose a sort of a secondary class later in the game.
 
-## Abilities
+## Abilities/spells
 
 Divided in three scopes:
 
  * Offense
  * Defense
  * Mobility
+ * Support
 
 ## Strategy Layer
 

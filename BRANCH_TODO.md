@@ -1,5 +1,7 @@
 ### Next
 
+* **BUG**: Orcs stuck in walls
+* Doors must be entities, and block LoS when closed
 * A junction should have a minimun size of 2+ the width of the corridor it
   originates from.
 

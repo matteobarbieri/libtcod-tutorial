@@ -24,6 +24,9 @@ from render_functions import RenderOrder
 
 from entity import Entity
 
+from components.ai import BasicMonster
+from components.fighter import Fighter
+
 class Tunneller():
 
     last_direction = None
@@ -588,6 +591,40 @@ def add_walls(level):
                        ## Create wall
                        level.tiles[X][Y] = Wall.create_from_palette()
 
+def add_monsters(level):
+    """
+    Add stairs for previous and next dungeon level
+    """
+
+    for room in level.rooms:
+        # TODO for now, just generate an orc in every room
+        if random.random() < 2:
+
+            # TODO must change for non square rooms
+            # Unpack room coordinates
+            x1, y1, x2, y2 = room.xy
+            x = random.randint(x1+1, x2)
+            y = random.randint(y1+1, y2)
+
+            # Spawn and add an orc 'o' in the room
+            fighter_component = Fighter(
+                hp=20, defense=0, power=4, xp=35)
+            ai_component = BasicMonster()
+
+            monster = Entity(
+                x, y,
+                'o', libtcod.desaturated_green,
+                'Orc',
+                blocks=True,
+                render_order=RenderOrder.ACTOR,
+                components=dict(
+                    fighter=fighter_component,
+                    ai=ai_component)
+            )
+
+            level.entities.append(monster)
+
+
 def add_exits(level, sorted_distance_list):
     """
     Add stairs for previous and next dungeon level
@@ -682,6 +719,11 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     # Add exits
     logging.getLogger().info("Adding exists")
     add_exits(level, sorted_distance_list)
+
+    # Populate Dungeon with entities
+    # Monsters
+    add_monsters(level)
+
 
     return level
 

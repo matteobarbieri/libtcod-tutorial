@@ -12,9 +12,10 @@ class Entity:
     A generic object to represent players, enemies, items, etc.
     """
 
+    # TODO change components to kwargs
     def __init__(self, x, y, char, color, name, blocks=False,
                  block_sight=False, render_order=RenderOrder.CORPSE,
-                 components=list()):
+                 components=dict()):
 
         # The entity's current position
         self.x = x

@@ -81,7 +81,8 @@ def draw_entity(terrain_layer, entity,
 
     # Only draw entities that are in player's fov
     if  libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or \
-        (entity.c['stairs'] and game_map.tiles[entity.x][entity.y].explored):
+        (entity.stairs and game_map.tiles[entity.x][entity.y].explored):
+        # (entity.c['stairs'] and game_map.tiles[entity.x][entity.y].explored):
         # TODO include case for doors
 
         # print("Bgcolor: {}".format(bg_color))

@@ -109,7 +109,7 @@ def play_game(player, game_map,
             # left_click = mouse_action.get('left_click')
             # right_click = mouse_action.get('right_click')
 
-            player_turn_results = []
+            # player_turn_results = []
 
             # Add all objects required to perform any action
             action.set_context(game_map, player, message_log)
@@ -130,9 +130,9 @@ def play_game(player, game_map,
                 if outcome.get('next_state') is not None:
                     game_state = outcome.get('next_state')
 
-                # Update results
-                if outcome.get('results') is not None:
-                    player_turn_results.extend(outcome['results'])
+                # # Update results
+                # if outcome.get('results') is not None:
+                    # player_turn_results.eytend(outcome['results'])
                 
                 # Determine whether to recompute fov...
                 if outcome.get('fov_recompute') is not None:

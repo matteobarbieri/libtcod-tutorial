@@ -38,9 +38,7 @@ class MoveAction(Action):
                 self.game_map.entities, destination_x, destination_y)
 
             if target:
-                # TODO replace with something more generic, like 'interact'
-                # attack_results = player.fighter.attack(target)
-                # player_turn_results.extend(attack_results)
+                messages.extend(self.player.interact_with(target))
                 pass
             else:
 
@@ -60,7 +58,6 @@ class MoveAction(Action):
         # Return outcome
         outcome = {
             "next_state": GameStates.ENEMY_TURN,
-            "results": [],
             'fov_recompute': position_changed, # TODO this might change
             'redraw_terrain': position_changed,
             'messages': messages,

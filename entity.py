@@ -96,6 +96,19 @@ class Entity:
         self.x += dx
         self.y += dy
 
+    def interact_with(self, other):
+        """
+        Default interaction with another entity
+
+        player <-> monster: attack
+        player  -> door: interact
+        """
+
+        # TODO check if hostile
+        if other.fighter is not None: 
+            messages = self.fighter.attack(other)
+            return messages
+
     def move_towards(self, target_x, target_y, game_map, entities):
         dx = target_x - self.x
         dy = target_y - self.y

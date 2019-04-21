@@ -278,10 +278,6 @@ def play_game(player, game_map,
 
                 return True
         
-        # Toggle fullscreen
-        if fullscreen:
-            libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
-
         # Handle results from player actions
         for player_turn_result in player_turn_results:
             message = player_turn_result.get('message')

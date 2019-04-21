@@ -101,7 +101,7 @@ def render_all(terrain_layer, panel, player,
                game_map, fov_map, fov_recompute, 
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
-               game_state):
+               game_state, current_turn):
 
     ### Extract variables from contants dict
     screen_width = constants['screen_width']
@@ -194,6 +194,10 @@ def render_all(terrain_layer, panel, player,
     libtcod.console_print_ex(panel, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT,
                              'Dungeon level: {0}'.format(game_map.dungeon_level))
 
+    # Show current dungeon level
+    libtcod.console_print_ex(panel, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT,
+                             'Time: {0}'.format(current_turn))
+
     # Show info about entities under mouse cursor
     libtcod.console_set_default_foreground(panel, libtcod.light_gray)
     libtcod.console_print_ex(
@@ -205,15 +209,12 @@ def render_all(terrain_layer, panel, player,
         get_names_under_mouse(
             mouse, game_map.entities, fov_map, top_x, top_y))
 
+    # Blit panel console on root console
     libtcod.console_blit(
-        panel,
+        panel, 0, 0,
+        screen_width, panel_height,
         0,
-        0,
-        screen_width,
-        panel_height,
-        0,
-        0,
-        panel_y)
+        0, panel_y)
 
     # Show inventory menu
     if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):

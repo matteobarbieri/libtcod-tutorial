@@ -50,6 +50,7 @@ def play_game(player, game_map,
 
     targeting_item = None
 
+    current_turn = 1
     # entities = game_map.entities
 
     ############################################
@@ -72,7 +73,7 @@ def play_game(player, game_map,
             terrain_layer, panel, 
             player, game_map, fov_map, fov_recompute, 
             redraw_terrain, redraw_entities, message_log,
-            constants, mouse, game_state)
+            constants, mouse, game_state, current_turn)
 
         fov_recompute = False
         redraw_terrain = False
@@ -152,6 +153,10 @@ def play_game(player, game_map,
             # Simply go back to player's turn state
             game_state = GameStates.PLAYERS_TURN
             redraw_entities = True
+
+            # TODO do something!
+
+            current_turn += 1
 
         """
         if move and game_state == GameStates.PLAYERS_TURN:

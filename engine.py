@@ -91,11 +91,11 @@ def play_game(player, game_map,
             # TODO to restore
             # mouse_action = handle_mouse(mouse)
 
-            ####### UPDATED
-
-            ####### TO UPDATE
+            ####### XXX UPDATED
             # move = action.get('move')
             # wait = action.get('wait')
+
+            ####### XXX TO UPDATE
             # pickup = action.get('pickup')
             # show_inventory = action.get('show_inventory')
             # drop_inventory = action.get('drop_inventory')
@@ -113,6 +113,7 @@ def play_game(player, game_map,
             # player_turn_results = []
 
             # Add all objects required to perform any action
+            # TODO check, should the message log be passed here?
             action.set_context(game_map, player, message_log)
 
             # Execute it
@@ -150,6 +151,20 @@ def play_game(player, game_map,
 
         elif game_state == GameStates.ENEMY_TURN:
 
+            # Each entity takes a turn
+            for entity in game_map.entities:
+                if entity.ai:
+                    # enemy_turn_results = entity.ai.take_turn(player, fov_map, game_map)
+
+                    # Pick an action for each entity
+                    entity_action = entity.ai.pick_action(player, fov_map, game_map)
+
+                    # XXX no need to set context, asit was needed previously to
+                    # choose the action
+
+                    # Execute the action
+                    outcome = entity_action.execute()
+
             # Simply go back to player's turn state
             game_state = GameStates.PLAYERS_TURN
             redraw_entities = True
@@ -158,34 +173,8 @@ def play_game(player, game_map,
 
             current_turn += 1
 
-        """
-        if move and game_state == GameStates.PLAYERS_TURN:
-            dx, dy = move
-            destination_x = player.x + dx
-            destination_y = player.y + dy
-
-            if not game_map.is_blocked(destination_x, destination_y):
-                target = get_blocking_entities_at_location(
-                    game_map.entities, destination_x, destination_y)
-
-                if target:
-                    attack_results = player.fighter.attack(target)
-                    player_turn_results.extend(attack_results)
-                else:
-                    player.move(dx, dy)
-
-                    fov_recompute = True
-                    redraw_terrain = True
-
-                # TODO uncomment
-                # game_state = GameStates.ENEMY_TURN
-
-        """
-
         ### COMMENT FROM HERE ###
         """
-        elif wait:
-            game_state = GameStates.ENEMY_TURN
 
         elif pickup and game_state == GameStates.PLAYERS_TURN:
             for entity in game_map.entities:

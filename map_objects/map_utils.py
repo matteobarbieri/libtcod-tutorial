@@ -36,6 +36,8 @@ def area_is_available(game_map, xy):
 def dig_rect(game_map, xy):
     """
     Dig a rectangle of empty space in the map
+
+    Edges are included, so tiles (x1, y1) and (x2, y2) are dug
     """
 
     # Extract coordinates

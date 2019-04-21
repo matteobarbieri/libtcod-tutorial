@@ -603,8 +603,10 @@ def add_monsters(level):
             # TODO must change for non square rooms
             # Unpack room coordinates
             x1, y1, x2, y2 = room.xy
-            x = random.randint(x1+1, x2)
-            y = random.randint(y1+1, y2)
+            # x = random.randint(x1+1, x2)
+            # y = random.randint(y1+1, y2)
+            x = random.randint(x1+1, x2-1)
+            y = random.randint(y1+1, y2-1)
 
             # Spawn and add an orc 'o' in the room
             fighter_component = Fighter(

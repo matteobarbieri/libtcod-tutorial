@@ -10,6 +10,8 @@ def handle_keys(key, game_state):
     """
     if game_state == GameStates.PLAYERS_TURN:
         return handle_player_turn_keys(key)
+
+    """
     elif game_state == GameStates.PLAYER_DEAD:
         return handle_player_dead_keys(key)
     elif game_state == GameStates.TARGETING:
@@ -20,6 +22,8 @@ def handle_keys(key, game_state):
         return handle_level_up_menu(key)
     elif game_state == GameStates.CHARACTER_SCREEN:
         return handle_character_screen(key)
+
+    """
 
     return {}
 
@@ -80,12 +84,6 @@ def handle_player_turn_keys(key):
     # Code to prevent double input 
     key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
 
-    """
-    if key.vk == libtcod.KEY_ENTER and key.lalt:
-        # Alt+Enter: toggle full screen
-        return {'fullscreen': True}
-    """
-
     #########################################
     ############## MOVEMENT #################
     #########################################
@@ -114,6 +112,9 @@ def handle_player_turn_keys(key):
     elif key_char == 'n':
         # return {'move': (1, 1)}
         return MoveAction(direction=(1, 1))
+    elif key_char == 'z':
+        # Do nothing for one turn
+        return WaitAction()
 
     #########################################
     ########### GO TO MAIN MENU #############
@@ -133,10 +134,8 @@ def handle_player_turn_keys(key):
 
     """
     #########################################
-    ############## MOVEMENT #################
+    ################# MISC ##################
     #########################################
-    elif key_char == 'z':
-        return {'wait': True}
     elif key_char == 'g':
         return {'pickup': True}
     elif key_char == 'i':

@@ -1,3 +1,5 @@
+from game_states import GameStates
+
 class Action():
     
     def __init__(self):
@@ -17,3 +19,17 @@ class Action():
 
 class NoopAction(Action):
     pass
+
+class WaitAction(Action):
+    """
+    Wait one turn without doing anything
+    """
+
+    def execute(self):
+        # Return outcome
+        outcome = {
+            "next_state": GameStates.ENEMY_TURN,
+        }
+
+        return outcome
+

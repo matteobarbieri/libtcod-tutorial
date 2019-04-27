@@ -1,0 +1,2 @@
+class ShowMenuException(Exception):
+    pass

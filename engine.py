@@ -18,6 +18,8 @@ from death_functions import kill_monster, kill_player
 
 from game_messages import Message
 
+from actions import ShowMenuException
+
 def parse_args():
 
     parser = argparse.ArgumentParser()
@@ -48,6 +50,7 @@ def play_game(player, game_map,
 
     targeting_item = None
 
+    current_turn = 1
     # entities = game_map.entities
 
     ############################################
@@ -57,6 +60,9 @@ def play_game(player, game_map,
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
 
+        ############################################
+        ########### RENDER GAME WINDOW #############
+        ############################################
         if fov_recompute:
             recompute_fov(
                 fov_map, player.x, player.y, 
@@ -67,7 +73,7 @@ def play_game(player, game_map,
             terrain_layer, panel, 
             player, game_map, fov_map, fov_recompute, 
             redraw_terrain, redraw_entities, message_log,
-            constants, mouse, game_state)
+            constants, mouse, game_state, current_turn)
 
         fov_recompute = False
         redraw_terrain = False
@@ -75,49 +81,100 @@ def play_game(player, game_map,
 
         libtcod.console_flush()
 
-        action = handle_keys(key, game_state)
-        mouse_action = handle_mouse(mouse)
+        if game_state in [GameStates.PLAYERS_TURN,]:
 
-        move = action.get('move')
-        wait = action.get('wait')
-        pickup = action.get('pickup')
-        show_inventory = action.get('show_inventory')
-        drop_inventory = action.get('drop_inventory')
-        inventory_index = action.get('inventory_index')
-        take_stairs = action.get('take_stairs')
-        level_up = action.get('level_up')
-        exit = action.get('exit')
-        fullscreen = action.get('fullscreen')
-        show_character_screen = action.get('show_character_screen')
-        
+            ############################################
+            ############# EXECUTE ACTIONS ##############
+            ############################################
+            action = handle_keys(key, game_state)
 
-        left_click = mouse_action.get('left_click')
-        right_click = mouse_action.get('right_click')
+            # TODO to restore
+            # mouse_action = handle_mouse(mouse)
 
-        player_turn_results = []
+            ####### XXX UPDATED
+            # move = action.get('move')
+            # wait = action.get('wait')
 
-        if move and game_state == GameStates.PLAYERS_TURN:
-            dx, dy = move
-            destination_x = player.x + dx
-            destination_y = player.y + dy
+            ####### XXX TO UPDATE
+            # pickup = action.get('pickup')
+            # show_inventory = action.get('show_inventory')
+            # drop_inventory = action.get('drop_inventory')
+            # inventory_index = action.get('inventory_index')
+            # take_stairs = action.get('take_stairs')
+            # level_up = action.get('level_up')
+            # exit = action.get('exit')
+            # fullscreen = action.get('fullscreen')
+            # show_character_screen = action.get('show_character_screen')
+            
+            # TODO to restore
+            # left_click = mouse_action.get('left_click')
+            # right_click = mouse_action.get('right_click')
 
-            if not game_map.is_blocked(destination_x, destination_y):
-                target = get_blocking_entities_at_location(
-                    game_map.entities, destination_x, destination_y)
+            # player_turn_results = []
 
-                if target:
-                    attack_results = player.fighter.attack(target)
-                    player_turn_results.extend(attack_results)
-                else:
-                    player.move(dx, dy)
+            # Add all objects required to perform any action
+            # TODO check, should the message log be passed here?
+            action.set_context(game_map, player, message_log)
 
-                    fov_recompute = True
-                    redraw_terrain = True
+            # Execute it
+            try:
+                outcome = action.execute()
+            except ShowMenuException:
+                # Exit main game loop and return to main menu
+                return True
 
-                game_state = GameStates.ENEMY_TURN
+            ############################################
+            ############# RESOLVE OUTCOME ##############
+            ############################################
+            if outcome is not None:
 
-        elif wait:
-            game_state = GameStates.ENEMY_TURN
+                # Update game state
+                if outcome.get('next_state') is not None:
+                    game_state = outcome.get('next_state')
+
+                # # Update results
+                # if outcome.get('results') is not None:
+                    # player_turn_results.eytend(outcome['results'])
+                
+                # Determine whether to recompute fov...
+                if outcome.get('fov_recompute') is not None:
+                    fov_recompute = outcome.get('fov_recompute')
+
+                # Or redraw terrain
+                if outcome.get('redraw_terrain') is not None:
+                    redraw_terrain = outcome.get('redraw_terrain')
+
+                # Add messages to the log
+                if outcome.get('messages') is not None:
+                    for m in outcome.get('messages'):
+                        message_log.add_message(m)
+
+        elif game_state == GameStates.ENEMY_TURN:
+
+            # Each entity takes a turn
+            for entity in game_map.entities:
+                if entity.ai:
+                    # enemy_turn_results = entity.ai.take_turn(player, fov_map, game_map)
+
+                    # Pick an action for each entity
+                    entity_action = entity.ai.pick_action(player, fov_map, game_map)
+
+                    # XXX no need to set context, asit was needed previously to
+                    # choose the action
+
+                    # Execute the action
+                    outcome = entity_action.execute()
+
+            # Simply go back to player's turn state
+            game_state = GameStates.PLAYERS_TURN
+            redraw_entities = True
+
+            # TODO do something!
+
+            current_turn += 1
+
+        ### COMMENT FROM HERE ###
+        """
 
         elif pickup and game_state == GameStates.PLAYERS_TURN:
             for entity in game_map.entities:
@@ -210,14 +267,11 @@ def play_game(player, game_map,
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
+                # Go back to main menu
                 save_game(player, game_map, message_log, game_state)
 
                 return True
         
-        # Toggle fullscreen
-        if fullscreen:
-            libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
-
         # Handle results from player actions
         for player_turn_result in player_turn_results:
             message = player_turn_result.get('message')
@@ -344,7 +398,8 @@ def play_game(player, game_map,
                 game_state = GameStates.PLAYERS_TURN
                 redraw_entities = True
 
-
+        """
+        ### COMMENT TO HERE ###
 
 def main():
 

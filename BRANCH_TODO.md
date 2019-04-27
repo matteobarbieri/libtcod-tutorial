@@ -1,5 +1,7 @@
 ### Next
 
+* Show current turn number somewhere on the UI
+* Doors must be entities, and block LoS when closed
 * A junction should have a minimun size of 2+ the width of the corridor it
   originates from.
 

@@ -4,8 +4,23 @@ from random import randint
 
 from game_messages import Message
 
+class AIAction():
+    """
+    An action performed by an entity
+    """
+
+    def __init__(self):
+        pass
+
+    def execute(self):
+        print("AI Action placeholder")
+        pass
 
 class BasicMonster:
+
+    def pick_action(self, target, fov_map, game_map):
+
+        return AIAction()
 
     def take_turn(self, target, fov_map, game_map, entities):
 

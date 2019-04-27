@@ -2,6 +2,7 @@ import libtcodpy as libtcod
 
 from game_states import GameStates
 
+from actions import *
 
 def handle_keys(key, game_state):
     """
@@ -9,6 +10,8 @@ def handle_keys(key, game_state):
     """
     if game_state == GameStates.PLAYERS_TURN:
         return handle_player_turn_keys(key)
+
+    """
     elif game_state == GameStates.PLAYER_DEAD:
         return handle_player_dead_keys(key)
     elif game_state == GameStates.TARGETING:
@@ -19,6 +22,8 @@ def handle_keys(key, game_state):
         return handle_level_up_menu(key)
     elif game_state == GameStates.CHARACTER_SCREEN:
         return handle_character_screen(key)
+
+    """
 
     return {}
 
@@ -74,31 +79,63 @@ def handle_character_screen(key):
 
 
 def handle_player_turn_keys(key):
-    # Movement keys
+
+
+    # Code to prevent double input 
     key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
+
+    #########################################
+    ############## MOVEMENT #################
+    #########################################
+
+    if key.vk == libtcod.KEY_UP or key_char == 'k':
+        # return {'move': (0, -1)}
+        return MoveAction(direction=(0, -1))
+    elif key.vk == libtcod.KEY_DOWN or key_char == 'j':
+        # return {'move': (0, 1)}
+        return MoveAction(direction=(0, 1))
+    elif key.vk == libtcod.KEY_LEFT or key_char == 'h':
+        # return {'move': (-1, 0)}
+        return MoveAction(direction=(-1, 0))
+    elif key.vk == libtcod.KEY_RIGHT or key_char == 'l':
+        # return {'move': (1, 0)}
+        return MoveAction(direction=(1, 0))
+    elif key_char == 'y':
+        # return {'move': (-1, -1)}
+        return MoveAction(direction=(-1, -1))
+    elif key_char == 'u':
+        # return {'move': (1, -1)}
+        return MoveAction(direction=(1, -1))
+    elif key_char == 'b':
+        # return {'move': (-1, 1)}
+        return MoveAction(direction=(-1, 1))
+    elif key_char == 'n':
+        # return {'move': (1, 1)}
+        return MoveAction(direction=(1, 1))
+    elif key_char == 'z':
+        # Do nothing for one turn
+        return WaitAction()
+
+    #########################################
+    ########### GO TO MAIN MENU #############
+    #########################################
+
+    elif key.vk == libtcod.KEY_ESCAPE:
+        # Show main menu
+        return ShowMenuAction()
+
+    #########################################
+    ########## TOGGLE FULLSCREEN ############
+    #########################################
 
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
-        return {'fullscreen': True}
+        return ToggleFullscreenAction()
 
-    if key.vk == libtcod.KEY_UP or key_char == 'k':
-        return {'move': (0, -1)}
-    elif key.vk == libtcod.KEY_DOWN or key_char == 'j':
-        return {'move': (0, 1)}
-    elif key.vk == libtcod.KEY_LEFT or key_char == 'h':
-        return {'move': (-1, 0)}
-    elif key.vk == libtcod.KEY_RIGHT or key_char == 'l':
-        return {'move': (1, 0)}
-    elif key_char == 'y':
-        return {'move': (-1, -1)}
-    elif key_char == 'u':
-        return {'move': (1, -1)}
-    elif key_char == 'b':
-        return {'move': (-1, 1)}
-    elif key_char == 'n':
-        return {'move': (1, 1)}
-    elif key_char == 'z':
-        return {'wait': True}
+    """
+    #########################################
+    ################# MISC ##################
+    #########################################
     elif key_char == 'g':
         return {'pickup': True}
     elif key_char == 'i':
@@ -110,12 +147,20 @@ def handle_player_turn_keys(key):
     elif key_char == 'c':
         return {'show_character_screen': True}
 
+    # Updated
     elif key.vk == libtcod.KEY_ESCAPE:
         # Exit the game
         return {'exit': True}
+    """
+
+
+    # elif key_char == 'n':
+        # # return {'move': (1, 1)}
+        # return MoveAction(direction=(1, 1))
 
     # No key was pressed
-    return {}
+    # return {}
+    return NoopAction()
 
 def handle_targeting_keys(key):
     if key.vk == libtcod.KEY_ESCAPE:

@@ -12,9 +12,10 @@ class Entity:
     A generic object to represent players, enemies, items, etc.
     """
 
+    # TODO change components to kwargs
     def __init__(self, x, y, char, color, name, blocks=False,
                  block_sight=False, render_order=RenderOrder.CORPSE,
-                 components=list()):
+                 components=dict()):
 
         # The entity's current position
         self.x = x
@@ -94,6 +95,19 @@ class Entity:
         # Move the entity by a given amount
         self.x += dx
         self.y += dy
+
+    def interact_with(self, other):
+        """
+        Default interaction with another entity
+
+        player <-> monster: attack
+        player  -> door: interact
+        """
+
+        # TODO check if hostile
+        if other.fighter is not None: 
+            messages = self.fighter.attack(other)
+            return messages
 
     def move_towards(self, target_x, target_y, game_map, entities):
         dx = target_x - self.x

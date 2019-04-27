@@ -81,7 +81,8 @@ def play_game(player, game_map,
 
         libtcod.console_flush()
 
-        if game_state in [GameStates.PLAYERS_TURN,]:
+        if game_state in [
+                GameStates.PLAYERS_TURN, GameStates.SHOW_INVENTORY]:
 
             ############################################
             ############# EXECUTE ACTIONS ##############

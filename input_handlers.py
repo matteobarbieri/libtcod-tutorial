@@ -10,6 +10,8 @@ def handle_keys(key, game_state):
     """
     if game_state == GameStates.PLAYERS_TURN:
         return handle_player_turn_keys(key)
+    elif game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
+        return handle_inventory_keys(key)
 
     """
     elif game_state == GameStates.PLAYER_DEAD:
@@ -31,17 +33,19 @@ def handle_inventory_keys(key):
 
     index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1
 
-    if index >= 0:
-        return {'inventory_index': index}
+    # TODO To enable again
+    # if index >= 0:
+        # return {'inventory_index': index}
 
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
-        return {'fullscreen': True}
+        return ToggleFullscreenAction()
     elif key.vk == libtcod.KEY_ESCAPE:
-        # Exit the menu
-        return {'exit': True}
+        # Exit the menu, go back to main game
+        return BackToGameAction()
 
-    return {}
+    # No key was pressed
+    return NoopAction()
 
 
 def handle_main_menu(key):
@@ -128,18 +132,19 @@ def handle_player_turn_keys(key):
     ########## TOGGLE FULLSCREEN ############
     #########################################
 
-    if key.vk == libtcod.KEY_ENTER and key.lalt:
+    elif key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
         return ToggleFullscreenAction()
 
+    elif key_char == 'i':
+        return ShowInventoryAction()
+    
     """
     #########################################
     ################# MISC ##################
     #########################################
     elif key_char == 'g':
         return {'pickup': True}
-    elif key_char == 'i':
-        return {'show_inventory': True}
     elif key_char == 'd':
         return {'drop_inventory': True}
     elif key.vk == libtcod.KEY_ENTER:
@@ -153,13 +158,7 @@ def handle_player_turn_keys(key):
         return {'exit': True}
     """
 
-
-    # elif key_char == 'n':
-        # # return {'move': (1, 1)}
-        # return MoveAction(direction=(1, 1))
-
     # No key was pressed
-    # return {}
     return NoopAction()
 
 def handle_targeting_keys(key):

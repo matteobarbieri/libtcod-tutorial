@@ -82,7 +82,8 @@ def play_game(player, game_map,
         libtcod.console_flush()
 
         if game_state in [
-                GameStates.PLAYERS_TURN, GameStates.SHOW_INVENTORY]:
+                GameStates.PLAYERS_TURN, GameStates.SHOW_INVENTORY,
+                GameStates.CHARACTER_SCREEN]:
 
             ############################################
             ############# EXECUTE ACTIONS ##############
@@ -133,6 +134,8 @@ def play_game(player, game_map,
                 if outcome.get('next_state') is not None:
                     game_state = outcome.get('next_state')
 
+                # TODO this should be probably phased out, as effects of actions
+                # are computed elsewhere
                 # # Update results
                 # if outcome.get('results') is not None:
                     # player_turn_results.eytend(outcome['results'])

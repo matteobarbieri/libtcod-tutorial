@@ -1,6 +1,7 @@
 from .move import MoveAction
 from .menus import (
-    ShowMenuAction, ShowInventoryAction, BackToGameAction)
+    ShowMenuAction, ShowInventoryAction, BackToGameAction,
+    ShowCharacterScreenAction)
 
 from .action import NoopAction, WaitAction
 from .toggle_fullscreen import ToggleFullscreenAction

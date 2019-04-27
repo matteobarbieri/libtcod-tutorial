@@ -17,7 +17,20 @@ class ShowMenuAction(Action):
 
         # Raise an exception which will cause the game to exit the main loop
         raise ShowMenuException()
-        
+
+
+class ShowCharacterScreenAction(Action):
+
+    def execute(self):
+
+        # Return outcome
+        outcome = {
+            'next_state': GameStates.CHARACTER_SCREEN,
+        }
+
+        return outcome
+
+
 class ShowInventoryAction(Action):
 
     def execute(self):

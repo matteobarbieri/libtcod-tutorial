@@ -24,9 +24,6 @@ from render_functions import RenderOrder
 
 from entity import Entity
 
-from components.ai import BasicMonster
-from components.fighter import Fighter
-
 from prefabs.orc import make_orc
 
 class Tunneller():
@@ -78,7 +75,7 @@ class Tunneller():
         x1 = x - int(size/2)
         x2 = x1 + size
         y1 = y - int(size/2)
-        y2 = y1 + size 
+        y2 = y1 + size
 
         # Collect coordinates in a variable
         xy = [x1, y1, x2, y2]
@@ -164,7 +161,7 @@ class Tunneller():
 
         if can_dig:
 
-            return junction 
+            return junction
         else:
             raise NoMoreSpaceException("Unavailable area")
 
@@ -194,7 +191,7 @@ class Tunneller():
             x2 = x1 + w
 
             y1 = y - h + 1
-            y2 = y 
+            y2 = y
         elif d == Direction.SOUTH:
             x1 = x - 1*(int(w/2))
             x2 = x1 + w
@@ -463,7 +460,7 @@ def connect_parts(level, i, j):
         # "Trying to connect a {} and a {} (from {} to {})".format(
             # part_i.__class__.__name__, part_j.__class__.__name__,
             # part_i.center, part_j.center))
-    
+
     xi, yi = part_i.center
     xj, yj = part_j.center
 
@@ -479,8 +476,8 @@ def connect_parts(level, i, j):
         dy = -1
 
     ### Excavate 1-wide tunnel
-    
-    # A list containing the coordinates of the skeleton of the 
+
+    # A list containing the coordinates of the skeleton of the
     # tunnel
     tunnel_skeleton = list()
 
@@ -549,7 +546,7 @@ def compute_sorted_distance_list(level):
     return sorted_distance_list
 
 def connect_close_parts(level, sorted_distance_list):
-    
+
 
     # TODO these must become parameters
     max_connected = 10
@@ -626,8 +623,8 @@ def add_exits(level, sorted_distance_list):
 
     down_stairs_component = Stairs(level.dungeon_level + 1)
     down_stairs = Entity(
-        exit_x, exit_y, '>', 
-        libtcod.white, 'Stairs down', render_order=RenderOrder.STAIRS, 
+        exit_x, exit_y, '>',
+        libtcod.white, 'Stairs down', render_order=RenderOrder.STAIRS,
         components=dict(stairs=down_stairs_component))
 
     level.entities.append(down_stairs)
@@ -708,4 +705,3 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
 
     return level
-

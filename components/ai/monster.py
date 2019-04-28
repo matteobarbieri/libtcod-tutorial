@@ -1,66 +1,14 @@
-import libtcodpy as libtcod
-
 from random import randint
 
-from game_messages import Message
+from .mob_states import MobState
+from .actions import AIMoveAction, AIAction
 
-from enum import Enum, auto
-
-from entity import get_blocking_entities_at_location
-
-class MobState(Enum):
-    # The mob will walk around the room
-    LOITERING = auto()
-
-    # TODO add more
-
-class AIAction():
-    """
-    An action performed by an entity
-    """
-
-    def __init__(self):
-        pass
-
-    def execute(self):
-        print("AI Action placeholder")
-        pass
-
-class AIMoveAction(AIAction):
-    
-    def __init__(self, **kwargs):
-        
-        self.direction = kwargs['direction']
-        self.game_map = kwargs['game_map']
-        self.mob = kwargs['mob']
-
-    def execute(self):
-
-        # Determine direction
-        dx, dy = self.direction
-
-        # Compute destination coordinates
-        destination_x = self.mob.x + dx
-        destination_y = self.mob.y + dy
-
-        self.mob.last_direction = (dx, dy)
-        # Check for collision with other possible non-entity blocking objects in
-        # the room
-        if not self.game_map.is_blocked(destination_x, destination_y):
-            target = get_blocking_entities_at_location(
-                self.game_map.entities, destination_x, destination_y)
-
-            if target:
-                # Do not change last direction
-                pass
-            else:
-                # Actually move
-                self.mob.x = destination_x
-                self.mob.y = destination_y
-
+# TODO used in old code
+# from game_messages import Message
+# import libtcodpy as libtcod
 
 class BasicMonster:
-    
+
     def __init__(self, location, state=MobState.LOITERING):
 
         # The MapPart where the mob currently is
@@ -138,7 +86,7 @@ class ConfusedMonster:
             self.number_of_turns -= 1
         else:
             self.owner.ai = self.previous_ai
-            results.append({'message': Message('The {0} is no longer confused!'.format(self.owner.name), libtcod.red)})
+            results.append({'message': ('The {0} is no longer confused!'.format(self.owner.name), libtcod.red)})
 
         return results
 """

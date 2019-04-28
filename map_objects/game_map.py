@@ -113,6 +113,63 @@ class MapPart():
         return does_intersect
         # return _intersection_area(self.xy, other.xy) > 0
 
+    def create_dijkstra_map(self, game_map):
+        """
+        Create and store a Dijkstra map pointing to the center of the map part.
+        See http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps for more info on Dijkstra maps
+        """
+
+        print("creating dmap for room at {}".format(self.center))
+
+        d_map = list()
+
+        # Max value
+        MAX_VALUE = 2 * game_map.width * game_map.height
+
+        # Fill the map with max values
+        for x in range(game_map.width):
+            d_row = list()
+            for y in range(game_map.height):
+                d_row.append(MAX_VALUE)
+
+            d_map.append(d_row)
+
+        # Set the goal tile[s] to 0
+        x_center, y_center = self.center
+        d_map[x_center][y_center] = 0
+
+        anything_changed = True
+        while anything_changed:
+            anything_changed = False
+            for x in range(1, game_map.width-1):
+                for y in range(1, game_map.height-1):
+                    # Only check floor tiles
+                    if type(game_map.tiles[x][y]) == Floor:
+                        min_val = MAX_VALUE
+                        for x1 in range(x-1, x+2):
+                            for y1 in range(y-1, y+2):
+                                if d_map[x1][y1] < min_val:
+                                    min_val = d_map[x1][y1]
+
+                        # If the smalles neighbour is more than 1 smaller than
+                        # the current tile, set it to be 1 greater than the
+                        # smallest value
+                        if min_val < d_map[x][y] - 1:
+                            d_map[x][y] = min_val + 1
+                            anything_changed = True
+
+        with open("aaaa.txt", 'w') as tf:
+            for y in range(game_map.height):
+                for x in range(game_map.width):
+                    if d_map[x][y] > 9:
+                        tf.write("#")
+                    elif d_map[x][y] > 9:
+                        tf.write(chr(65 - 10 + d_map[x][y]))
+                    else:
+                        tf.write("{}".format(d_map[x][y]))
+                tf.write("\n")
+
+
     def has_available_directions(self):
         return len(self.available_directions) > 0
 

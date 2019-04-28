@@ -700,6 +700,11 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     logging.getLogger().info("Adding exists")
     add_exits(level, sorted_distance_list)
 
+    # Create Dijkstra Maps for all map parts
+    for mp in level.all_parts:
+        # mp.create_dijkstra_map(level)
+        pass
+
     # Populate Dungeon with entities
     # Monsters
     add_monsters(level)

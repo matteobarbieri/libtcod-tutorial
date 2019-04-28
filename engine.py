@@ -167,7 +167,7 @@ def play_game(player, game_map,
                     # enemy_turn_results = entity.ai.take_turn(player, fov_map, game_map)
 
                     # Pick an action for each entity
-                    entity_action = entity.ai.pick_action(player, fov_map, game_map)
+                    entity_action = entity.ai.pick_action(player, game_map)
 
                     # XXX no need to set context, asit was needed previously to
                     # choose the action

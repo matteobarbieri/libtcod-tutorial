@@ -1,8 +1,6 @@
 # TODO temporarily disabled
 # from entity import Entity
 
-from enum import Enum
-
 import logging
 
 from game_messages import Message

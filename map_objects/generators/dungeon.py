@@ -602,15 +602,7 @@ def add_monsters(level):
         # TODO for now, just generate an orc in every room
         if random.random() < 2:
 
-            # TODO must change for non square rooms
-            # Unpack room coordinates
-            x1, y1, x2, y2 = room.xy
-            # x = random.randint(x1+1, x2)
-            # y = random.randint(y1+1, y2)
-            x = random.randint(x1+1, x2-1)
-            y = random.randint(y1+1, y2-1)
-
-            monster = make_orc(x, y)
+            monster = make_orc(room)
 
             level.entities.append(monster)
 

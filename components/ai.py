@@ -22,6 +22,7 @@ class BasicMonster:
 
         return AIAction()
 
+    """
     def take_turn(self, target, fov_map, game_map, entities):
 
         results = []
@@ -37,7 +38,9 @@ class BasicMonster:
                 results.extend(attack_results)
 
         return results
+    """
 
+"""
 class ConfusedMonster:
     def __init__(self, previous_ai, number_of_turns=10):
         self.previous_ai = previous_ai
@@ -59,3 +62,4 @@ class ConfusedMonster:
             results.append({'message': Message('The {0} is no longer confused!'.format(self.owner.name), libtcod.red)})
 
         return results
+"""

@@ -27,6 +27,8 @@ from entity import Entity
 from components.ai import BasicMonster
 from components.fighter import Fighter
 
+from prefabs.orc import make_orc
+
 class Tunneller():
 
     last_direction = None
@@ -608,21 +610,7 @@ def add_monsters(level):
             x = random.randint(x1+1, x2-1)
             y = random.randint(y1+1, y2-1)
 
-            # Spawn and add an orc 'o' in the room
-            fighter_component = Fighter(
-                hp=20, defense=0, power=4, xp=35)
-            ai_component = BasicMonster()
-
-            monster = Entity(
-                x, y,
-                'o', libtcod.desaturated_green,
-                'Orc',
-                blocks=True,
-                render_order=RenderOrder.ACTOR,
-                components=dict(
-                    fighter=fighter_component,
-                    ai=ai_component)
-            )
+            monster = make_orc(x, y)
 
             level.entities.append(monster)
 

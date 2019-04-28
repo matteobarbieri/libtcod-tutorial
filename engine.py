@@ -1,4 +1,5 @@
-import libtcodpy as libtcod
+# import libtcodpy as libtcod
+import tcod as libtcod
 
 import argparse
 
@@ -30,9 +31,9 @@ def parse_args():
     return parser.parse_args()
 
 
-def play_game(player, game_map, 
-              message_log, game_state, 
-              terrain_layer, 
+def play_game(player, game_map,
+              message_log, game_state,
+              terrain_layer,
               panel, constants):
 
     # At the beginning of the game, recompute fov
@@ -65,13 +66,13 @@ def play_game(player, game_map,
         ############################################
         if fov_recompute:
             recompute_fov(
-                fov_map, player.x, player.y, 
+                fov_map, player.x, player.y,
                 constants['fov_radius'], constants['fov_light_walls'],
                 constants['fov_algorithm'])
 
         render_all(
-            terrain_layer, panel, 
-            player, game_map, fov_map, fov_recompute, 
+            terrain_layer, panel,
+            player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state, current_turn)
 
@@ -110,7 +111,7 @@ def play_game(player, game_map,
             # level_up = action.get('level_up')
             # exit = action.get('exit')
             # fullscreen = action.get('fullscreen')
-            
+
             # TODO to restore
             # left_click = mouse_action.get('left_click')
             # right_click = mouse_action.get('right_click')
@@ -142,7 +143,7 @@ def play_game(player, game_map,
                 # # Update results
                 # if outcome.get('results') is not None:
                     # player_turn_results.eytend(outcome['results'])
-                
+
                 # Determine whether to recompute fov...
                 if outcome.get('fov_recompute') is not None:
                     fov_recompute = outcome.get('fov_recompute')
@@ -265,8 +266,8 @@ def play_game(player, game_map,
 
             # If it was in a menu, go back to the previous state
             if game_state in (
-                GameStates.SHOW_INVENTORY, 
-                GameStates.DROP_INVENTORY, 
+                GameStates.SHOW_INVENTORY,
+                GameStates.DROP_INVENTORY,
                 GameStates.CHARACTER_SCREEN):
 
                 game_state = previous_game_state
@@ -279,7 +280,7 @@ def play_game(player, game_map,
                 save_game(player, game_map, message_log, game_state)
 
                 return True
-        
+
         # Handle results from player actions
         for player_turn_result in player_turn_results:
             message = player_turn_result.get('message')
@@ -424,28 +425,32 @@ def main():
     constants = get_constants()
 
     # libtcod.console_set_custom_font(
-        # 'data/fonts/arial12x12.png', 
+        # 'data/fonts/arial12x12.png',
         # libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
 
     libtcod.console_set_custom_font(
-        # 'data/fonts/Yayo-c64-640x200.png', 
-        # 'data/fonts/Yayo-c64-1280x400-83b157.png', 
-        # 'data/fonts/Alloy-curses-12x12.png', 
-        # 'data/fonts/terminal16x16_gs_ro.png', 
+        # 'data/fonts/Yayo-c64-640x200.png',
+        # 'data/fonts/Yayo-c64-1280x400-83b157.png',
+        # 'data/fonts/Alloy-curses-12x12.png',
+        # 'data/fonts/terminal16x16_gs_ro.png',
         'data/fonts/16x16-sb-ascii.png', # good!
         # 'data/fonts/16x16-RogueYun-AgmEdit.png', # good!
         libtcod.FONT_LAYOUT_ASCII_INROW)
 
+    # libtcod.console_init_root(
+    #     constants['screen_width'], constants['screen_height'],
+    #     constants['window_title'], False)
+
     libtcod.console_init_root(
-        constants['screen_width'], constants['screen_height'], 
-        constants['window_title'], False)
+        constants['screen_width'], constants['screen_height'],
+        constants['window_title'], False, renderer=libtcod.RENDERER_SDL2)
 
     terrain_layer = libtcod.console_new(
-        constants['screen_width'], 
+        constants['screen_width'],
         constants['screen_height'])
-    
+
     panel = libtcod.console_new(
-        constants['screen_width'], 
+        constants['screen_width'],
         constants['panel_height'])
 
     player = None
@@ -499,7 +504,10 @@ def main():
                 break
 
         else:
-            libtcod.console_clear(terrain_layer)
+            # migrating to tcod
+            # libtcod.console_clear(terrain_layer)
+            terrain_layer.clear()
+            
             play_game(
                 player, game_map, message_log, game_state,
                 terrain_layer, panel, constants)

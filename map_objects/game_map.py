@@ -24,7 +24,8 @@ import shelve
 
 from render_functions import RenderOrder
 
-import libtcodpy as libtcod
+# import libtcodpy as libtcod
+import tcod as libtcod
 
 # TODO temporarily disabled
 # from random_utils import from_dungeon_level, random_choice_from_dict
@@ -135,7 +136,7 @@ class MapPart():
             y = y1 + int((y2 - y1)/2)
         elif d == Direction.NORTH:
             x = x1 + int((x2- x1)/2)
-            y = y1 
+            y = y1
         elif d == Direction.SOUTH:
             x = x1 + int((x2- x1)/2)
             y = y2
@@ -314,7 +315,7 @@ class GameMap:
         return self.junctions + self.corridors + self.rooms
 
     def get_player_starting_coords(self):
-        
+
         # TODO!!!
         for e in self.entities:
             if e.char == '<':
@@ -329,7 +330,7 @@ class GameMap:
         # Should place him/her in an entry/exit tile (depending on where they
         # came from).
         # starting_room = random.choice(self.rooms)
-        
+
         x, y = self.get_player_starting_coords()
         player.x = x
         player.y = y
@@ -401,7 +402,7 @@ class GameMap:
             return False
 
         # Then check for potential intersections with other elements of the map
-        
+
         # Build the list of alla placed parts
         placed_parts = self.rooms + self.junctions + self.corridors
 
@@ -461,4 +462,3 @@ class GameMap:
             return True
 
         return False
-

@@ -1,4 +1,5 @@
-import libtcodpy as libtcod
+# import libtcodpy as libtcod
+import tcod as libtcod
 
 from map_objects.tile import Wall
 
@@ -76,7 +77,7 @@ def clear_all(con, entities, game_map, fov_map, top_x, top_y):
     for entity in entities:
         clear_entity(con, entity, game_map, fov_map, top_x, top_y)
 
-def draw_entity(terrain_layer, entity, 
+def draw_entity(terrain_layer, entity,
                 fov_map, game_map, top_x=0, top_y=0):
 
     # Only draw entities that are in player's fov
@@ -93,12 +94,12 @@ def draw_entity(terrain_layer, entity,
             entity.y-top_y,
             entity.char,
             libtcod.BKGND_NONE)
-            
+
         libtcod.console_set_char_foreground(
             terrain_layer, entity.x-top_x, entity.y-top_y, entity.color)
-            
-def render_all(terrain_layer, panel, player, 
-               game_map, fov_map, fov_recompute, 
+
+def render_all(terrain_layer, panel, player,
+               game_map, fov_map, fov_recompute,
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
                game_state, current_turn):
@@ -224,13 +225,13 @@ def render_all(terrain_layer, panel, player,
             inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
 
         inventory_menu(
-            terrain_layer, inventory_title, player, 
+            terrain_layer, inventory_title, player,
             50, screen_width, screen_height)
 
     # Show level up menu
     elif game_state == GameStates.LEVEL_UP:
         level_up_menu(
-                terrain_layer, 'Level up! Choose a stat to raise:', 
+                terrain_layer, 'Level up! Choose a stat to raise:',
                 player, 40, screen_width, screen_height)
 
     # Show character screen
@@ -240,5 +241,3 @@ def render_all(terrain_layer, panel, player,
     clear_all(terrain_layer, game_map.entities, game_map, fov_map, top_x, top_y)
 
     return top_x, top_y
-
-

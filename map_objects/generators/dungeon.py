@@ -16,7 +16,8 @@ from ..map_utils import area_is_available
 
 from ..map_utils import NoMoreSpaceException
 
-import libtcodpy as libtcod
+# import libtcodpy as libtcod
+import tcod as libtcod
 
 from components.stairs import Stairs
 

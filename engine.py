@@ -81,6 +81,9 @@ def play_game(player, game_map,
 
         libtcod.console_flush()
 
+        ############################################
+        ############## PLAYER'S TURN ###############
+        ############################################
         if game_state in [
                 GameStates.PLAYERS_TURN, GameStates.SHOW_INVENTORY,
                 GameStates.CHARACTER_SCREEN]:
@@ -96,17 +99,17 @@ def play_game(player, game_map,
             ####### XXX UPDATED
             # move = action.get('move')
             # wait = action.get('wait')
+            # show_inventory = action.get('show_inventory')
+            # show_character_screen = action.get('show_character_screen')
 
             ####### XXX TO UPDATE
             # pickup = action.get('pickup')
-            # show_inventory = action.get('show_inventory')
             # drop_inventory = action.get('drop_inventory')
             # inventory_index = action.get('inventory_index')
             # take_stairs = action.get('take_stairs')
             # level_up = action.get('level_up')
             # exit = action.get('exit')
             # fullscreen = action.get('fullscreen')
-            # show_character_screen = action.get('show_character_screen')
             
             # TODO to restore
             # left_click = mouse_action.get('left_click')
@@ -153,6 +156,9 @@ def play_game(player, game_map,
                     for m in outcome.get('messages'):
                         message_log.add_message(m)
 
+        ############################################
+        ############## ENEMIES' TURN ###############
+        ############################################
         elif game_state == GameStates.ENEMY_TURN:
 
             # Each entity takes a turn
@@ -169,11 +175,9 @@ def play_game(player, game_map,
                     # Execute the action
                     outcome = entity_action.execute()
 
-            # Simply go back to player's turn state
+            # Go back to player's turn state
             game_state = GameStates.PLAYERS_TURN
             redraw_entities = True
-
-            # TODO do something!
 
             current_turn += 1
 

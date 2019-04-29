@@ -116,7 +116,8 @@ class MapPart():
     def create_dijkstra_map(self, game_map):
         """
         Create and store a Dijkstra map pointing to the center of the map part.
-        See http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps for more info on Dijkstra maps
+        See http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps 
+        for more info on Dijkstra maps
         """
 
         print("creating dmap for room at {}".format(self.center))
@@ -138,6 +139,8 @@ class MapPart():
         x_center, y_center = self.center
         d_map[x_center][y_center] = 0
 
+        """
+        # First inefficient implementation
         anything_changed = True
         while anything_changed:
             anything_changed = False
@@ -157,7 +160,59 @@ class MapPart():
                         if min_val < d_map[x][y] - 1:
                             d_map[x][y] = min_val + 1
                             anything_changed = True
+        """
 
+        # Keep a queue of tiles that need updating
+        # queue = [(x_center, y_center)]
+        queue = list()
+        for x in range(x_center-1, x_center+2):
+            for y in range(y_center-1, y_center+2):
+                if (x, y) != (x_center, y_center):
+                    queue.append((x, y))
+
+        while queue:
+            (xx, yy) = queue.pop(0)
+            # tmp_queue = list()
+
+            min_val = MAX_VALUE
+
+            # First check the min value in the neighborhood
+            # for x in range(xx-1, xx+2):
+                # for y in range(yy-1, yy+2):
+            for x in range(max(0, xx-1), min(game_map.width, xx+2)):
+                for y in range(max(0, yy-1), min(game_map.height, yy+2)):
+                    if (x, y) != (xx, yy):
+                        # tmp_queue.append((x, y))
+                        if d_map[x][y] < min_val:
+                            min_val = d_map[x][y]
+
+            # If that's the case, update current cell
+            if min_val < d_map[xx][yy] - 1:
+                d_map[xx][yy] = min_val + 1
+
+            # Add more cells to be updated
+            # for x in range(xx-1, xx+2):
+                # for y in range(yy-1, yy+2):
+            for x in range(max(0, xx-1), min(game_map.width, xx+2)):
+                for y in range(max(0, yy-1), min(game_map.height, yy+2)):
+                    """
+                    if (x, y) != (xx, yy):
+                        if (
+                                type(game_map.tiles[x][y]) == Floor and \
+                                d_map[x][y] > min_val + 1 and \
+                                (x, y) not in queue):
+                            queue.append((x, y))
+                    """
+                    if \
+                            (x, y) != (xx, yy) and \
+                            type(game_map.tiles[x][y]) == Floor and \
+                            d_map[x][y] > min_val + 1 and \
+                            (x, y) not in queue:
+                        queue.append((x, y))
+
+
+
+        """
         with open("aaaa.txt", 'w') as tf:
             for y in range(game_map.height):
                 for x in range(game_map.width):
@@ -168,6 +223,7 @@ class MapPart():
                     else:
                         tf.write("{}".format(d_map[x][y]))
                 tf.write("\n")
+        """
 
 
     def has_available_directions(self):

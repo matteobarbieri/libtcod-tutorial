@@ -3,8 +3,6 @@
 
 import logging
 
-from game_messages import Message
-
 # from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
 
 from map_objects.tile import Tile, Wall, Floor
@@ -22,19 +20,12 @@ import random
 
 import shelve
 
-from render_functions import RenderOrder
-
-# import libtcodpy as libtcod
-import tcod as libtcod
-
 # TODO temporarily disabled
 # from random_utils import from_dungeon_level, random_choice_from_dict
 
 from .directions import Direction
 
 from .map_utils import dig_rect, _intersection_area
-
-from .map_utils import NoMoreSpaceException
 
 
 class MapPart():
@@ -61,7 +52,6 @@ class MapPart():
         x1, y1, x2, y2 = self.xy
 
         return x >= x1 and x <= x2 and y >= y1 and y <= y2
-
 
     def remove_connection(self, other):
         if other in self.connected_parts:
@@ -116,7 +106,7 @@ class MapPart():
     def create_dijkstra_map(self, game_map):
         """
         Create and store a Dijkstra map pointing to the center of the map part.
-        See http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps 
+        See http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps
         for more info on Dijkstra maps
         """
 
@@ -177,8 +167,6 @@ class MapPart():
             min_val = MAX_VALUE
 
             # First check the min value in the neighborhood
-            # for x in range(xx-1, xx+2):
-                # for y in range(yy-1, yy+2):
             for x in range(max(0, xx-1), min(game_map.width, xx+2)):
                 for y in range(max(0, yy-1), min(game_map.height, yy+2)):
                     if (x, y) != (xx, yy):
@@ -191,26 +179,22 @@ class MapPart():
                 d_map[xx][yy] = min_val + 1
 
             # Add more cells to be updated
-            # for x in range(xx-1, xx+2):
-                # for y in range(yy-1, yy+2):
             for x in range(max(0, xx-1), min(game_map.width, xx+2)):
                 for y in range(max(0, yy-1), min(game_map.height, yy+2)):
-                    """
                     if (x, y) != (xx, yy):
-                        if (
+                        if \
                                 type(game_map.tiles[x][y]) == Floor and \
                                 d_map[x][y] > min_val + 1 and \
-                                (x, y) not in queue):
+                                (x, y) not in queue:
                             queue.append((x, y))
                     """
                     if \
-                            (x, y) != (xx, yy) and \
+                            (x, y) not in queue and \
                             type(game_map.tiles[x][y]) == Floor and \
                             d_map[x][y] > min_val + 1 and \
-                            (x, y) not in queue:
+                            (x, y) != (xx, yy):
                         queue.append((x, y))
-
-
+                    """
 
         """
         with open("aaaa.txt", 'w') as tf:
@@ -225,15 +209,14 @@ class MapPart():
                 tf.write("\n")
         """
 
-
     def has_available_directions(self):
         return len(self.available_directions) > 0
 
     def pick_starting_point(self):
         """
-        Pick a starting point and direction for the next element in the dungeon.
-        The coordinates are supposed to be part of the previous element, i.e.
-        walkable space (a Floor tile, NOT a Wall tile).
+        Pick a starting point and direction for the next element in the
+        dungeon. The coordinates are supposed to be part of the previous
+        element, i.e. walkable space (a Floor tile, NOT a Wall tile).
         """
 
         d = random.choice(self.available_directions)
@@ -248,10 +231,10 @@ class MapPart():
             x = x2
             y = y1 + int((y2 - y1)/2)
         elif d == Direction.NORTH:
-            x = x1 + int((x2- x1)/2)
+            x = x1 + int((x2 - x1)/2)
             y = y1
         elif d == Direction.SOUTH:
-            x = x1 + int((x2- x1)/2)
+            x = x1 + int((x2 - x1)/2)
             y = y2
 
         # Remove option
@@ -303,6 +286,7 @@ class MapPart():
 
         # TODO
         # Do more than this
+
 
 class Door(MapPart):
     """

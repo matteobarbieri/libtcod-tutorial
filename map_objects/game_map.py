@@ -27,6 +27,7 @@ from .directions import Direction
 
 from .map_utils import dig_rect, _intersection_area
 
+from dijkstra_map import DijkstraMap
 
 class MapPart():
 
@@ -110,7 +111,7 @@ class MapPart():
         for more info on Dijkstra maps
         """
 
-        print("creating dmap for room at {}".format(self.center))
+        # print("creating dmap for room at {}".format(self.center))
 
         d_map = list()
 
@@ -182,8 +183,15 @@ class MapPart():
             for x in range(max(0, xx-1), min(game_map.width, xx+2)):
                 for y in range(max(0, yy-1), min(game_map.height, yy+2)):
                     if (x, y) != (xx, yy):
+                        """
                         if \
                                 type(game_map.tiles[x][y]) == Floor and \
+                                d_map[x][y] > min_val + 1 and \
+                                (x, y) not in queue:
+                            queue.append((x, y))
+                        """
+                        if \
+                                not game_map.tiles[x][y].blocked and \
                                 d_map[x][y] > min_val + 1 and \
                                 (x, y) not in queue:
                             queue.append((x, y))
@@ -196,18 +204,9 @@ class MapPart():
                         queue.append((x, y))
                     """
 
-        """
-        with open("aaaa.txt", 'w') as tf:
-            for y in range(game_map.height):
-                for x in range(game_map.width):
-                    if d_map[x][y] > 9:
-                        tf.write("#")
-                    elif d_map[x][y] > 9:
-                        tf.write(chr(65 - 10 + d_map[x][y]))
-                    else:
-                        tf.write("{}".format(d_map[x][y]))
-                tf.write("\n")
-        """
+        # Save the Dijkstra map for this room
+        self.d_map = DijkstraMap(d_map)
+
 
     def has_available_directions(self):
         return len(self.available_directions) > 0

@@ -27,7 +27,7 @@ from entity import Entity
 
 from prefabs.orc import make_orc
 
-import time 
+import time
 
 class Tunneller():
 
@@ -625,6 +625,9 @@ def add_exits(level, sorted_distance_list):
         if entry_room != exit_room:
             break
 
+    # TODO DEBUG
+    # entry_room.d_map.dump_txt("/home/matteo/entroom.txt")
+
     # Create and add exit stairs '>'
     exit_x, exit_y = exit_room.center
 
@@ -702,14 +705,12 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     logging.getLogger().info("Adding walls")
     add_walls(level)
 
-    # Add exits
-    logging.getLogger().info("Adding exists")
-    add_exits(level, sorted_distance_list)
-
     # Create Dijkstra Maps for all map parts
+    logging.getLogger().info("Compute Dijkstra maps for rooms")
     tic = time.time()
     count = 0
     for mp in level.all_parts:
+    # for mp in level.rooms:
         mp.create_dijkstra_map(level)
         count += 1
     tac = time.time()
@@ -718,9 +719,12 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     logging.getLogger().info("Time for {} rooms: {} s".format(count, dt))
     logging.getLogger().info("Average time per room: {} s".format(dt/count))
 
+    # Add exits
+    logging.getLogger().info("Adding exists")
+    add_exits(level, sorted_distance_list)
+
     # Populate Dungeon with entities
     # Monsters
     add_monsters(level)
-
 
     return level

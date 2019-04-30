@@ -7,7 +7,9 @@ import random
 
 import sys
 
-from entity import get_blocking_entities_at_location
+# TODO temporarily disabled
+# from entity import get_blocking_entities_at_location
+
 from input_handlers import handle_keys, handle_mouse, handle_main_menu
 from loader_functions.initialize_new_game import get_constants, get_game_variables
 from loader_functions.data_loaders import load_game, save_game
@@ -17,7 +19,8 @@ from render_functions import clear_all, render_all
 from game_states import GameStates
 from death_functions import kill_monster, kill_player
 
-from game_messages import Message
+# TODO temporarily disabled
+# from game_messages import Message
 
 from actions import ShowMenuException
 
@@ -47,9 +50,12 @@ def play_game(player, game_map,
     mouse = libtcod.Mouse()
 
     game_state = GameStates.PLAYERS_TURN
-    previous_game_state = game_state
 
-    targeting_item = None
+    # TODO temporarily disabled
+    # previous_game_state = game_state
+
+    # TODO temporarily disabled
+    # targeting_item = None
 
     current_turn = 1
     # entities = game_map.entities
@@ -65,8 +71,9 @@ def play_game(player, game_map,
         ########### RENDER GAME WINDOW #############
         ############################################
         if fov_recompute:
-            recompute_fov(
-                fov_map, player.x, player.y,
+
+            fov_map.compute_fov(
+                player.x, player.y,
                 constants['fov_radius'], constants['fov_light_walls'],
                 constants['fov_algorithm'])
 
@@ -507,7 +514,7 @@ def main():
             # migrating to tcod
             # libtcod.console_clear(terrain_layer)
             terrain_layer.clear()
-            
+
             play_game(
                 player, game_map, message_log, game_state,
                 terrain_layer, panel, constants)

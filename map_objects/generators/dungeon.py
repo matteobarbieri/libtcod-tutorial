@@ -449,7 +449,7 @@ class Tunneller():
 
             except NoMoreSpaceException as e:
                 self.current_location = old_location
-                print(e)
+                # print(e)
                 # Tunneller was unable to create anything in that direction; try
                 # another one
         else:
@@ -577,8 +577,9 @@ def connect_close_parts(level, sorted_distance_list):
                 # logging.getLogger().debug("Connected parts {} and {}".format(i, j))
                 n_connected += 1
             except NoMoreSpaceException as e:
-                print("While creating connections:")
-                print(e)
+                # print("While creating connections:")
+                # print(e)
+                pass
 
 
     # TODO to complete!
@@ -691,8 +692,9 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
             # Put tunneler at the end of the queue
             tunnelers_queue.append(t)
         except NoMoreSpaceException as e:
-            print(e)
             # Simply do not append the tunneler to the queue
+            # print(e)
+            pass
 
     # Improve connectivity
     logging.getLogger().info("Creating additional connections")

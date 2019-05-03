@@ -1,7 +1,8 @@
 from game_states import GameStates
 
+
 class Action():
-    
+
     def __init__(self):
         self.game_map = None
         self.player = None
@@ -14,22 +15,37 @@ class Action():
         self.player = player
         self.message_log = message_log
 
+    def _execute(self):
+        """
+        The actual code that must be reimplemented by children classes.
+
+        Returns the outcome
+        """
+        return {}
+
     def execute(self):
-        pass
+        """
+        Wrapper function. The actual outcome is computed by the _execute
+        method, saved (in order to allow replay) and returned.
+        """
+
+        self.outcome = self._execute()
+        return self.outcome
+
 
 class NoopAction(Action):
     pass
+
 
 class WaitAction(Action):
     """
     Wait one turn without doing anything
     """
 
-    def execute(self):
+    def _execute(self):
         # Return outcome
         outcome = {
             "next_state": GameStates.ENEMY_TURN,
         }
 
         return outcome
-

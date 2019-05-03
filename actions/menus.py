@@ -5,9 +5,10 @@ from game_states import GameStates
 
 from loader_functions.data_loaders import save_game
 
+
 class ShowMenuAction(Action):
 
-    def execute(self):
+    def _execute(self):
 
         # Go back to main menu
         # TODO When going back to main game it's always player's turn, maybe
@@ -21,7 +22,7 @@ class ShowMenuAction(Action):
 
 class ShowCharacterScreenAction(Action):
 
-    def execute(self):
+    def _execute(self):
 
         # Return outcome
         outcome = {
@@ -33,7 +34,7 @@ class ShowCharacterScreenAction(Action):
 
 class ShowInventoryAction(Action):
 
-    def execute(self):
+    def _execute(self):
 
         # Return outcome
         outcome = {
@@ -45,7 +46,7 @@ class ShowInventoryAction(Action):
 
 class BackToGameAction(Action):
 
-    def execute(self):
+    def _execute(self):
         """
         Simply reset the state to player's turn
         """

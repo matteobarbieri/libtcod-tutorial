@@ -10,13 +10,14 @@ from game_messages import Message
 
 import random
 
+
 class MoveAction(Action):
 
     def __init__(self, **kwargs):
-        
+
         self.direction = kwargs['direction']
 
-    def execute(self):
+    def _execute(self):
 
         # Determine direction
         dx, dy = self.direction
@@ -54,11 +55,10 @@ class MoveAction(Action):
         position_changed = (
             source_x != self.player.x or source_y != self.player.y)
 
-
         # Return outcome
         outcome = {
             "next_state": GameStates.ENEMY_TURN,
-            'fov_recompute': position_changed, # TODO this might change
+            'fov_recompute': position_changed,  # TODO this might change
             'redraw_terrain': position_changed,
             'messages': messages,
         }
@@ -66,4 +66,3 @@ class MoveAction(Action):
         # TODO check terrain/enemies!!!
 
         return outcome
-

@@ -9,9 +9,13 @@ class AIAction():
     def __init__(self):
         pass
 
-    def execute(self):
+    def _execute(self):
         print("AI Action placeholder")
-        pass
+
+    def execute(self):
+        self.outcome = self._execute()
+
+        return self.outcome
 
 
 class AIMoveAction(AIAction):
@@ -22,7 +26,7 @@ class AIMoveAction(AIAction):
         self.game_map = kwargs['game_map']
         self.mob = kwargs['mob']
 
-    def execute(self):
+    def _execute(self):
 
         # Determine direction
         dx, dy = self.direction
@@ -45,3 +49,5 @@ class AIMoveAction(AIAction):
                 # Actually move
                 self.mob.x = destination_x
                 self.mob.y = destination_y
+
+        # TODO return outcome

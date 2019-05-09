@@ -35,6 +35,10 @@ def get_constants():
     panel_height = 7
     panel_y = screen_height - panel_height
 
+    # Geometry of entity info frame
+    frame_width = 30
+    frame_height = 60
+
     # Parameters for the log panel
     message_x = bar_width + 2
     message_width = screen_width - bar_width - 2
@@ -74,6 +78,8 @@ def get_constants():
         'bar_width': bar_width,
         'panel_height': panel_height,
         'panel_y': panel_y,
+        'frame_width': frame_width,
+        'frame_height': frame_height,
         'message_x': message_x,
         'message_width': message_width,
         'message_height': message_height,
@@ -101,7 +107,7 @@ def get_game_variables(constants):
 
     # Fighter component for player
     fighter_component = Fighter(hp=100, defense=1, power=2)
-    
+
     # Inventory component for the player
     inventory_component = Inventory(26)
 
@@ -131,7 +137,7 @@ def get_game_variables(constants):
     dagger = Entity(
         0, 0, '-', libtcod.sky, 'Dagger',
         components=dict(equippable=equippable_component, item=Item()))
-    
+
     player.inventory.add_item(dagger)
     player.equipment.toggle_equip(dagger)
 

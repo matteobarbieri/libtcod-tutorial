@@ -1,13 +1,12 @@
 # import libtcodpy as libtcod
 import tcod as libtcod
 
-from map_objects.tile import Wall
-
 from enum import Enum, auto
 
 from game_states import GameStates
 
 from menus import character_screen, inventory_menu, level_up_menu
+
 
 class RenderOrder(Enum):
     STAIRS = auto()
@@ -19,8 +18,11 @@ class RenderOrder(Enum):
 def get_names_under_mouse(mouse, entities, fov_map, top_x, top_y):
     (x, y) = (mouse.cx, mouse.cy)
 
-    names = [entity.name for entity in entities if entity.x == (top_x + x) and entity.y ==
-             (top_y + y) and libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]
+    names = [
+        entity.name for entity in entities if
+            entity.x == (top_x + x) and
+            entity.y == (top_y + y) and
+            libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]
     names = ', '.join(names)
 
     return names.capitalize()
@@ -73,16 +75,18 @@ def clear_entity(con, entity, game_map, fov_map, top_x=0, top_y=0):
         libtcod.console_put_char(
             con, entity.x-top_x, entity.y-top_y, ' ', libtcod.BKGND_DEFAULT)
 
+
 def clear_all(con, entities, game_map, fov_map, top_x, top_y):
     for entity in entities:
         clear_entity(con, entity, game_map, fov_map, top_x, top_y)
+
 
 def draw_entity(terrain_layer, entity,
                 fov_map, game_map, top_x=0, top_y=0):
 
     # Only draw entities that are in player's fov
-    if  libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or \
-        (entity.stairs and game_map.tiles[entity.x][entity.y].explored):
+    if (libtcod.map_is_in_fov(fov_map, entity.x, entity.y) or
+        (entity.stairs and game_map.tiles[entity.x][entity.y].explored)):
         # (entity.c['stairs'] and game_map.tiles[entity.x][entity.y].explored):
         # TODO include case for doors
 
@@ -145,7 +149,7 @@ def render_all(terrain_layer, panel, player,
                     game_map.tiles[x][y].render_at(terrain_layer, x-top_x, y-top_y, visible)
 
     #########################################
-    ######### Render entities  #########
+    ########### Render entities  ############
     #########################################
 
     if redraw_terrain or redraw_entities:
@@ -220,9 +224,11 @@ def render_all(terrain_layer, panel, player,
     # Show inventory menu
     if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
         if game_state == GameStates.SHOW_INVENTORY:
-            inventory_title = 'Press the key next to an item to use it, or Esc to cancel.\n'
+            inventory_title = 'Press the key next to an item to use it, '
+            'or Esc to cancel.\n'
         else:
-            inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
+            inventory_title = 'Press the key next to an item to drop it, '
+            'or Esc to cancel.\n'
 
         inventory_menu(
             terrain_layer, inventory_title, player,
@@ -238,6 +244,7 @@ def render_all(terrain_layer, panel, player,
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
 
-    clear_all(terrain_layer, game_map.entities, game_map, fov_map, top_x, top_y)
+    clear_all(terrain_layer, game_map.entities, game_map,
+              fov_map, top_x, top_y)
 
     return top_x, top_y

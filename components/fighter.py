@@ -14,8 +14,8 @@ class Fighter:
 
     @property
     def max_hp(self):
-        if self.owner and self.owner.c.get('equipment'):
-            bonus = self.owner.c['equipment'].max_hp_bonus
+        if self.owner and self.owner.equipment:
+            bonus = self.owner.equipment.max_hp_bonus
         else:
             bonus = 0
 
@@ -23,8 +23,8 @@ class Fighter:
 
     @property
     def power(self):
-        if self.owner and self.owner.c.get('equipment'):
-            bonus = self.owner.c['equipment'].power_bonus
+        if self.owner and self.owner.equipment:
+            bonus = self.owner.equipment.power_bonus
         else:
             bonus = 0
 
@@ -32,8 +32,8 @@ class Fighter:
 
     @property
     def defense(self):
-        if self.owner and self.owner.c.get('equipment'):
-            bonus = self.owner.c['equipment'].defense_bonus
+        if self.owner and self.owner.equipment:
+            bonus = self.owner.equipment.defense_bonus
         else:
             bonus = 0
 
@@ -63,7 +63,6 @@ class Fighter:
 
         self.hp -= amount
 
-        
         if self.hp <= 0:
             # messages.append(
                 # {'dead': self.owner, 'xp': self.xp})

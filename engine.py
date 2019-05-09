@@ -1,4 +1,5 @@
-import libtcodpy as libtcod
+# import libtcodpy as libtcod
+import tcod as libtcod
 
 import argparse
 
@@ -6,7 +7,9 @@ import random
 
 import sys
 
-from entity import get_blocking_entities_at_location
+# TODO temporarily disabled
+# from entity import get_blocking_entities_at_location
+
 from input_handlers import handle_keys, handle_mouse, handle_main_menu
 from loader_functions.initialize_new_game import get_constants, get_game_variables
 from loader_functions.data_loaders import load_game, save_game
@@ -16,7 +19,8 @@ from render_functions import clear_all, render_all
 from game_states import GameStates
 from death_functions import kill_monster, kill_player
 
-from game_messages import Message
+# TODO temporarily disabled
+# from game_messages import Message
 
 from actions import ShowMenuException
 
@@ -30,9 +34,9 @@ def parse_args():
     return parser.parse_args()
 
 
-def play_game(player, game_map, 
-              message_log, game_state, 
-              terrain_layer, 
+def play_game(player, game_map,
+              message_log, game_state,
+              terrain_layer,
               panel, constants):
 
     # At the beginning of the game, recompute fov
@@ -46,9 +50,12 @@ def play_game(player, game_map,
     mouse = libtcod.Mouse()
 
     game_state = GameStates.PLAYERS_TURN
-    previous_game_state = game_state
 
-    targeting_item = None
+    # TODO temporarily disabled
+    # previous_game_state = game_state
+
+    # TODO temporarily disabled
+    # targeting_item = None
 
     current_turn = 1
     # entities = game_map.entities
@@ -64,14 +71,15 @@ def play_game(player, game_map,
         ########### RENDER GAME WINDOW #############
         ############################################
         if fov_recompute:
-            recompute_fov(
-                fov_map, player.x, player.y, 
+
+            fov_map.compute_fov(
+                player.x, player.y,
                 constants['fov_radius'], constants['fov_light_walls'],
                 constants['fov_algorithm'])
 
         render_all(
-            terrain_layer, panel, 
-            player, game_map, fov_map, fov_recompute, 
+            terrain_layer, panel,
+            player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state, current_turn)
 
@@ -81,7 +89,12 @@ def play_game(player, game_map,
 
         libtcod.console_flush()
 
-        if game_state in [GameStates.PLAYERS_TURN,]:
+        ############################################
+        ############## PLAYER'S TURN ###############
+        ############################################
+        if game_state in [
+                GameStates.PLAYERS_TURN, GameStates.SHOW_INVENTORY,
+                GameStates.CHARACTER_SCREEN]:
 
             ############################################
             ############# EXECUTE ACTIONS ##############
@@ -94,18 +107,18 @@ def play_game(player, game_map,
             ####### XXX UPDATED
             # move = action.get('move')
             # wait = action.get('wait')
+            # show_inventory = action.get('show_inventory')
+            # show_character_screen = action.get('show_character_screen')
 
             ####### XXX TO UPDATE
             # pickup = action.get('pickup')
-            # show_inventory = action.get('show_inventory')
             # drop_inventory = action.get('drop_inventory')
             # inventory_index = action.get('inventory_index')
             # take_stairs = action.get('take_stairs')
             # level_up = action.get('level_up')
             # exit = action.get('exit')
             # fullscreen = action.get('fullscreen')
-            # show_character_screen = action.get('show_character_screen')
-            
+
             # TODO to restore
             # left_click = mouse_action.get('left_click')
             # right_click = mouse_action.get('right_click')
@@ -132,10 +145,12 @@ def play_game(player, game_map,
                 if outcome.get('next_state') is not None:
                     game_state = outcome.get('next_state')
 
+                # TODO this should be probably phased out, as effects of actions
+                # are computed elsewhere
                 # # Update results
                 # if outcome.get('results') is not None:
                     # player_turn_results.eytend(outcome['results'])
-                
+
                 # Determine whether to recompute fov...
                 if outcome.get('fov_recompute') is not None:
                     fov_recompute = outcome.get('fov_recompute')
@@ -149,6 +164,9 @@ def play_game(player, game_map,
                     for m in outcome.get('messages'):
                         message_log.add_message(m)
 
+        ############################################
+        ############## ENEMIES' TURN ###############
+        ############################################
         elif game_state == GameStates.ENEMY_TURN:
 
             # Each entity takes a turn
@@ -157,7 +175,7 @@ def play_game(player, game_map,
                     # enemy_turn_results = entity.ai.take_turn(player, fov_map, game_map)
 
                     # Pick an action for each entity
-                    entity_action = entity.ai.pick_action(player, fov_map, game_map)
+                    entity_action = entity.ai.pick_action(player, game_map)
 
                     # XXX no need to set context, asit was needed previously to
                     # choose the action
@@ -165,11 +183,9 @@ def play_game(player, game_map,
                     # Execute the action
                     outcome = entity_action.execute()
 
-            # Simply go back to player's turn state
+            # Go back to player's turn state
             game_state = GameStates.PLAYERS_TURN
             redraw_entities = True
-
-            # TODO do something!
 
             current_turn += 1
 
@@ -257,8 +273,8 @@ def play_game(player, game_map,
 
             # If it was in a menu, go back to the previous state
             if game_state in (
-                GameStates.SHOW_INVENTORY, 
-                GameStates.DROP_INVENTORY, 
+                GameStates.SHOW_INVENTORY,
+                GameStates.DROP_INVENTORY,
                 GameStates.CHARACTER_SCREEN):
 
                 game_state = previous_game_state
@@ -271,7 +287,7 @@ def play_game(player, game_map,
                 save_game(player, game_map, message_log, game_state)
 
                 return True
-        
+
         # Handle results from player actions
         for player_turn_result in player_turn_results:
             message = player_turn_result.get('message')
@@ -416,28 +432,32 @@ def main():
     constants = get_constants()
 
     # libtcod.console_set_custom_font(
-        # 'data/fonts/arial12x12.png', 
+        # 'data/fonts/arial12x12.png',
         # libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
 
     libtcod.console_set_custom_font(
-        # 'data/fonts/Yayo-c64-640x200.png', 
-        # 'data/fonts/Yayo-c64-1280x400-83b157.png', 
-        # 'data/fonts/Alloy-curses-12x12.png', 
-        # 'data/fonts/terminal16x16_gs_ro.png', 
+        # 'data/fonts/Yayo-c64-640x200.png',
+        # 'data/fonts/Yayo-c64-1280x400-83b157.png',
+        # 'data/fonts/Alloy-curses-12x12.png',
+        # 'data/fonts/terminal16x16_gs_ro.png',
         'data/fonts/16x16-sb-ascii.png', # good!
         # 'data/fonts/16x16-RogueYun-AgmEdit.png', # good!
         libtcod.FONT_LAYOUT_ASCII_INROW)
 
+    # libtcod.console_init_root(
+    #     constants['screen_width'], constants['screen_height'],
+    #     constants['window_title'], False)
+
     libtcod.console_init_root(
-        constants['screen_width'], constants['screen_height'], 
-        constants['window_title'], False)
+        constants['screen_width'], constants['screen_height'],
+        constants['window_title'], False, renderer=libtcod.RENDERER_SDL2)
 
     terrain_layer = libtcod.console_new(
-        constants['screen_width'], 
+        constants['screen_width'],
         constants['screen_height'])
-    
+
     panel = libtcod.console_new(
-        constants['screen_width'], 
+        constants['screen_width'],
         constants['panel_height'])
 
     player = None
@@ -491,7 +511,10 @@ def main():
                 break
 
         else:
-            libtcod.console_clear(terrain_layer)
+            # migrating to tcod
+            # libtcod.console_clear(terrain_layer)
+            terrain_layer.clear()
+
             play_game(
                 player, game_map, message_log, game_state,
                 terrain_layer, panel, constants)

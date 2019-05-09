@@ -16,7 +16,8 @@ from ..map_utils import area_is_available
 
 from ..map_utils import NoMoreSpaceException
 
-import libtcodpy as libtcod
+# import libtcodpy as libtcod
+import tcod as libtcod
 
 from components.stairs import Stairs
 
@@ -24,8 +25,9 @@ from render_functions import RenderOrder
 
 from entity import Entity
 
-from components.ai import BasicMonster
-from components.fighter import Fighter
+from prefabs.orc import make_orc
+
+import time
 
 class Tunneller():
 
@@ -236,7 +238,7 @@ class Tunneller():
             # Also specify the door
             door = Door([x, y, x, y])
 
-            logging.getLogger().debug("Creating Room at {}".format(room.center))
+            # logging.getLogger().debug("Creating Room at {}".format(room.center))
             return room, door
         else:
             raise NoMoreSpaceException("Unavailable area")
@@ -318,9 +320,11 @@ class Tunneller():
                     break
 
         if can_dig:
+            """
             logging.getLogger().debug(
                 "Creating Corridor at {}, heading {} of length {}".format(
                     corridor.center, d, tunnel_length))
+            """
             return corridor
         else:
             raise NoMoreSpaceException("Unavailable area")
@@ -396,8 +400,10 @@ class Tunneller():
                 try:
                     x, y, d = self.current_location.pick_starting_point()
                     junction = self.create_junction_blueprint(game_map, x, y, d, blueprint)
+                    """
                     logging.getLogger().debug("Creating junction at {}".format(
                         junction.center))
+                    """
                     break
                 except NoMoreSpaceException:
                     # This direction didn't work, try another one
@@ -568,7 +574,7 @@ def connect_close_parts(level, sorted_distance_list):
         if not level.all_parts[i].is_connected_to(level.all_parts[j]):
             try:
                 connect_parts(level, i, j)
-                logging.getLogger().debug("Connected parts {} and {}".format(i, j))
+                # logging.getLogger().debug("Connected parts {} and {}".format(i, j))
                 n_connected += 1
             except NoMoreSpaceException as e:
                 # print("While creating connections:")
@@ -601,29 +607,7 @@ def add_monsters(level):
         # TODO for now, just generate an orc in every room
         if random.random() < 2:
 
-            # TODO must change for non square rooms
-            # Unpack room coordinates
-            x1, y1, x2, y2 = room.xy
-            # x = random.randint(x1+1, x2)
-            # y = random.randint(y1+1, y2)
-            x = random.randint(x1+1, x2-1)
-            y = random.randint(y1+1, y2-1)
-
-            # Spawn and add an orc 'o' in the room
-            fighter_component = Fighter(
-                hp=20, defense=0, power=4, xp=35)
-            ai_component = BasicMonster()
-
-            monster = Entity(
-                x, y,
-                'o', libtcod.desaturated_green,
-                'Orc',
-                blocks=True,
-                render_order=RenderOrder.ACTOR,
-                components=dict(
-                    fighter=fighter_component,
-                    ai=ai_component)
-            )
+            monster = make_orc(room)
 
             level.entities.append(monster)
 
@@ -641,6 +625,9 @@ def add_exits(level, sorted_distance_list):
         entry_room = random.choice(level.rooms)
         if entry_room != exit_room:
             break
+
+    # TODO DEBUG
+    # entry_room.d_map.dump_txt("/home/matteo/entroom.txt")
 
     # Create and add exit stairs '>'
     exit_x, exit_y = exit_room.center
@@ -720,6 +707,20 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     logging.getLogger().info("Adding walls")
     add_walls(level)
 
+    # Create Dijkstra Maps for all map parts
+    logging.getLogger().info("Compute Dijkstra maps for rooms")
+    tic = time.time()
+    count = 0
+    for mp in level.all_parts:
+    # for mp in level.rooms:
+        mp.create_dijkstra_map(level)
+        count += 1
+    tac = time.time()
+
+    dt = tac - tic
+    logging.getLogger().info("Time for {} rooms: {} s".format(count, dt))
+    logging.getLogger().info("Average time per room: {} s".format(dt/count))
+
     # Add exits
     logging.getLogger().info("Adding exists")
     add_exits(level, sorted_distance_list)
@@ -728,6 +729,4 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     # Monsters
     add_monsters(level)
 
-
     return level
-

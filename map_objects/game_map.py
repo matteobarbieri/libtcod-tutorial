@@ -1,11 +1,7 @@
 # TODO temporarily disabled
 # from entity import Entity
 
-from enum import Enum
-
 import logging
-
-from game_messages import Message
 
 # from item_functions import cast_confuse, cast_fireball, cast_lightning, heal
 
@@ -24,10 +20,6 @@ import random
 
 import shelve
 
-from render_functions import RenderOrder
-
-import libtcodpy as libtcod
-
 # TODO temporarily disabled
 # from random_utils import from_dungeon_level, random_choice_from_dict
 
@@ -35,8 +27,7 @@ from .directions import Direction
 
 from .map_utils import dig_rect, _intersection_area
 
-from .map_utils import NoMoreSpaceException
-
+from dijkstra_map import DijkstraMap
 
 class MapPart():
 
@@ -62,7 +53,6 @@ class MapPart():
         x1, y1, x2, y2 = self.xy
 
         return x >= x1 and x <= x2 and y >= y1 and y <= y2
-
 
     def remove_connection(self, other):
         if other in self.connected_parts:
@@ -114,14 +104,118 @@ class MapPart():
         return does_intersect
         # return _intersection_area(self.xy, other.xy) > 0
 
+    def create_dijkstra_map(self, game_map):
+        """
+        Create and store a Dijkstra map pointing to the center of the map part.
+        See http://www.roguebasin.com/index.php?title=The_Incredible_Power_of_Dijkstra_Maps
+        for more info on Dijkstra maps
+        """
+
+        # print("creating dmap for room at {}".format(self.center))
+
+        d_map = list()
+
+        # Max value
+        MAX_VALUE = 2 * game_map.width * game_map.height
+
+        # Fill the map with max values
+        for x in range(game_map.width):
+            d_row = list()
+            for y in range(game_map.height):
+                d_row.append(MAX_VALUE)
+
+            d_map.append(d_row)
+
+        # Set the goal tile[s] to 0
+        x_center, y_center = self.center
+        d_map[x_center][y_center] = 0
+
+        """
+        # First inefficient implementation
+        anything_changed = True
+        while anything_changed:
+            anything_changed = False
+            for x in range(1, game_map.width-1):
+                for y in range(1, game_map.height-1):
+                    # Only check floor tiles
+                    if type(game_map.tiles[x][y]) == Floor:
+                        min_val = MAX_VALUE
+                        for x1 in range(x-1, x+2):
+                            for y1 in range(y-1, y+2):
+                                if d_map[x1][y1] < min_val:
+                                    min_val = d_map[x1][y1]
+
+                        # If the smalles neighbour is more than 1 smaller than
+                        # the current tile, set it to be 1 greater than the
+                        # smallest value
+                        if min_val < d_map[x][y] - 1:
+                            d_map[x][y] = min_val + 1
+                            anything_changed = True
+        """
+
+        # Keep a queue of tiles that need updating
+        # queue = [(x_center, y_center)]
+        queue = list()
+        for x in range(x_center-1, x_center+2):
+            for y in range(y_center-1, y_center+2):
+                if (x, y) != (x_center, y_center):
+                    queue.append((x, y))
+
+        while queue:
+            (xx, yy) = queue.pop(0)
+            # tmp_queue = list()
+
+            min_val = MAX_VALUE
+
+            # First check the min value in the neighborhood
+            for x in range(max(0, xx-1), min(game_map.width, xx+2)):
+                for y in range(max(0, yy-1), min(game_map.height, yy+2)):
+                    if (x, y) != (xx, yy):
+                        # tmp_queue.append((x, y))
+                        if d_map[x][y] < min_val:
+                            min_val = d_map[x][y]
+
+            # If that's the case, update current cell
+            if min_val < d_map[xx][yy] - 1:
+                d_map[xx][yy] = min_val + 1
+
+            # Add more cells to be updated
+            for x in range(max(0, xx-1), min(game_map.width, xx+2)):
+                for y in range(max(0, yy-1), min(game_map.height, yy+2)):
+                    if (x, y) != (xx, yy):
+                        """
+                        if \
+                                type(game_map.tiles[x][y]) == Floor and \
+                                d_map[x][y] > min_val + 1 and \
+                                (x, y) not in queue:
+                            queue.append((x, y))
+                        """
+                        if \
+                                not game_map.tiles[x][y].blocked and \
+                                d_map[x][y] > min_val + 1 and \
+                                (x, y) not in queue:
+                            queue.append((x, y))
+                    """
+                    if \
+                            (x, y) not in queue and \
+                            type(game_map.tiles[x][y]) == Floor and \
+                            d_map[x][y] > min_val + 1 and \
+                            (x, y) != (xx, yy):
+                        queue.append((x, y))
+                    """
+
+        # Save the Dijkstra map for this room
+        self.d_map = DijkstraMap(d_map)
+
+
     def has_available_directions(self):
         return len(self.available_directions) > 0
 
     def pick_starting_point(self):
         """
-        Pick a starting point and direction for the next element in the dungeon.
-        The coordinates are supposed to be part of the previous element, i.e.
-        walkable space (a Floor tile, NOT a Wall tile).
+        Pick a starting point and direction for the next element in the
+        dungeon. The coordinates are supposed to be part of the previous
+        element, i.e. walkable space (a Floor tile, NOT a Wall tile).
         """
 
         d = random.choice(self.available_directions)
@@ -136,10 +230,10 @@ class MapPart():
             x = x2
             y = y1 + int((y2 - y1)/2)
         elif d == Direction.NORTH:
-            x = x1 + int((x2- x1)/2)
-            y = y1 
+            x = x1 + int((x2 - x1)/2)
+            y = y1
         elif d == Direction.SOUTH:
-            x = x1 + int((x2- x1)/2)
+            x = x1 + int((x2 - x1)/2)
             y = y2
 
         # Remove option
@@ -191,6 +285,7 @@ class MapPart():
 
         # TODO
         # Do more than this
+
 
 class Door(MapPart):
     """
@@ -316,7 +411,7 @@ class GameMap:
         return self.junctions + self.corridors + self.rooms
 
     def get_player_starting_coords(self):
-        
+
         # TODO!!!
         for e in self.entities:
             if e.char == '<':
@@ -331,7 +426,7 @@ class GameMap:
         # Should place him/her in an entry/exit tile (depending on where they
         # came from).
         # starting_room = random.choice(self.rooms)
-        
+
         x, y = self.get_player_starting_coords()
         player.x = x
         player.y = y
@@ -403,7 +498,7 @@ class GameMap:
             return False
 
         # Then check for potential intersections with other elements of the map
-        
+
         # Build the list of alla placed parts
         placed_parts = self.rooms + self.junctions + self.corridors
 
@@ -463,4 +558,3 @@ class GameMap:
             return True
 
         return False
-

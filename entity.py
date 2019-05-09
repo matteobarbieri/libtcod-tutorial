@@ -38,7 +38,7 @@ class Entity:
 
         # Render order
         self.render_order = render_order
-    
+
         self.components = dict()
         # Add components
         for k, v in components.items():
@@ -64,7 +64,6 @@ class Entity:
         else:
             raise AttributeError()
 
-
     def add_component(self, component_type, component):
         """
         Add a component to the entity
@@ -82,7 +81,6 @@ class Entity:
 
         component.owner = self
         self.components[component_type] = component
-
 
     @property
     def c(self):
@@ -105,7 +103,7 @@ class Entity:
         """
 
         # TODO check if hostile
-        if other.fighter is not None: 
+        if other.fighter is not None:
             messages = self.fighter.attack(other)
             return messages
 
@@ -144,8 +142,9 @@ class Entity:
                     not game_map.tiles[x1][y1].block_sight,
                     not game_map.tiles[x1][y1].blocked)
 
-        # Scan all the objects to see if there are objects that must be navigated around
-        # Check also that the object isn't self or the target (so that the start and the end points are free)
+        # Scan all the objects to see if there are objects that must be
+        # navigated around. Check also that the object isn't self or the
+        # target (so that the start and the end points are free).
         # The AI class handles the situation if self is next to the target so
         # it will not use this A* function anyway
         for entity in entities:
@@ -163,8 +162,10 @@ class Entity:
         # coordinates
         libtcod.path_compute(my_path, self.x, self.y, target.x, target.y)
 
-        # Check if the path exists, and in this case, also the path is shorter than 25 tiles
-        # The path size matters if you want the monster to use alternative longer paths (for example through other rooms) if for example the player is in a corridor
+        # Check if the path exists, and in this case, also if such path is
+        # shorter than 25 tiles. The path size matters if you want the monster
+        # to use alternative longer paths (for example through other rooms),
+        # if for example the player is in a corridor.
         # It makes sense to keep path size relatively low to keep the monsters
         # from running around the map if there's an alternative path really far
         # away
@@ -177,9 +178,10 @@ class Entity:
                 self.x = x
                 self.y = y
         else:
-            # Keep the old move function as a backup so that if there are no paths (for example another monster blocks a corridor)
-            # it will still try to move towards the player (closer to the
-            # corridor opening)
+            # Keep the old move function as a backup so that if there are no
+            # paths (for example another monster blocks a corridor), it will
+            # still try to move towards the player (closer to the corridor
+            # opening).
             self.move_towards(target.x, target.y, game_map, entities)
 
             # Delete the path to free memory

@@ -37,7 +37,7 @@ def parse_args():
 def play_game(player, game_map,
               message_log, game_state,
               terrain_layer,
-              panel, constants):
+              panel, entity_frame, constants):
 
     # At the beginning of the game, recompute fov
     fov_recompute = True
@@ -78,7 +78,7 @@ def play_game(player, game_map,
                 constants['fov_algorithm'])
 
         render_all(
-            terrain_layer, panel,
+            terrain_layer, panel, entity_frame,
             player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state, current_turn)
@@ -460,8 +460,11 @@ def main():
         constants['screen_width'],
         constants['panel_height'])
 
+    entity_frame = libtcod.console_new(
+        constants['frame_width'],
+        constants['frame_height'])
+
     player = None
-    entities = []
     game_map = None
     message_log = None
     game_state = None
@@ -517,7 +520,7 @@ def main():
 
             play_game(
                 player, game_map, message_log, game_state,
-                terrain_layer, panel, constants)
+                terrain_layer, panel, entity_frame, constants)
 
             show_main_menu = True
 

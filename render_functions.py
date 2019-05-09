@@ -15,6 +15,18 @@ class RenderOrder(Enum):
     ACTOR = auto()
 
 
+def get_entities_under_mouse(mouse, entities, fov_map, top_x, top_y):
+    (x, y) = (mouse.cx, mouse.cy)
+
+    entities_list = [
+        entity for entity in entities if
+            entity.x == (top_x + x) and
+            entity.y == (top_y + y) and
+            libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]
+
+    return entities_list
+
+
 def get_names_under_mouse(mouse, entities, fov_map, top_x, top_y):
     (x, y) = (mouse.cx, mouse.cy)
 
@@ -26,6 +38,31 @@ def get_names_under_mouse(mouse, entities, fov_map, top_x, top_y):
     names = ', '.join(names)
 
     return names.capitalize()
+
+def render_entity_frame(entity_frame, entity):
+
+    # Draw a rectangle of the background color for the full
+    # length of the bar
+    # libtcod.console_set_default_background(entity_frame, libtcod.red)
+    # libtcod.console_rect(entity_frame, 3, 3, 7, 2,
+                         # False, libtcod.BKGND_SCREEN)
+
+
+    entity_frame.draw_frame(
+        1, 1,
+        entity_frame.width-2, entity_frame.height-2,
+        'TheFrame')
+
+    # Draw the event log
+    # libtcod.console_set_default_foreground(panel, libtcod.white)
+    # libtcod.console_print_ex(panel,
+                             # int(x + total_width / 2),
+                             # y,
+                             # libtcod.BKGND_NONE,
+                             # libtcod.CENTER,
+                             # '{0}: {1}/{2}'.format(name,
+                                                   # value,
+                                                   # maximum))
 
 
 def render_bar(panel, x, y, total_width,
@@ -102,7 +139,7 @@ def draw_entity(terrain_layer, entity,
         libtcod.console_set_char_foreground(
             terrain_layer, entity.x-top_x, entity.y-top_y, entity.color)
 
-def render_all(terrain_layer, panel, player,
+def render_all(terrain_layer, panel, entity_frame, player,
                game_map, fov_map, fov_recompute,
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
@@ -114,6 +151,8 @@ def render_all(terrain_layer, panel, player,
     panel_height = constants['panel_height']
     bar_width = constants['bar_width']
     panel_y = constants['panel_y']
+    frame_width = constants['frame_width']
+    frame_height = constants['frame_height']
 
     #########################################
     ######### Render terrain first ##########
@@ -172,6 +211,10 @@ def render_all(terrain_layer, panel, player,
             # draw_entity(terrain_layer, entity, fov_map, game_map, top_x, top_y)
             draw_entity(terrain_layer, entity, fov_map, game_map, top_x, top_y)
 
+    #########################################
+    ############ Render panel  ##############
+    #########################################
+
     # Now render the health bar
     libtcod.console_set_default_background(panel, libtcod.black)
     libtcod.console_clear(panel)
@@ -220,6 +263,26 @@ def render_all(terrain_layer, panel, player,
         screen_width, panel_height,
         0,
         0, panel_y)
+
+    #########################################
+    ######### Render entity frame  ##########
+    #########################################
+
+    entities_under_mouse = get_entities_under_mouse(
+            mouse, game_map.entities, fov_map, top_x, top_y)
+
+    if entities_under_mouse:
+
+        render_entity_frame(entity_frame, entities_under_mouse[0])
+
+        # Blit panel console on root console
+        libtcod.console_blit(
+            entity_frame, 0, 0,
+            frame_width, frame_height,
+            0,
+            screen_width - frame_width, 0)
+
+    #########################################
 
     # Show inventory menu
     if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):

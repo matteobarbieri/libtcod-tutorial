@@ -51,3 +51,8 @@ class AIMoveAction(AIAction):
                 self.mob.y = destination_y
 
         # TODO return outcome
+        outcome = {
+            "redraw_terrain": True,
+        }
+
+        return outcome

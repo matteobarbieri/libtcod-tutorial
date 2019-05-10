@@ -46,6 +46,7 @@ class WaitAction(Action):
         # Return outcome
         outcome = {
             "next_state": GameStates.ENEMY_TURN,
+            "redraw_terrain": True,
         }
 
         return outcome

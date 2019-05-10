@@ -35,8 +35,11 @@ def get_constants():
     panel_height = 7
     panel_y = screen_height - panel_height
 
+    terrain_layer_width = screen_width
+    terrain_layer_height = screen_height - panel_height
+
     # Geometry of entity info frame
-    frame_width = 30
+    frame_width = 31
     frame_height = screen_height - panel_height
 
     # Parameters for the log panel
@@ -78,6 +81,8 @@ def get_constants():
         'bar_width': bar_width,
         'panel_height': panel_height,
         'panel_y': panel_y,
+        'terrain_layer_width': terrain_layer_width,
+        'terrain_layer_height': terrain_layer_height,
         'frame_width': frame_width,
         'frame_height': frame_height,
         'message_x': message_x,

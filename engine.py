@@ -15,7 +15,7 @@ from loader_functions.initialize_new_game import get_constants, get_game_variabl
 from loader_functions.data_loaders import load_game, save_game
 from menus import main_menu, message_box
 from fov_functions import initialize_fov, recompute_fov
-from render_functions import clear_all, render_all
+from render_functions import render_all
 from game_states import GameStates
 from death_functions import kill_monster, kill_player
 
@@ -37,7 +37,7 @@ def parse_args():
 def play_game(player, game_map,
               message_log, game_state,
               terrain_layer,
-              panel, entity_frame, constants):
+              panel, entity_frame, main_window, constants):
 
     # At the beginning of the game, recompute fov
     fov_recompute = True
@@ -78,7 +78,7 @@ def play_game(player, game_map,
                 constants['fov_algorithm'])
 
         render_all(
-            terrain_layer, panel, entity_frame,
+            terrain_layer, panel, entity_frame, main_window,
             player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state, current_turn)
@@ -185,7 +185,8 @@ def play_game(player, game_map,
 
             # Go back to player's turn state
             game_state = GameStates.PLAYERS_TURN
-            redraw_entities = True
+            # redraw_entities = True
+            redraw_terrain = True
 
             current_turn += 1
 
@@ -453,8 +454,12 @@ def main():
         constants['window_title'], False, renderer=libtcod.RENDERER_SDL2)
 
     terrain_layer = libtcod.console_new(
-        constants['screen_width'],
-        constants['screen_height'])
+        constants['terrain_layer_width'],
+        constants['terrain_layer_height'])
+
+    main_window = libtcod.console_new(
+        constants['terrain_layer_width'],
+        constants['terrain_layer_height'])
 
     panel = libtcod.console_new(
         constants['screen_width'],
@@ -520,7 +525,7 @@ def main():
 
             play_game(
                 player, game_map, message_log, game_state,
-                terrain_layer, panel, entity_frame, constants)
+                terrain_layer, panel, entity_frame, main_window, constants)
 
             show_main_menu = True
 

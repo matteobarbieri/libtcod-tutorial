@@ -78,18 +78,15 @@ def render_entity_frame(entity_frame, entity):
         w-2, h-2,
         'Info')
 
-    # Print entiy name
-    # libtcod.console_set_default_foreground(panel, libtcod.white)
-    libtcod.console_print_ex(
-        entity_frame, 3, 3,
-        libtcod.BKGND_NONE,
-        libtcod.LEFT,
-        '{}'.format(entity.name))
+    # Print the entiy's name
+    entity_frame.print(
+        3, 3, '{}'.format(entity.name))
 
     # Draw entity graphics
-    # libtcod.console_set_default_background(entity_frame, libtcod.red)
-    # libtcod.console_rect(entity_frame, 3, 3, 7, 2,
-                         # False, libtcod.BKGND_SCREEN)
+    # TODO
+    # Mockup for entity detail
+    entity_frame.draw_rect(
+        3, 5, 10, 10, 0, bg=libtcod.red)
 
 
 def render_bar(panel, x, y, total_width,

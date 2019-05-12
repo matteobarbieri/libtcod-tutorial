@@ -4,19 +4,21 @@ from game_states import GameStates
 
 from actions import *
 
-def handle_keys(key, game_state):
+def handle_input(key, mouse, game_state):
     """
     Handle inputs differently depending on game state
     """
+
+    # TODO refactor as dispatch tables
     if game_state == GameStates.PLAYERS_TURN:
-        return handle_player_turn_keys(key)
+        return handle_player_turn_keys(key, mouse)
     # TODO handle also DROP_INVENTORY
     # elif game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
         # return handle_inventory_keys(key)
-    elif game_state in (GameStates.SHOW_INVENTORY, GameStates):
-        return handle_inventory_keys(key)
+    elif game_state in (GameStates.SHOW_INVENTORY):
+        return handle_inventory_keys(key, mouse)
     elif game_state == GameStates.CHARACTER_SCREEN:
-        return handle_character_screen(key)
+        return handle_character_screen(key, mouse)
 
     """
     elif game_state == GameStates.PLAYER_DEAD:
@@ -32,7 +34,7 @@ def handle_keys(key, game_state):
 
     return {}
 
-def handle_inventory_keys(key):
+def handle_inventory_keys(key, mouse):
 
     index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1
 
@@ -65,6 +67,8 @@ def handle_main_menu(key):
 
 
 def handle_level_up_menu(key):
+    pass
+    """
     if key:
         key_char = chr(key.c)
 
@@ -76,9 +80,10 @@ def handle_level_up_menu(key):
             return {'level_up': 'def'}
 
     return {}
+    """
 
 
-def handle_character_screen(key):
+def handle_character_screen(key, mouse):
 
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
@@ -90,10 +95,10 @@ def handle_character_screen(key):
     # No key was pressed
     return NoopAction()
 
-def handle_player_turn_keys(key):
+def handle_player_turn_keys(key, mouse):
 
 
-    # Code to prevent double input 
+    # Code to prevent double input
     key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
 
     #########################################
@@ -128,6 +133,13 @@ def handle_player_turn_keys(key):
         return ShowMenuAction()
 
     #########################################
+    ############ SELECT ENTITY ##############
+    #########################################
+
+    elif False:
+        pass
+
+    #########################################
     ########## TOGGLE FULLSCREEN ############
     #########################################
 
@@ -138,9 +150,10 @@ def handle_player_turn_keys(key):
     #########################################
     ################# MISC ##################
     #########################################
+
     elif key_char == 'i':
         return ShowInventoryAction()
-    
+
     elif key_char == 'c':
         return ShowCharacterScreenAction()
 

@@ -10,7 +10,7 @@ import sys
 # TODO temporarily disabled
 # from entity import get_blocking_entities_at_location
 
-from input_handlers import handle_keys, handle_mouse, handle_main_menu
+from input_handlers import handle_input, handle_main_menu
 from loader_functions.initialize_new_game import get_constants, get_game_variables
 from loader_functions.data_loaders import load_game, save_game
 from menus import main_menu, message_box
@@ -99,7 +99,7 @@ def play_game(player, game_map,
             ############################################
             ############# EXECUTE ACTIONS ##############
             ############################################
-            action = handle_keys(key, game_state)
+            action = handle_input(key, mouse, game_state)
 
             # TODO to restore
             # mouse_action = handle_mouse(mouse)
@@ -109,6 +109,8 @@ def play_game(player, game_map,
             # wait = action.get('wait')
             # show_inventory = action.get('show_inventory')
             # show_character_screen = action.get('show_character_screen')
+            # exit = action.get('exit')
+            # fullscreen = action.get('fullscreen')
 
             ####### XXX TO UPDATE
             # pickup = action.get('pickup')
@@ -116,8 +118,6 @@ def play_game(player, game_map,
             # inventory_index = action.get('inventory_index')
             # take_stairs = action.get('take_stairs')
             # level_up = action.get('level_up')
-            # exit = action.get('exit')
-            # fullscreen = action.get('fullscreen')
 
             # TODO to restore
             # left_click = mouse_action.get('left_click')

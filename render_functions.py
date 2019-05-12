@@ -48,7 +48,7 @@ def render_entity_label(terrain_layer, entity, top_x, top_y):
 
     # Print the name of the entity on the top left tile
     libtcod.console_put_char(
-        0, entity.x-top_x-1, entity.y-top_y-1, '\\', libtcod.BKGND_DEFAULT)
+        terrain_layer, entity.x-top_x-1, entity.y-top_y-1, '\\', libtcod.BKGND_DEFAULT)
 
     libtcod.console_print_ex(
         terrain_layer,
@@ -68,11 +68,14 @@ def render_entity_frame(entity_frame, entity):
     # libtcod.console_rect(entity_frame, 3, 3, 7, 2,
                          # False, libtcod.BKGND_SCREEN)
 
+    # Extract width and height
+    w = entity_frame.width
+    h = entity_frame.height
 
     # Draw frame
     entity_frame.draw_frame(
         1, 1,
-        entity_frame.width-2, entity_frame.height-2,
+        w-2, h-2,
         'Info')
 
     # Print entiy name
@@ -166,7 +169,7 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
                game_map, fov_map, fov_recompute,
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
-               game_state, current_turn):
+               game_state, entity_focused, current_turn):
 
     ### Extract variables from contants dict
     screen_width = constants['screen_width']
@@ -312,16 +315,16 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
             main_window, entity_under_mouse,
             top_x, top_y)
 
+    if game_state == GameStates.ENTITY_INFO:
         # TODO to move somewhere else!
-        # render_entity_frame(entity_frame, entity_under_mouse)
+        render_entity_frame(entity_frame, entity_focused)
 
-        # # Blit panel console on root console
-        # libtcod.console_blit(
-            # entity_frame,
-            # 0, 0, frame_width, frame_height,
-            # main_window,
-            # screen_width - frame_width, 0)
-
+        # Blit panel console on root console
+        libtcod.console_blit(
+            entity_frame,
+            0, 0, frame_width, frame_height,
+            main_window,
+            screen_width - frame_width, 0)
 
     libtcod.console_blit(
         main_window,

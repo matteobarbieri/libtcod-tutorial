@@ -44,6 +44,12 @@ def play_game(player, game_map,
     redraw_terrain = True
     redraw_entities = True
 
+    # Entity being inspected
+    entity_focused = None
+
+    # Entity being targeted
+    entity_targeted = None
+
     fov_map = initialize_fov(game_map)
 
     key = libtcod.Key()
@@ -65,7 +71,8 @@ def play_game(player, game_map,
     ############################################
 
     while not libtcod.console_is_window_closed():
-        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+        libtcod.sys_check_for_event(
+            libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
 
         ############################################
         ########### RENDER GAME WINDOW #############
@@ -77,11 +84,15 @@ def play_game(player, game_map,
                 constants['fov_radius'], constants['fov_light_walls'],
                 constants['fov_algorithm'])
 
-        render_all(
+        top_x, top_y = render_all(
             terrain_layer, panel, entity_frame, main_window,
             player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
-            constants, mouse, game_state, current_turn)
+            constants, mouse, game_state, entity_focused, current_turn)
+
+        # TODO find a better place
+        game_map.top_x = top_x
+        game_map.top_y = top_y
 
         fov_recompute = False
         redraw_terrain = False
@@ -94,7 +105,7 @@ def play_game(player, game_map,
         ############################################
         if game_state in [
                 GameStates.PLAYERS_TURN, GameStates.SHOW_INVENTORY,
-                GameStates.CHARACTER_SCREEN]:
+                GameStates.CHARACTER_SCREEN, GameStates.ENTITY_INFO]:
 
             ############################################
             ############# EXECUTE ACTIONS ##############
@@ -150,6 +161,10 @@ def play_game(player, game_map,
                 # # Update results
                 # if outcome.get('results') is not None:
                     # player_turn_results.eytend(outcome['results'])
+
+                # Determine whether to recompute fov...
+                if outcome.get('entity_focused') is not None:
+                    entity_focused = outcome.get('entity_focused')
 
                 # Determine whether to recompute fov...
                 if outcome.get('fov_recompute') is not None:

@@ -1,4 +1,4 @@
-import libtcodpy as libtcod
+import tcod as libtcod
 
 from game_states import GameStates
 
@@ -15,10 +15,12 @@ def handle_input(key, mouse, game_state):
     # TODO handle also DROP_INVENTORY
     # elif game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
         # return handle_inventory_keys(key)
-    elif game_state in (GameStates.SHOW_INVENTORY):
+    elif game_state in (GameStates.SHOW_INVENTORY, ):
         return handle_inventory_keys(key, mouse)
     elif game_state == GameStates.CHARACTER_SCREEN:
         return handle_character_screen(key, mouse)
+    elif game_state == GameStates.ENTITY_INFO:
+        return handle_entity_info(key, mouse)
 
     """
     elif game_state == GameStates.PLAYER_DEAD:
@@ -33,6 +35,24 @@ def handle_input(key, mouse, game_state):
     """
 
     return {}
+
+def handle_entity_info(key, mouse):
+
+    index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1
+
+    # TODO To enable again
+    # if index >= 0:
+        # return {'inventory_index': index}
+
+    if key.vk == libtcod.KEY_ENTER and key.lalt:
+        # Alt+Enter: toggle full screen
+        return ToggleFullscreenAction()
+    elif key.vk == libtcod.KEY_ESCAPE:
+        # Exit the menu, go back to main game
+        return BackToGameAction()
+
+    # No key was pressed
+    return NoopAction()
 
 def handle_inventory_keys(key, mouse):
 
@@ -133,13 +153,6 @@ def handle_player_turn_keys(key, mouse):
         return ShowMenuAction()
 
     #########################################
-    ############ SELECT ENTITY ##############
-    #########################################
-
-    elif False:
-        pass
-
-    #########################################
     ########## TOGGLE FULLSCREEN ############
     #########################################
 
@@ -156,6 +169,22 @@ def handle_player_turn_keys(key, mouse):
 
     elif key_char == 'c':
         return ShowCharacterScreenAction()
+
+    #########################################
+    ############ MOUSE ACTIONS ##############
+    #########################################
+
+    (x, y) = (mouse.cx, mouse.cy)
+
+    if mouse.lbutton_pressed:
+        return InspectAction(x, y)
+    # elif mouse.rbutton_pressed:
+        # return {'right_click': (x, y)}
+
+    #########################################
+    ############ SELECT ENTITY ##############
+    #########################################
+
 
     """
     elif key_char == 'g':

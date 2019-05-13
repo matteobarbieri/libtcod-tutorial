@@ -5,12 +5,34 @@ from game_messages import Message
 from render_functions import RenderOrder
 
 class Fighter:
-    def __init__(self, hp, defense, power, xp=0):
+    def __init__(self, hp, defense, power, xp=0,
+                 STR=0, DEX=0, INT=0):
+
+        # TODO Old stuff, to change/update/remove
         self.base_max_hp = hp
         self.hp = hp
         self.base_defense = defense
         self.base_power = power
         self.xp = xp
+
+        ###################################
+        ############ STATS ################
+        ###################################
+
+        self.stats = {
+            'base_str': STR,
+            'base_dex': DEX,
+            'base_int': INT,
+        }
+
+    def get_adjusted_stat(self, stat_name):
+        base_stat = self.stats['base_{}'.format(stat_name)]
+
+        equipment_bonus =
+
+    @property
+    def INT(self):
+        return self.get_adjusted_stat('int')
 
     @property
     def max_hp(self):

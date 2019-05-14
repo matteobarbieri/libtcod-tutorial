@@ -166,7 +166,8 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
                game_map, fov_map, fov_recompute,
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
-               game_state, entity_focused, current_turn):
+               game_state, entity_focused, entity_targeted,
+               current_turn):
 
     ### Extract variables from contants dict
     screen_width = constants['screen_width']
@@ -206,12 +207,23 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
                 if visible:
                     # Render it as visible
                     # game_map.tiles[x][y].render_at(terrain_layer, x, y, visible)
-                    game_map.tiles[x][y].render_at(terrain_layer, x-top_x, y-top_y, visible)
+                    game_map.tiles[x][y].render_at(
+                        terrain_layer, x-top_x, y-top_y, visible)
                     game_map.tiles[x][y].explored = True
 
                 elif game_map.tiles[x][y].explored:
                     # Render as currently out of sight
-                    game_map.tiles[x][y].render_at(terrain_layer, x-top_x, y-top_y, visible)
+                    game_map.tiles[x][y].render_at(
+                        terrain_layer, x-top_x, y-top_y, visible)
+
+        if entity_targeted:
+            # print("Targeted {} at ({}, {})".format(
+                # entity_targeted.name, entity_targeted.x, entity_targeted.y))
+
+            libtcod.console_set_char_background(
+                terrain_layer,
+                entity_targeted.x-top_x, entity_targeted.y-top_y,
+                libtcod.red, libtcod.BKGND_SET)
 
     #########################################
     ########### Render entities  ############

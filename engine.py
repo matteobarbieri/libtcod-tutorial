@@ -89,7 +89,8 @@ def play_game(player, game_map,
             terrain_layer, panel, entity_frame, main_window,
             player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
-            constants, mouse, game_state, entity_focused, current_turn)
+            constants, mouse, game_state, entity_focused, entity_targeted,
+            current_turn)
 
         # TODO find a better place
         game_map.top_x = top_x
@@ -139,7 +140,7 @@ def play_game(player, game_map,
 
             # Add all objects required to perform any action
             # TODO check, should the message log be passed here?
-            action.set_context(game_map, player, message_log)
+            action.set_context(game_map, player, message_log, fov_map)
 
             # Execute it
             try:
@@ -163,9 +164,13 @@ def play_game(player, game_map,
                 # if outcome.get('results') is not None:
                     # player_turn_results.eytend(outcome['results'])
 
-                # Determine whether to recompute fov...
+                # Update focused entity
                 if outcome.get('entity_focused') is not None:
                     entity_focused = outcome.get('entity_focused')
+
+                # Update targeted entity
+                if outcome.get('entity_targeted') is not None:
+                    entity_targeted = outcome.get('entity_targeted')
 
                 # Determine whether to recompute fov...
                 if outcome.get('fov_recompute') is not None:

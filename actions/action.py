@@ -7,13 +7,14 @@ class Action():
         self.game_map = None
         self.player = None
 
-    def set_context(self, game_map, player, message_log):
+    def set_context(self, game_map, player, message_log, fov_map):
         # self.context['game_map'] = game_map
         # self.context['player'] = player
 
         self.game_map = game_map
         self.player = player
         self.message_log = message_log
+        self.fov_map = fov_map
 
     def _execute(self):
         """

@@ -145,11 +145,19 @@ def handle_player_turn_keys(key, mouse):
         return WaitAction()
 
     #########################################
+    ################ COMBAT #################
+    #########################################
+
+    # Targeting
+    if key.vk == libtcod.KEY_TAB:
+        return CycleTargetAction()
+
+    #########################################
     ########### GO TO MAIN MENU #############
     #########################################
 
+    # Show main menu
     elif key.vk == libtcod.KEY_ESCAPE:
-        # Show main menu
         return ShowMenuAction()
 
     #########################################

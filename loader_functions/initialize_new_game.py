@@ -137,13 +137,19 @@ def get_game_variables(constants):
     )
 
     # Give a starting item, a dagger
+    # Create first the Equippable component for the item
+    # TODO bonus must be in the item, not the equippable component
     equippable_component = Equippable(
         EquipmentSlots.MAIN_HAND, power_bonus=2)
+
+    # Then the item itself
     dagger = Entity(
         0, 0, '-', libtcod.sky, 'Dagger',
         components=dict(equippable=equippable_component, item=Item()))
 
+    # Add the dagger to the player's inventory...
     player.inventory.add_item(dagger)
+    # ...and equip it
     player.equipment.toggle_equip(dagger)
 
     # Place player in the map

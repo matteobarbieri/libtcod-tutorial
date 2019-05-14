@@ -7,10 +7,15 @@ class Item:
             self, use_function=None, targeting=False,
             targeting_message=None, **kwargs):
 
+        # The function called when the item is used
         self.use_function = use_function
+
+        # Other things that might be used by the use_function
+        self.function_kwargs = kwargs
+
+        # TODO these things must be probably reworked
         self.targeting = targeting
         self.targeting_message = targeting_message
-        self.function_kwargs = kwargs
 
     def stat_bonus(self, stat_name):
         """

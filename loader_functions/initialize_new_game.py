@@ -22,7 +22,7 @@ from render_functions import RenderOrder
 from map_objects.generators.dungeon import generate_dungeon_level
 
 def get_constants():
-    window_title = 'Roguelike Tutorial Revised'
+    window_title = 'Rogue 20177'
 
     # Size of the game screen
     # screen_width = 80

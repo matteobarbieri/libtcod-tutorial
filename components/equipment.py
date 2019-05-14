@@ -2,9 +2,43 @@ from equipment_slots import EquipmentSlots
 
 
 class Equipment:
-    def __init__(self, main_hand=None, off_hand=None):
+    """
+    This class describes the equipment currently 'active' (i.e., worn/wielded,
+    whatever) on the player.
+    """
+
+    def __init__(self, main_hand=None, off_hand=None, available_slots=None):
+
+        # TODO must update/replace this stuff
         self.main_hand = main_hand
         self.off_hand = off_hand
+
+        # Initialize the list of slots
+        self.available_slots = available_slots
+
+        # Initialize the list of equipped items
+        self.equipped_items = dict()
+
+    def stat_bonus(self, stat_name):
+        """
+        Returns the total equipment stat bonus for a specific stat
+        """
+
+        # TODO can be optimized (cached) in order to not recompute each bonus
+        # every time a stat is checked
+
+        total_bonus = 0
+
+        # Search for all possible equipment slots
+        for s in self.available_slots:
+
+            # Get item equipped at slot s (or None)
+            item = self.equipped_items.get(s)
+
+            if item:
+                total_bonus += item.stat_bonus(stat_name)
+
+        return total_bonus
 
     @property
     def max_hp_bonus(self):

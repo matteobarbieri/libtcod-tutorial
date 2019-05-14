@@ -28,7 +28,12 @@ class Fighter:
     def get_adjusted_stat(self, stat_name):
         base_stat = self.stats['base_{}'.format(stat_name)]
 
-        equipment_bonus =
+        if self.owner and self.owner.equipment:
+            equipment_bonus = self.owner.equipment.stat_bonus(stat_name)
+        else:
+            equipment_bonus = 0
+
+        return base_stat + equipment_bonus
 
     @property
     def INT(self):

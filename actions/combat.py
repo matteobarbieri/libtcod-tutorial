@@ -24,6 +24,7 @@ class CycleTargetAction(Action):
         # The list of enemies in sight
         enemies_in_sight = list()
 
+        i_targeted = i = 0
         for entity in self.game_map.entities:
 
             # TODO also check if hostile
@@ -34,8 +35,21 @@ class CycleTargetAction(Action):
                 # Only enemies in sight
                 enemies_in_sight.append(entity)
 
-        # TODO must cycle through enemies
-        new_target = enemies_in_sight[0]
+                if self.entity_targeted == entity:
+                    # print("Found old target!")
+                    # Remember the entity currently being targeted
+                    i_targeted = i
+
+                i += 1
+
+        if len(enemies_in_sight) > 0:
+            # Select the next one
+            i_targeted = (i_targeted + 1) % len(enemies_in_sight)
+
+            # print("{} enemies in sight, targeting # {}".format(len(enemies_in_sight), i_targeted+1))
+            new_target = enemies_in_sight[i_targeted]
+        else:
+            new_target = self.entity_targeted
 
         # Return outcome
         outcome = {

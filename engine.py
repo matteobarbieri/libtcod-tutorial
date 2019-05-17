@@ -124,6 +124,7 @@ def play_game(player, game_map,
             # show_character_screen = action.get('show_character_screen')
             # exit = action.get('exit')
             # fullscreen = action.get('fullscreen')
+            # left_click = mouse_action.get('left_click')
 
             ####### XXX TO UPDATE
             # pickup = action.get('pickup')
@@ -133,14 +134,14 @@ def play_game(player, game_map,
             # level_up = action.get('level_up')
 
             # TODO to restore
-            # left_click = mouse_action.get('left_click')
             # right_click = mouse_action.get('right_click')
 
             # player_turn_results = []
 
             # Add all objects required to perform any action
             # TODO check, should the message log be passed here?
-            action.set_context(game_map, player, message_log, fov_map)
+            action.set_context(
+                game_map, player, message_log, fov_map, entity_targeted)
 
             # Execute it
             try:

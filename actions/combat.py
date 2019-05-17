@@ -2,13 +2,43 @@ from .action import Action
 
 from game_states import GameStates
 
-from entity import get_blocking_entities_at_location
-
 import tcod as libtcod
 
 from game_messages import Message
 
-import random
+
+class ShootAction(Action):
+
+    def _execute(self):
+
+        messages = list()
+
+        if self.entity_targeted:
+            # TODO implement shooting
+            try:
+                messages.extend(self.player.shoot(self.entity_targeted))
+                next_state = GameStates.ENEMY_TURN
+            except:
+                # TODO implement exceptions
+                next_state = GameStates.PLAYERS_TURN
+                pass
+            pass
+        else:
+            messages.append(
+                Message("Target something first!", libtcod.red))
+
+            next_state = GameStates.PLAYERS_TURN
+
+        # Return outcome
+        outcome = {
+            # 'fov_recompute': position_changed,  # TODO this might change
+            'redraw_terrain': True,
+            'messages': messages,
+            "next_state": next_state,
+            # 'entity_targeted': new_target,
+        }
+
+        return outcome
 
 
 class CycleTargetAction(Action):
@@ -50,10 +80,14 @@ class CycleTargetAction(Action):
             # Select the next one
             i_targeted = (i_targeted + self.cycle_dir) % len(enemies_in_sight)
 
-            # print("{} enemies in sight, targeting # {}".format(len(enemies_in_sight), i_targeted+1))
+            # print("{} enemies in sight, targeting # {}".format(
+                # len(enemies_in_sight), i_targeted+1))
             new_target = enemies_in_sight[i_targeted]
         else:
-            new_target = self.entity_targeted
+            # new_target = self.entity_targeted
+            new_target = None
+            messages.append(
+                Message("No valid targets in sight.", libtcod.red))
 
         # Return outcome
         outcome = {

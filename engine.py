@@ -90,6 +90,11 @@ def play_game(player, game_map,
         # If the player move, check if targeted entity is still in sight
         if entity_targeted and redraw_terrain:
             entity_targeted = check_if_still_in_sight(fov_map, entity_targeted)
+            # Check if by any chance target is dead
+            # TODO more generally, if it is no longer targetable for any
+            # reason
+            if entity_targeted and not entity_targeted.fighter:
+                entity_targeted = None
 
             # TODO same for focused entity?
 

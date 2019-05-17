@@ -103,6 +103,25 @@ class Fighter:
         if self.hp > self.max_hp:
             self.hp = self.max_hp
 
+    def shoot(self, target):
+        """
+        other : Entity
+        """
+
+        messages = list()
+
+        # TODO implement actual shooting
+        damage = 5
+
+        messages.append(
+            Message('{0} shoots {1} for {2} hit points.'.format(
+                self.owner.name.capitalize(), target.name,
+                str(damage)), libtcod.white))
+
+        messages.extend(target.fighter.take_damage(damage))
+
+        return messages
+
     def attack(self, target):
 
         # TODO Completely rewrite this

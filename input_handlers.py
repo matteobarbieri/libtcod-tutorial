@@ -158,6 +158,9 @@ def handle_player_turn_keys(key, mouse):
             # Select the next one
             return CycleTargetAction(1)
 
+    elif key_char == 'f':
+        return ShootAction()
+
     #########################################
     ########### GO TO MAIN MENU #############
     #########################################

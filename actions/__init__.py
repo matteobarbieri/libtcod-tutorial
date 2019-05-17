@@ -7,4 +7,4 @@ from .menus import (
 from .action import NoopAction, WaitAction
 from .toggle_fullscreen import ToggleFullscreenAction
 from .exceptions import ShowMenuException
-from .combat import CycleTargetAction
+from .combat import CycleTargetAction, ShootAction

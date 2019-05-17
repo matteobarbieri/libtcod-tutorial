@@ -89,6 +89,9 @@ class Entity:
         """
         return self.components
 
+    def shoot(self, target):
+        return self.fighter.shoot(target)
+
     def move(self, dx, dy):
         # Move the entity by a given amount
         self.x += dx

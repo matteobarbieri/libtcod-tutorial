@@ -15,6 +15,17 @@ class RenderOrder(Enum):
     ACTOR = auto()
 
 
+def check_if_still_in_sight(fov_map, entity):
+    """
+    Checks if an entity is in sight and return it if it is true, else return
+    None.
+    """
+
+    if libtcod.map_is_in_fov(fov_map, entity.x, entity.y):
+        return entity
+    else:
+        return None
+
 def get_entity_under_mouse(mouse, entities, fov_map, top_x, top_y):
     (x, y) = (mouse.cx, mouse.cy)
 

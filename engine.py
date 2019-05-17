@@ -16,7 +16,9 @@ from loader_functions.initialize_new_game import get_constants, get_game_variabl
 from loader_functions.data_loaders import load_game, save_game
 from menus import main_menu, message_box
 from fov_functions import initialize_fov, recompute_fov
-from render_functions import render_all
+
+from render_functions import render_all, check_if_still_in_sight
+
 from game_states import GameStates
 from death_functions import kill_monster, kill_player
 
@@ -84,6 +86,12 @@ def play_game(player, game_map,
                 player.x, player.y,
                 constants['fov_radius'], constants['fov_light_walls'],
                 constants['fov_algorithm'])
+
+        # If the player move, check if targeted entity is still in sight
+        if entity_targeted and redraw_terrain:
+            entity_targeted = check_if_still_in_sight(fov_map, entity_targeted)
+
+            # TODO same for focused entity?
 
         top_x, top_y = render_all(
             terrain_layer, panel, entity_frame, main_window,

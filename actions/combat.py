@@ -13,9 +13,13 @@ import random
 
 class CycleTargetAction(Action):
 
-    def __init__(self, **kwargs):
+    def __init__(self, cycle_dir, **kwargs):
+        """
+        cycle_dir : int
+            Either 1 or -1, determines the direction of the cycle
+        """
 
-        pass
+        self.cycle_dir = cycle_dir
 
     def _execute(self):
 
@@ -44,7 +48,7 @@ class CycleTargetAction(Action):
 
         if len(enemies_in_sight) > 0:
             # Select the next one
-            i_targeted = (i_targeted + 1) % len(enemies_in_sight)
+            i_targeted = (i_targeted + self.cycle_dir) % len(enemies_in_sight)
 
             # print("{} enemies in sight, targeting # {}".format(len(enemies_in_sight), i_targeted+1))
             new_target = enemies_in_sight[i_targeted]

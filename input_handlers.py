@@ -150,9 +150,13 @@ def handle_player_turn_keys(key, mouse):
 
     # Targeting
     if key.vk == libtcod.KEY_TAB:
-        return CycleTargetAction()
 
-    # TODO implement reverse targeting
+        if key.shift:
+            # Select the previous one
+            return CycleTargetAction(-1)
+        else:
+            # Select the next one
+            return CycleTargetAction(1)
 
     #########################################
     ########### GO TO MAIN MENU #############

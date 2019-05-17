@@ -217,13 +217,17 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
                         terrain_layer, x-top_x, y-top_y, visible)
 
         if entity_targeted:
-            # print("Targeted {} at ({}, {})".format(
-                # entity_targeted.name, entity_targeted.x, entity_targeted.y))
+            visible = libtcod.map_is_in_fov(fov_map,
+                entity_targeted.x, entity_targeted.y)
 
-            libtcod.console_set_char_background(
-                terrain_layer,
-                entity_targeted.x-top_x, entity_targeted.y-top_y,
-                libtcod.red, libtcod.BKGND_SET)
+            if visible:
+                # print("Targeted {} at ({}, {})".format(
+                    # entity_targeted.name, entity_targeted.x, entity_targeted.y))
+
+                libtcod.console_set_char_background(
+                    terrain_layer,
+                    entity_targeted.x-top_x, entity_targeted.y-top_y,
+                    libtcod.red, libtcod.BKGND_SET)
 
     #########################################
     ########### Render entities  ############

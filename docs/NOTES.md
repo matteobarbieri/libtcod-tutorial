@@ -14,6 +14,8 @@ Example missions:
  - Rescue VIP
  - Retrieve data disk
  - Recover tissue sample
+ - Defend location
+ - Trigger self destruct
 
 The time passes after each mission, and the main story unrolls.
 
@@ -39,9 +41,17 @@ Or maybe providing sort of templates but not a real class system?
 ### Combat
 
  * **Melee**: hitting is relatively easy (let's say base 75% chance), moderate
-   amount of damage.
+   amount of damage. The drawback is given by the need to get close to the
+   target (and therefore risk to be hit).
  * **Ranged**: hitting is less easy without a decent bonus in precision (given
    by weapon/stats/range). Firing rate depends on weapon.
+   Sample firing rates/weapon characteristics:
+    - **Pistols**: 1/turn (2/turn in case of akimbo mode).
+    - **Automatic rifles/SMGs**: 1/turn but needs to reload after magazine is
+      emptied.
+    - **Shotguns**: 1/2 turns. Scatter shot, the damage is high if the target is
+      close, each hit is computed individually.
+    - **Sniper rifles**: 1/3turns. High damage, aim malus at medium/short range.
  * **Ability/spell**: hitting is almost automatic, also damage dealt is usually
    high, however there is a limit to the frequency of attacks due to 
    _cooldown_/_energy cost_.
@@ -52,8 +62,6 @@ In case the enemy has multiple viable targets (i.e. the player and his/her
 minions/pets/mercenaries), use a smart threat system to choose the target (and
 possibly stick to it after that, it would not really make sense for a mob to
 continuously switch target).
-
-
 
 ### Factions
 

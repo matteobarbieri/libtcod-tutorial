@@ -36,12 +36,14 @@ class Equipment:
             item = self.equipped_items.get(s)
 
             if item:
-                total_bonus += item.stat_bonus(stat_name)
+                total_bonus += item.equippable.stat_bonus(stat_name)
 
         return total_bonus
 
     @property
     def max_hp_bonus(self):
+        # TODO to rework
+        return 0
         bonus = 0
 
         if self.main_hand and self.main_hand.c['equippable']:
@@ -54,6 +56,8 @@ class Equipment:
 
     @property
     def power_bonus(self):
+        # TODO to rework
+        return 0
         bonus = 0
 
         if self.main_hand and self.main_hand.c['equippable']:
@@ -66,6 +70,8 @@ class Equipment:
 
     @property
     def defense_bonus(self):
+        # TODO to rework
+        return 0
         bonus = 0
 
         if self.main_hand and self.main_hand.c['equippable']:
@@ -77,9 +83,12 @@ class Equipment:
         return bonus
 
     def toggle_equip(self, equippable_entity):
+
+        # TODO to rework
+        return []
         results = []
 
-        slot = equippable_entity.c['equippable'].slot
+        slot = equippable_entity.c['equippable'].valid_slots[0]
 
         if slot == EquipmentSlots.MAIN_HAND:
             if self.main_hand == equippable_entity:

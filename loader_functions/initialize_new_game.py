@@ -138,9 +138,8 @@ def get_game_variables(constants):
 
     # Give a starting item, a dagger
     # Create first the Equippable component for the item
-    # TODO bonus must be in the item, not the equippable component
     equippable_component = Equippable(
-        EquipmentSlots.MAIN_HAND, power_bonus=2)
+        [EquipmentSlots.MAIN_HAND, EquipmentSlots.OFF_HAND])
 
     # Then the item itself
     dagger = Entity(

@@ -1,6 +1,11 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class EquipmentSlots(Enum):
-    MAIN_HAND = 1
-    OFF_HAND = 2
+    MAIN_HAND = auto()
+    OFF_HAND = auto()
+    HEAD = auto()
+    CHEST = auto()
+    HANDS = auto()
+    LEGS = auto()
+    FEET = auto()

@@ -4,6 +4,8 @@ from game_messages import Message
 
 from render_functions import RenderOrder
 
+from .item import ItemType, ItemSubtype
+
 class Fighter:
     def __init__(self, hp, defense, power, xp=0,
                  STR=0, DEX=0, INT=0):
@@ -103,10 +105,52 @@ class Fighter:
         if self.hp > self.max_hp:
             self.hp = self.max_hp
 
+    def shoot2(self, target):
+        """
+        other : Entity
+        """
+
+        messages = list()
+
+        equipped_ranged_weapons = list()
+
+        # First check that whoever is shooting actually has a ranged weapon
+        # equipped
+        w1 = self.owner.equipment.main_hand
+        w2 = self.owner.equipment.off_hand
+
+        # TODO initial list must be more generic
+        for w in [w1, w2]:
+            if (w and ItemType.WEAPON in w.item_types and
+                ItemSubtype.RANGED in w.item_subtypes):
+
+                # It is an equipped ranged weapon
+                equipped_ranged_weapons.append(w)
+
+        # Check if weapon has enough ammo to shoot
+        # TODO implement
+
+        # Check if enemy is in weapon range
+        # TODO implement
+
+        # Shoot with remaining viable weapons
+        # TODO implement
+
+        # messages.append(
+            # Message('{0} shoots {1} for {2} hit points.'.format(
+                # self.owner.name.capitalize(), target.name,
+                # str(damage)), libtcod.white))
+
+        # messages.extend(target.fighter.take_damage(damage))
+
+        return messages
+
     def shoot(self, target):
         """
         other : Entity
         """
+
+        ## XXX DEPRECATED STUB FUNCTION  XXX
 
         messages = list()
 

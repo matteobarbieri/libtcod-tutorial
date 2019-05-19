@@ -114,3 +114,6 @@ savegame.*
 
 # Folder containing maps
 maps_txt
+
+# Extra configuration file for youcompleteme
+.ycm_extra_conf.py

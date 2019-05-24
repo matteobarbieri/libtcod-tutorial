@@ -39,14 +39,15 @@ class MoveAction(Action):
                 self.game_map.entities, destination_x, destination_y)
 
             if target:
+                print("Attacking!")
                 messages.extend(self.player.interact_with(target))
-                pass
             else:
 
                 # Update player's position
                 self.player.x = destination_x
                 self.player.y = destination_y
         else:
+            # Stupid things said when bumping into walls
             possible_messages = ['Ouch!', 'Hey!', 'Stop it!']
             messages.append(
                 Message(random.choice(possible_messages), libtcod.yellow))

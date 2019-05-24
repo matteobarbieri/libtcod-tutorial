@@ -85,7 +85,6 @@ class Equipment:
     def toggle_equip(self, equippable_entity):
 
         # TODO to rework
-        return []
         results = []
 
         slot = equippable_entity.c['equippable'].valid_slots[0]
@@ -112,3 +111,22 @@ class Equipment:
                 results.append({'equipped': equippable_entity})
 
         return results
+
+    @property
+    def melee_weapons(self):
+        """
+        Return the list of melee weapons currently equipped
+        """
+        weapons = list()
+
+        if self.main_hand and self.main_hand.item.is_melee():
+            weapons.append(self.main_hand)
+
+        if self.off_hand and self.off_hand.item.is_melee():
+            weapons.append(self.off_hand)
+
+        # TODO DEBUG remove
+        print("Melee weapons:")
+        print(weapons)
+
+        return weapons

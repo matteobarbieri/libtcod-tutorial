@@ -107,6 +107,8 @@ class Entity:
 
         # TODO check if hostile
         if other.fighter is not None:
+            # TODO DEBUG remove
+            print("Interacting with!")
             messages = self.fighter.attack(other)
             return messages
 

@@ -10,27 +10,27 @@ from render_functions import RenderOrder
 import tcod as libtcodpy
 
 
-def make_pistol():
+def make_dagger():
 
     # Create the base Item instance
     item_component = Item(
         item_types=[ItemType.WEAPON],
-        item_subtypes=[ItemSubtype.RANGED]
+        item_subtypes=[ItemSubtype.MELEE]
     )
 
     # The equippable component of the entity
     equippable_component = Equippable(
         valid_slots=[EquipmentSlots.MAIN_HAND, EquipmentSlots.OFF_HAND],
-        damage_range=[2, 5],
+        damage_range=[3, 4],
     )
 
-    pistol = Entity(
+    dagger = Entity(
         None, None,
-        ')', libtcodpy.green, "Pistol", blocks=False,
+        '-', libtcodpy.sky, "Dagger", blocks=False,
         block_sight=False, render_order=RenderOrder.ITEM,
         components={
             'equippable': equippable_component,
             'item': item_component,
         })
 
-    return pistol
+    return dagger

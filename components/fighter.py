@@ -166,12 +166,39 @@ class Fighter:
 
         return messages
 
+    def roll_to_hit(self, target, weapon):
+        # TODO placeholder, must be implemented. For the time being, always
+        # hit!
+        return True
+
+    def calculate_damage(self, target, weapon):
+
+        return weapon.equippable.roll_damage()
+
+        # damage = self.power - target.fighter.defense
+        # return 3
+
     def attack(self, target):
+        # TODO temp renaming, to remove
 
-        # TODO Completely rewrite this
-        messages = []
+        # TODO DEBUG remove
+        print("Attacking")
+        return self.attack_melee(target)
 
-        damage = self.power - target.fighter.defense
+    def attack_melee_with_weapon(self, target, weapon):
+        """
+        Perform a melee attack with a specific weapon
+        """
+
+        # TODO DEBUG remove
+        print("Attacking with melee weapon")
+        messages = list()
+
+        if not self.roll_to_hit(target, weapon):
+            # TODO better implement this
+            messages.append(Message("Missed!", libtcod.yellow))
+
+        damage = self.calculate_damage(target, weapon)
 
         if damage > 0:
 
@@ -188,5 +215,22 @@ class Fighter:
             messages.append(
                 Message('{0} attacks {1} but does no damage.'.format(
                     self.owner.name.capitalize(), target.name), libtcod.white))
+
+        return messages
+
+
+    def attack_melee(self, target):
+        """
+        Perform an attack with all equipped melee weapons
+        """
+
+        # TODO DEBUG remove
+        print("Attacking melee")
+        # TODO Completely rewrite this
+        messages = []
+
+        for weapon in self.owner.equipment.melee_weapons:
+            messages.extend(
+                self.attack_melee_with_weapon(target, weapon))
 
         return messages

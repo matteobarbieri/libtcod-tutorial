@@ -7,6 +7,8 @@ from components.inventory import Inventory
 from components.level import Level
 from components.item import Item
 
+from prefabs.weapons.dagger import make_dagger
+
 from entity import Entity
 
 from equipment_slots import EquipmentSlots
@@ -136,18 +138,12 @@ def get_game_variables(constants):
         )
     )
 
-    # Give a starting item, a dagger
-    # Create first the Equippable component for the item
-    equippable_component = Equippable(
-        [EquipmentSlots.MAIN_HAND, EquipmentSlots.OFF_HAND])
-
-    # Then the item itself
-    dagger = Entity(
-        0, 0, '-', libtcod.sky, 'Dagger',
-        components=dict(equippable=equippable_component, item=Item()))
+    # Create the dagger from the prefab
+    dagger = make_dagger()
 
     # Add the dagger to the player's inventory...
     player.inventory.add_item(dagger)
+
     # ...and equip it
     player.equipment.toggle_equip(dagger)
 

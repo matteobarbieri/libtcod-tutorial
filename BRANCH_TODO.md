@@ -1,6 +1,9 @@
 ### Next
 
 * Implement base stats (**STR**, **INT**, **DEX**) for _fighter_ component.
+* Implement inventory item sub-menu.
+* Game state should be a more complex object, which of course includes the
+  current *state* (in the state machine sense of the term).
 
 ### Backlog
 

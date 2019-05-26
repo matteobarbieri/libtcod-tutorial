@@ -15,9 +15,9 @@
   - Add relevant info lines for the entity.
 * A junction should have a minimun size of 2+ the width of the corridor it
   originates from.
-* Equipment slots must be dynamic
 
 ### Done
 
 * Show current turn number somewhere on the UI
 * An entity can be selected, and its frame be shown.
+* Equipment slots must be dynamic

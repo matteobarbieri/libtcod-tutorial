@@ -182,7 +182,7 @@ class Fighter:
         # TODO temp renaming, to remove
 
         # TODO DEBUG remove
-        print("Attacking")
+        # print("Attacking")
         return self.attack_melee(target)
 
     def attack_melee_with_weapon(self, target, weapon):
@@ -191,7 +191,7 @@ class Fighter:
         """
 
         # TODO DEBUG remove
-        print("Attacking with melee weapon")
+        # print("Attacking with melee weapon")
         messages = list()
 
         if not self.roll_to_hit(target, weapon):
@@ -225,7 +225,7 @@ class Fighter:
         """
 
         # TODO DEBUG remove
-        print("Attacking melee")
+        # print("Attacking melee")
         # TODO Completely rewrite this
         messages = []
 

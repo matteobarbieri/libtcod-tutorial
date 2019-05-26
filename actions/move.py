@@ -39,7 +39,6 @@ class MoveAction(Action):
                 self.game_map.entities, destination_x, destination_y)
 
             if target:
-                print("Attacking!")
                 messages.extend(self.player.interact_with(target))
             else:
 

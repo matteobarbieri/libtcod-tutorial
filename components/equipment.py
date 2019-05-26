@@ -1,4 +1,14 @@
-from equipment_slots import EquipmentSlots
+from game_messages import Message
+
+import tcod as libtcod
+
+
+class UnableToEquipException(Exception):
+    """
+    Exception raised whenever it is impossible to equip a piece of equipment
+    for whatever reason.
+    """
+    pass
 
 
 class Equipment:
@@ -7,17 +17,14 @@ class Equipment:
     whatever) on the player.
     """
 
-    def __init__(self, main_hand=None, off_hand=None, available_slots=None):
-
-        # TODO must update/replace this stuff
-        self.main_hand = main_hand
-        self.off_hand = off_hand
+    def __init__(self, available_slots=[]):
 
         # Initialize the list of slots
         self.available_slots = available_slots
 
-        # Initialize the list of equipped items
-        self.equipped_items = dict()
+        # Initialize the `slots` property, which contains the list of all
+        # equipped items
+        self.slots = dict()
 
     def stat_bonus(self, stat_name):
         """
@@ -30,10 +37,7 @@ class Equipment:
         total_bonus = 0
 
         # Search for all possible equipment slots
-        for s in self.available_slots:
-
-            # Get item equipped at slot s (or None)
-            item = self.equipped_items.get(s)
+        for _, item in self.slots.items():
 
             if item:
                 total_bonus += item.equippable.stat_bonus(stat_name)
@@ -44,73 +48,119 @@ class Equipment:
     def max_hp_bonus(self):
         # TODO to rework
         return 0
-        bonus = 0
 
-        if self.main_hand and self.main_hand.c['equippable']:
-            bonus += self.main_hand.c['equippable'].max_hp_bonus
+        # bonus = 0
 
-        if self.off_hand and self.off_hand.c['equippable']:
-            bonus += self.off_hand.c['equippable'].max_hp_bonus
+        # if self.main_hand and self.main_hand.c['equippable']:
+            # bonus += self.main_hand.c['equippable'].max_hp_bonus
 
-        return bonus
+        # if self.off_hand and self.off_hand.c['equippable']:
+            # bonus += self.off_hand.c['equippable'].max_hp_bonus
+
+        # return bonus
 
     @property
     def power_bonus(self):
         # TODO to rework
         return 0
-        bonus = 0
 
-        if self.main_hand and self.main_hand.c['equippable']:
-            bonus += self.main_hand.c['equippable'].power_bonus
+        # bonus = 0
 
-        if self.off_hand and self.off_hand.c['equippable']:
-            bonus += self.off_hand.c['equippable'].power_bonus
+        # if self.main_hand and self.main_hand.c['equippable']:
+            # bonus += self.main_hand.c['equippable'].power_bonus
 
-        return bonus
+        # if self.off_hand and self.off_hand.c['equippable']:
+            # bonus += self.off_hand.c['equippable'].power_bonus
+
+        # return bonus
 
     @property
     def defense_bonus(self):
         # TODO to rework
         return 0
-        bonus = 0
 
-        if self.main_hand and self.main_hand.c['equippable']:
-            bonus += self.main_hand.c['equippable'].defense_bonus
+        # bonus = 0
 
-        if self.off_hand and self.off_hand.c['equippable']:
-            bonus += self.off_hand.c['equippable'].defense_bonus
+        # if self.main_hand and self.main_hand.c['equippable']:
+            # bonus += self.main_hand.c['equippable'].defense_bonus
 
-        return bonus
+        # if self.off_hand and self.off_hand.c['equippable']:
+            # bonus += self.off_hand.c['equippable'].defense_bonus
 
-    def toggle_equip(self, equippable_entity):
+        # return bonus
 
-        # TODO to rework
-        results = []
+    def unequip(self, equippable_entity):
+        """
+        Unequip a currently equipped item.
+        """
 
-        slot = equippable_entity.c['equippable'].valid_slots[0]
+        messages = list()
 
-        if slot == EquipmentSlots.MAIN_HAND:
-            if self.main_hand == equippable_entity:
-                self.main_hand = None
-                results.append({'dequipped': equippable_entity})
+        # Search for the item among equipped items
+        for slot, item in self.slots.items():
+            if item == equippable_entity:
+                item.equipped = False
+                self.slots[slot] = None
+
+                # Add item to the owner's inventory
+                self.owner.inventory.items.append(item)
+
+                messages.append(Message(
+                    "{} unequipped".format(equippable_entity),
+                    libtcod.white))
+                return messages
+            pass
+        else:
+            # TODO should not really happen actually...
+            pass
+
+    def equip(self, equippable_entity, slot=None):
+        """
+        Parameters
+        ----------
+
+        equippable_entity : Entity
+            The entity that is being equipped.
+        """
+
+        messages = list()
+
+        if slot is not None:
+            # TODO implement this
+            pass
+
+        # Try to equip the entity in an available slot
+        for slot in equippable_entity.c['equippable'].valid_slots:
+
+            # First check if slot is present and free
+            if (slot not in self.available_slots or
+                self.slots.get(slot) is not None):  # noqa
+
+                # Slot unavailable, move on
+                continue
             else:
-                if self.main_hand:
-                    results.append({'dequipped': self.main_hand})
 
-                self.main_hand = equippable_entity
-                results.append({'equipped': equippable_entity})
-        elif slot == EquipmentSlots.OFF_HAND:
-            if self.off_hand == equippable_entity:
-                self.off_hand = None
-                results.append({'dequipped': equippable_entity})
-            else:
-                if self.off_hand:
-                    results.append({'dequipped': self.off_hand})
+                # Slot available, equip the item!
 
-                self.off_hand = equippable_entity
-                results.append({'equipped': equippable_entity})
+                # Set the `equippable` property as true
+                equippable_entity.equipped = True
 
-        return results
+                # Add the entity to slots
+                self.slots[slot] = equippable_entity
+
+                messages.append(Message(
+                    "Equipped {} in {}".format(equippable_entity, slot),
+                    libtcod.white))
+
+                return messages
+                # break
+
+        else:
+            # Unable to equip the entity
+            raise UnableToEquipException(
+                "No equipment slots available for {}!".format(
+                    equippable_entity))
+
 
     @property
     def melee_weapons(self):
@@ -119,14 +169,12 @@ class Equipment:
         """
         weapons = list()
 
-        if self.main_hand and self.main_hand.item.is_melee():
-            weapons.append(self.main_hand)
-
-        if self.off_hand and self.off_hand.item.is_melee():
-            weapons.append(self.off_hand)
+        for _, equipped_entity in self.slots.items():
+            if equipped_entity and equipped_entity.item.is_melee():
+                weapons.append(equipped_entity)
 
         # TODO DEBUG remove
-        print("Melee weapons:")
-        print(weapons)
+        # print("Melee weapons:")
+        # print(weapons)
 
         return weapons

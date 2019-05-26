@@ -24,6 +24,9 @@ class Entity:
         # The ASCII character representing it
         self.char = char
 
+        # Is it currently equipped?
+        self.equipped = False
+
         # Its color
         self.color = color
 
@@ -108,7 +111,7 @@ class Entity:
         # TODO check if hostile
         if other.fighter is not None:
             # TODO DEBUG remove
-            print("Interacting with!")
+            # print("Interacting with!")
             messages = self.fighter.attack(other)
             return messages
 

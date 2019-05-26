@@ -30,7 +30,8 @@ def menu(con, header, options, width, screen_width, screen_height):
     libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.7)
 
 
-def inventory_menu(con, header, player, inventory_width, screen_width, screen_height):
+def inventory_menu(con, header, player, inventory_width,
+                   screen_width, screen_height):
 
     # show a menu with each item of the inventory as an option
     if len(player.inventory.items) == 0:
@@ -41,14 +42,7 @@ def inventory_menu(con, header, player, inventory_width, screen_width, screen_he
 
         # Show in the inventory if an item is equipped
         for item in player.inventory.items:
-            if player.equipment.main_hand == item:
-                options.append(
-                    '{0} (on main hand)'.format(item.name))
-            elif player.equipment.off_hand == item:
-                options.append(
-                    '{0} (on off hand)'.format(item.name))
-            else:
-                options.append(item.name)
+            options.append(item.name)
 
     menu(con, header, options, inventory_width, screen_width, screen_height)
 
@@ -73,11 +67,11 @@ def level_up_menu(con, header, player, menu_width, screen_width, screen_height):
     menu(con, header, options, menu_width, screen_width, screen_height)
 
 
-def character_screen(player, 
-                     character_screen_width, character_screen_height, 
+def character_screen(player,
+                     character_screen_width, character_screen_height,
                      screen_width, screen_height):
 
-    # Create new console for showing character info 
+    # Create new console for showing character info
     window = libtcod.console_new(
         character_screen_width, character_screen_height)
 
@@ -87,44 +81,44 @@ def character_screen(player,
 
     # Header of the character info section
     libtcod.console_print_rect_ex(
-        window, 0, 1, character_screen_width, character_screen_height, 
+        window, 0, 1, character_screen_width, character_screen_height,
         libtcod.BKGND_NONE, libtcod.LEFT, 'Character Information')
 
     # Character level
     libtcod.console_print_rect_ex(
         window, 0, 2, character_screen_width, character_screen_height,
-        libtcod.BKGND_NONE, libtcod.LEFT, 
+        libtcod.BKGND_NONE, libtcod.LEFT,
         'Level: {0}'.format(player.level.current_level))
 
     # Character experience
     libtcod.console_print_rect_ex(
         window, 0, 3, character_screen_width, character_screen_height,
-        libtcod.BKGND_NONE, libtcod.LEFT, 
+        libtcod.BKGND_NONE, libtcod.LEFT,
         'Experience: {0}'.format(player.level.current_xp))
 
     # Experience to next level
     libtcod.console_print_rect_ex(
         window, 0, 4, character_screen_width, character_screen_height,
-        libtcod.BKGND_NONE, libtcod.LEFT, 
+        libtcod.BKGND_NONE, libtcod.LEFT,
         'Experience to Level: {0}'.format(
             player.level.experience_to_next_level))
 
-    # Maximum HP 
+    # Maximum HP
     libtcod.console_print_rect_ex(
         window, 0, 6, character_screen_width, character_screen_height,
-        libtcod.BKGND_NONE, libtcod.LEFT, 
+        libtcod.BKGND_NONE, libtcod.LEFT,
         'Maximum HP: {0}'.format(player.fighter.max_hp))
 
     # Attack value
     libtcod.console_print_rect_ex(
         window, 0, 7, character_screen_width, character_screen_height,
-        libtcod.BKGND_NONE, libtcod.LEFT, 
+        libtcod.BKGND_NONE, libtcod.LEFT,
         'Attack: {0}'.format(player.fighter.power))
 
     # Defense value
     libtcod.console_print_rect_ex(
         window, 0, 8, character_screen_width, character_screen_height,
-        libtcod.BKGND_NONE, libtcod.LEFT, 
+        libtcod.BKGND_NONE, libtcod.LEFT,
         'Defense: {0}'.format(player.fighter.defense))
 
     # Calculate character screen position w.r.t. the main screen
@@ -133,7 +127,7 @@ def character_screen(player,
 
     # Blit character console on root console
     libtcod.console_blit(
-        window, 0, 0, character_screen_width, character_screen_height, 
+        window, 0, 0, character_screen_width, character_screen_height,
         0, x, y, 1.0, 0.7)
 
 

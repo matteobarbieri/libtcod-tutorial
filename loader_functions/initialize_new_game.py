@@ -17,7 +17,7 @@ from game_messages import MessageLog
 
 from game_states import GameStates
 
-from map_objects.old import GameMap
+# from map_objects.old import GameMap
 
 from render_functions import RenderOrder
 
@@ -122,7 +122,16 @@ def get_game_variables(constants):
     level_component = Level()
 
     # The equipment component, for equippable items
-    equipment_component = Equipment()
+    equipment_component = Equipment(
+        available_slots=[
+            EquipmentSlots.MAIN_HAND,
+            EquipmentSlots.OFF_HAND,
+            EquipmentSlots.HEAD,
+            EquipmentSlots.CHEST,
+            EquipmentSlots.HANDS,
+            EquipmentSlots.LEGS,
+            EquipmentSlots.FEET,
+            ])
 
     # Create the Player object
     player = Entity(
@@ -141,11 +150,9 @@ def get_game_variables(constants):
     # Create the dagger from the prefab
     dagger = make_dagger()
 
-    # Add the dagger to the player's inventory...
-    player.inventory.add_item(dagger)
-
-    # ...and equip it
-    player.equipment.toggle_equip(dagger)
+    # Equip it
+    # player.equipment.toggle_equip(dagger)
+    player.equipment.equip(dagger)
 
     # Place player in the map
     game_map.place_player(player)

@@ -1,12 +1,13 @@
 ### Next
 
-* Implement base stats (**STR**, **INT**, **DEX**) for _fighter_ component.
+* Reimplement input handling module using dispatch tables.
 * Implement inventory item sub-menu.
 * Game state should be a more complex object, which of course includes the
   current *state* (in the state machine sense of the term).
 
 ### Backlog
 
+* Implement base stats (**STR**, **INT**, **DEX**) for _fighter_ component.
 * Doors must be entities, and block LoS when closed.
 * Corridors widths should be weighted, that is the average width should be more
   likely than extreme values.

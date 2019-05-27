@@ -1,7 +1,9 @@
 from .move import MoveAction
 from .inspect import InspectAction
 from .menus import (
-    ShowMenuAction, ShowInventoryAction, BackToGameAction,
+    ShowMenuAction,
+    ShowInventoryAction, SelectInventoryItemAction,
+    BackToGameAction,
     ShowCharacterScreenAction)
 
 from .action import NoopAction, WaitAction

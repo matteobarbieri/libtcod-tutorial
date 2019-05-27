@@ -32,13 +32,37 @@ class ShowCharacterScreenAction(Action):
         return outcome
 
 
+class SelectInventoryItemAction(Action):
+
+    def __init__(self, inventory_item_index):
+        self.inventory_item_index = inventory_item_index
+
+    def _execute(self):
+
+        try:
+            self.item = self.player.inventory.items[self.inventory_item_index]
+            print("Selected {}!".format(self.item))
+        except Exception as e:
+            print("Uncaught Exception!")
+            raise e
+
+        # Return outcome
+        outcome = {
+            'selected_inventory_item': self.item,
+            'next_state': GameStates.INVENTORY_ITEM_MENU,
+        }
+
+        return outcome
+
+
 class ShowInventoryAction(Action):
 
     def _execute(self):
 
         # Return outcome
         outcome = {
-            'next_state': GameStates.SHOW_INVENTORY,
+            'selected_inventory_item': None,
+            'next_state': GameStates.INVENTORY_MENU,
         }
 
         return outcome

@@ -149,10 +149,13 @@ def get_game_variables(constants):
 
     # Create the dagger from the prefab
     dagger = make_dagger()
+    dagger2 = make_dagger()
 
     # Equip it
     # player.equipment.toggle_equip(dagger)
     player.equipment.equip(dagger)
+
+    player.inventory.items.append(dagger2)
 
     # Place player in the map
     game_map.place_player(player)

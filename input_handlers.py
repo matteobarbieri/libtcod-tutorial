@@ -12,11 +12,10 @@ def handle_input(key, mouse, game_state):
     # TODO refactor as dispatch tables
     if game_state == GameStates.PLAYERS_TURN:
         return handle_player_turn_keys(key, mouse)
-    # TODO handle also DROP_INVENTORY
-    # elif game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
-        # return handle_inventory_keys(key)
-    elif game_state in (GameStates.SHOW_INVENTORY, ):
+    elif game_state in (GameStates.INVENTORY_MENU, ):
         return handle_inventory_keys(key, mouse)
+    elif game_state == GameStates.INVENTORY_ITEM_MENU:
+        return handle_inventory_item_keys(key, mouse)
     elif game_state == GameStates.CHARACTER_SCREEN:
         return handle_character_screen(key, mouse)
     elif game_state == GameStates.ENTITY_INFO:
@@ -27,8 +26,6 @@ def handle_input(key, mouse, game_state):
         return handle_player_dead_keys(key)
     elif game_state == GameStates.TARGETING:
         return handle_targeting_keys(key)
-    elif game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
-        return handle_inventory_keys(key)
     elif game_state == GameStates.LEVEL_UP:
         return handle_level_up_menu(key)
 
@@ -59,8 +56,8 @@ def handle_inventory_keys(key, mouse):
     index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1
 
     # TODO To enable again
-    # if index >= 0:
-        # return {'inventory_index': index}
+    if index >= 0:
+        return SelectInventoryItemAction(index)
 
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen

@@ -53,6 +53,9 @@ def play_game(player, game_map,
     # Entity being targeted
     entity_targeted = None
 
+    # Inventory item being selected
+    selected_inventory_item = None
+
     fov_map = initialize_fov(game_map)
 
     key = libtcod.Key()
@@ -119,8 +122,9 @@ def play_game(player, game_map,
         ############## PLAYER'S TURN ###############
         ############################################
         if game_state in [
-                GameStates.PLAYERS_TURN, GameStates.SHOW_INVENTORY,
-                GameStates.CHARACTER_SCREEN, GameStates.ENTITY_INFO]:
+            GameStates.PLAYERS_TURN,
+            GameStates.INVENTORY_MENU, GameStates.INVENTORY_ITEM_MENU,
+            GameStates.CHARACTER_SCREEN, GameStates.ENTITY_INFO]:  # noqa
 
             ############################################
             ############# EXECUTE ACTIONS ##############
@@ -161,6 +165,11 @@ def play_game(player, game_map,
                 # Update targeted entity
                 if outcome.get('entity_targeted') is not None:
                     entity_targeted = outcome.get('entity_targeted')
+
+                # Update selected inventory item
+                if outcome.get('selected_inventory_item') is not None:
+                    selected_inventory_item = outcome.get(
+                        'selected_inventory_item')
 
                 # Determine whether to recompute fov...
                 if outcome.get('fov_recompute') is not None:

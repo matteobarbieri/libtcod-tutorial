@@ -357,8 +357,8 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
         0, 0)
 
     # Show inventory menu
-    if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
-        if game_state == GameStates.SHOW_INVENTORY:
+    if game_state in (GameStates.INVENTORY_MENU, ):
+        if game_state == GameStates.INVENTORY_MENU:
             inventory_title = 'Press the key next to an item to use it, '
             'or Esc to cancel.\n'
         else:

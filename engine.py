@@ -269,7 +269,8 @@ def main():
     show_main_menu = True
     show_load_error_message = False
 
-    main_menu_background_image = libtcod.image_load('menu_background1.png')
+    # main_menu_background_image = libtcod.image_load('menu_background1.png')
+    main_menu_background_image = libtcod.image_load('menu_background2.png')
 
     key = libtcod.Key()
     mouse = libtcod.Mouse()

@@ -46,3 +46,8 @@ Represents an item as it is being equipped. Examples are weapons, pieces of
 armor, trinkets/gadgets/rings whatever.
 
 ### Equipment
+
+### AI
+
+Contains a list of behaviours that instruct the monster on how to respond to
+different events (such as seeing the player).

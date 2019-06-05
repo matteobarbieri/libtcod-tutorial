@@ -27,7 +27,7 @@ def menu(con, header, options, width, screen_width, screen_height):
     # blit the contents of "window" to the root console
     x = int(screen_width / 2 - width / 2)
     y = int(screen_height / 2 - height / 2)
-    libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.7)
+    libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.4)
 
 
 def inventory_menu(con, header, player, inventory_width,
@@ -51,12 +51,16 @@ def main_menu(con, background_image, screen_width, screen_height):
     libtcod.image_blit_2x(background_image, 0, 0, 0)
 
     libtcod.console_set_default_foreground(0, libtcod.light_yellow)
-    libtcod.console_print_ex(0, int(screen_width / 2), int(screen_height / 2) - 4, libtcod.BKGND_NONE, libtcod.CENTER,
-                             'TOMBS OF THE ANCIENT KINGS')
-    libtcod.console_print_ex(0, int(screen_width / 2), int(screen_height - 2), libtcod.BKGND_NONE, libtcod.CENTER,
-                             'By (Your name here)')
+    libtcod.console_print_ex(0, int(screen_width / 2), int(screen_height / 2)
+                             - 4, libtcod.BKGND_NONE, libtcod.CENTER,
+                             'Rogue 20177')
+    libtcod.console_print_ex(0, int(screen_width / 2), int(screen_height - 2),
+                             libtcod.BKGND_NONE, libtcod.CENTER,
+                             'By heXe')
 
-    menu(con, '', ['Play a new game', 'Continue last game', 'Quit'], 24, screen_width, screen_height)
+    menu(con, '',
+         ['Play a new game', 'Continue last game', 'Quit'], 24,
+         screen_width, screen_height)
 
 
 def level_up_menu(con, header, player, menu_width, screen_width, screen_height):

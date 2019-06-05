@@ -16,7 +16,8 @@ class ShootAction(Action):
         if self.entity_targeted:
             # TODO implement shooting
             try:
-                messages.extend(self.player.shoot(self.entity_targeted))
+                messages.extend(
+                    self.player.fighter.shoot(self.entity_targeted))
                 next_state = GameStates.ENEMY_TURN
             except:
                 # TODO implement exceptions

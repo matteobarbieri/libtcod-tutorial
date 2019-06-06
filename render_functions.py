@@ -5,7 +5,7 @@ from enum import Enum, auto
 
 from game_states import GameStates
 
-from menus import character_screen, inventory_menu, level_up_menu
+from menus import character_screen, inventory_menu
 
 
 class RenderOrder(Enum):
@@ -368,12 +368,6 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
         inventory_menu(
             terrain_layer, inventory_title, player,
             50, screen_width, screen_height)
-
-    # Show level up menu
-    elif game_state == GameStates.LEVEL_UP:
-        level_up_menu(
-                terrain_layer, 'Level up! Choose a stat to raise:',
-                player, 40, screen_width, screen_height)
 
     # Show character screen
     elif game_state == GameStates.CHARACTER_SCREEN:

@@ -26,14 +26,15 @@ def check_if_still_in_sight(fov_map, entity):
     else:
         return None
 
+
 def get_entity_under_mouse(mouse, entities, fov_map, top_x, top_y):
     (x, y) = (mouse.cx, mouse.cy)
 
     entities_list = [
         entity for entity in entities if
-            entity.x == (top_x + x) and
-            entity.y == (top_y + y) and
-            libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]
+            entity.x == (top_x + x) and  # noqa
+            entity.y == (top_y + y) and  # noqa
+            libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]  # noqa
 
     if entities_list:
         sorted(entities_list, key=lambda e: e.render_order.value)
@@ -47,9 +48,9 @@ def get_names_under_mouse(mouse, entities, fov_map, top_x, top_y):
 
     names = [
         entity.name for entity in entities if
-            entity.x == (top_x + x) and
-            entity.y == (top_y + y) and
-            libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]
+            entity.x == (top_x + x) and  # noqa
+            entity.y == (top_y + y) and  # noqa
+            libtcod.map_is_in_fov(fov_map, entity.x, entity.y)]  # noqa
     names = ', '.join(names)
 
     return names.capitalize()
@@ -59,7 +60,9 @@ def render_entity_label(terrain_layer, entity, top_x, top_y):
 
     # Print the name of the entity on the top left tile
     libtcod.console_put_char(
-        terrain_layer, entity.x-top_x-1, entity.y-top_y-1, '\\', libtcod.BKGND_DEFAULT)
+        terrain_layer,
+        entity.x-top_x-1, entity.y-top_y-1,
+        '\\', libtcod.BKGND_DEFAULT)
 
     libtcod.console_print_ex(
         terrain_layer,
@@ -128,29 +131,6 @@ def render_bar(panel, x, y, total_width,
         '{0}: {1}/{2}'.format(name, value, maximum))
 
 
-# def clear_entity(con, entity, game_map, fov_map, top_x=0, top_y=0):
-    # # erase the character that represents this object
-    # # libtcod.console_put_char(
-        # # con, entity.x-top_x, entity.y-top_y, ' ', libtcod.BKGND_NONE)
-
-    # # Simply redraw the corresponding map tile above it
-    # visible = libtcod.map_is_in_fov(fov_map, entity.x, entity.y)
-
-    # if visible or game_map.tiles[entity.x][entity.y].explored:
-        # # If visible or explored, redraw map tile
-        # game_map.tiles[entity.x][entity.y].render_at(
-            # con, entity.x-top_x, entity.y-top_y, visible)
-    # else:
-        # # Else, just draw a black space at that position
-        # libtcod.console_put_char(
-   #          con, entity.x-top_x, entity.y-top_y, ' ', libtcod.BKGND_DEFAULT)
-
-
-# def clear_all(con, entities, game_map, fov_map, top_x, top_y):
-    # for entity in entities:
-        # clear_entity(con, entity, game_map, fov_map, top_x, top_y)
-
-
 def draw_entity(terrain_layer, entity,
                 fov_map, game_map, top_x=0, top_y=0):
 
@@ -171,6 +151,7 @@ def draw_entity(terrain_layer, entity,
 
         libtcod.console_set_char_foreground(
             terrain_layer, entity.x-top_x, entity.y-top_y, entity.color)
+
 
 def render_all(terrain_layer, panel, entity_frame, main_window,
                player,
@@ -228,8 +209,8 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
                         terrain_layer, x-top_x, y-top_y, visible)
 
         if entity_targeted:
-            visible = libtcod.map_is_in_fov(fov_map,
-                entity_targeted.x, entity_targeted.y)
+            visible = libtcod.map_is_in_fov(
+                fov_map, entity_targeted.x, entity_targeted.y)
 
             if visible:
                 # print("Targeted {} at ({}, {})".format(
@@ -292,11 +273,13 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
 
     # Show current dungeon level
     libtcod.console_print_ex(panel, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT,
-                             'Dungeon level: {0}'.format(game_map.dungeon_level))
+                             'Dungeon level: {0}'.format(
+                                 game_map.dungeon_level))
 
     # Show current dungeon level
     libtcod.console_print_ex(panel, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT,
-                             'Time: {0}'.format(current_turn))
+                             'Time: {0}'.format(
+                                 current_turn))
 
     # Show info about entities under mouse cursor
     libtcod.console_set_default_foreground(panel, libtcod.light_gray)
@@ -372,9 +355,5 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
     # Show character screen
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
-
-    # TODO possibly no longer needed because of rendering overhaul
-    # clear_all(terrain_layer, game_map.entities, game_map,
-              # fov_map, top_x, top_y)
 
     return top_x, top_y

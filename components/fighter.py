@@ -6,6 +6,15 @@ from render_functions import RenderOrder
 
 from .item import ItemType, ItemSubtype
 
+
+class NoMeleeWeaponsEquippedException(Exception):
+    pass
+
+
+class NoRangedWeaponsEquippedException(Exception):
+    pass
+
+
 class Fighter:
     def __init__(self, hp, defense, power, xp=0,
                  STR=0, DEX=0, INT=0):
@@ -105,7 +114,7 @@ class Fighter:
         if self.hp > self.max_hp:
             self.hp = self.max_hp
 
-    def shoot2(self, target):
+    def shoot(self, target):
         """
         other : Entity
         """
@@ -116,57 +125,59 @@ class Fighter:
 
         # First check that whoever is shooting actually has a ranged weapon
         # equipped
-        w1 = self.owner.equipment.main_hand
-        w2 = self.owner.equipment.off_hand
 
-        # TODO initial list must be more generic
-        for w in [w1, w2]:
-            if (w and ItemType.WEAPON in w.item_types and
-                ItemSubtype.RANGED in w.item_subtypes):
+        for _, w in self.owner.equipment.slots.items():
+            if (w and ItemType.WEAPON in w.item.item_types and
+                ItemSubtype.RANGED in w.item.item_subtypes):
 
                 # It is an equipped ranged weapon
                 equipped_ranged_weapons.append(w)
+
+        # If no ranged weapons are equipped, raise an exception
+        if len(equipped_ranged_weapons) == 0:
+            raise NoRangedWeaponsEquippedException()
 
         # Check if weapon has enough ammo to shoot
         # TODO implement
 
         # Check if enemy is in weapon range
         # TODO implement
+        weapons_in_range = equipped_ranged_weapons
 
         # Shoot with remaining viable weapons
         # TODO implement
 
-        # messages.append(
-            # Message('{0} shoots {1} for {2} hit points.'.format(
-                # self.owner.name.capitalize(), target.name,
-                # str(damage)), libtcod.white))
+        for w in weapons_in_range:
+            if not self.roll_to_hit_ranged(target, w):
+                # TODO better implement this
+                messages.append(Message("Missed!", libtcod.yellow))
 
-        # messages.extend(target.fighter.take_damage(damage))
+            damage = self.calculate_damage(target, w)
 
-        return messages
+            if damage > 0:
 
-    def shoot(self, target):
-        """
-        other : Entity
-        """
+                messages.append(
+                    Message('{0} shoots {1} for {2} hit points.'.format(
+                        self.owner.name.capitalize(), target.name,
+                        str(damage)), libtcod.white))
 
-        ## XXX DEPRECATED STUB FUNCTION  XXX
+                # In case there are other effects, add extra messages
+                messages.extend(target.fighter.take_damage(damage))
+            else:
 
-        messages = list()
-
-        # TODO implement actual shooting
-        damage = 5
-
-        messages.append(
-            Message('{0} shoots {1} for {2} hit points.'.format(
-                self.owner.name.capitalize(), target.name,
-                str(damage)), libtcod.white))
-
-        messages.extend(target.fighter.take_damage(damage))
+                # Append the no damage dealt messages
+                messages.append(
+                    Message('{0} attacks {1} but does no damage.'.format(
+                        self.owner.name.capitalize(), target.name), libtcod.white))
 
         return messages
 
-    def roll_to_hit(self, target, weapon):
+    def roll_to_hit_ranged(self, target, weapon):
+        # TODO placeholder, must be implemented. For the time being, always
+        # hit!
+        return True
+
+    def roll_to_hit_melee(self, target, weapon):
         # TODO placeholder, must be implemented. For the time being, always
         # hit!
         return True
@@ -194,7 +205,7 @@ class Fighter:
         # print("Attacking with melee weapon")
         messages = list()
 
-        if not self.roll_to_hit(target, weapon):
+        if not self.roll_to_hit_melee(target, weapon):
             # TODO better implement this
             messages.append(Message("Missed!", libtcod.yellow))
 

@@ -11,3 +11,8 @@ class GamePhase(Enum):
     LEVEL_UP = auto()
     CHARACTER_SCREEN = auto()
     ENTITY_INFO = auto()
+
+class GameState():
+
+    def __init__(self):
+        pass

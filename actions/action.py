@@ -1,4 +1,4 @@
-from game_states import GamePhase
+from game_state import GamePhase
 
 
 class Action():

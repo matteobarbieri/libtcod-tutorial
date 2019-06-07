@@ -15,7 +15,7 @@ from equipment_slots import EquipmentSlots
 
 from game_messages import MessageLog
 
-from game_states import GamePhase
+from game_state import GamePhase
 
 # from map_objects.old import GameMap
 

@@ -1,6 +1,6 @@
 from .action import Action
 
-from game_states import GamePhase
+from game_state import GamePhase
 
 from entity import get_blocking_entities_at_location
 

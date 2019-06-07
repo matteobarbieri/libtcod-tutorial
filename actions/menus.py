@@ -1,7 +1,7 @@
 from .action import Action
 from .exceptions import ShowMenuException
 
-from game_states import GamePhase
+from game_state import GamePhase
 
 from loader_functions.data_loaders import save_game
 

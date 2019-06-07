@@ -4,7 +4,7 @@ from render_functions import RenderOrder
 
 from game_messages import Message
 
-from game_states import GamePhase
+from game_state import GamePhase
 
 
 def kill_player(player):

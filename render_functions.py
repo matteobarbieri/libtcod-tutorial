@@ -3,7 +3,7 @@ import tcod as libtcod
 
 from enum import Enum, auto
 
-from game_states import GamePhase
+from game_state import GamePhase
 
 from menus import character_screen, inventory_menu
 

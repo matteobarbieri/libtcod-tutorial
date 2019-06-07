@@ -1,6 +1,6 @@
 import tcod as libtcod
 
-from game_states import GamePhase
+from game_state import GamePhase
 
 from actions import *
 

@@ -19,7 +19,7 @@ from fov_functions import initialize_fov, recompute_fov
 
 from render_functions import render_all, check_if_still_in_sight
 
-from game_states import GamePhase
+from game_state import GamePhase
 from death_functions import kill_monster, kill_player
 
 # TODO temporarily disabled

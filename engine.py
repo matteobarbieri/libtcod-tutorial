@@ -19,7 +19,7 @@ from fov_functions import initialize_fov, recompute_fov
 
 from render_functions import render_all, check_if_still_in_sight
 
-from game_states import GameStates
+from game_states import GamePhase
 from death_functions import kill_monster, kill_player
 
 # TODO temporarily disabled
@@ -61,7 +61,7 @@ def play_game(player, game_map,
     key = libtcod.Key()
     mouse = libtcod.Mouse()
 
-    game_state = GameStates.PLAYERS_TURN
+    game_state = GamePhase.PLAYERS_TURN
 
     # TODO temporarily disabled
     # previous_game_state = game_state
@@ -122,9 +122,9 @@ def play_game(player, game_map,
         ############## PLAYER'S TURN ###############
         ############################################
         if game_state in [
-            GameStates.PLAYERS_TURN,
-            GameStates.INVENTORY_MENU, GameStates.INVENTORY_ITEM_MENU,
-            GameStates.CHARACTER_SCREEN, GameStates.ENTITY_INFO]:  # noqa
+            GamePhase.PLAYERS_TURN,
+            GamePhase.INVENTORY_MENU, GamePhase.INVENTORY_ITEM_MENU,
+            GamePhase.CHARACTER_SCREEN, GamePhase.ENTITY_INFO]:  # noqa
 
             ############################################
             ############# EXECUTE ACTIONS ##############
@@ -187,7 +187,7 @@ def play_game(player, game_map,
         ############################################
         ############## ENEMIES' TURN ###############
         ############################################
-        elif game_state == GameStates.ENEMY_TURN:
+        elif game_state == GamePhase.ENEMY_TURN:
 
             # Each entity takes a turn
             for entity in game_map.entities:
@@ -204,7 +204,7 @@ def play_game(player, game_map,
                     outcome = entity_action.execute()
 
             # Go back to player's turn state
-            game_state = GameStates.PLAYERS_TURN
+            game_state = GamePhase.PLAYERS_TURN
             # redraw_entities = True
             redraw_terrain = True
 
@@ -297,7 +297,7 @@ def main():
                 show_load_error_message = False
             elif new_game:
                 player, game_map, message_log, game_state = get_game_variables(constants)
-                game_state = GameStates.PLAYERS_TURN
+                game_state = GamePhase.PLAYERS_TURN
 
                 game_map.export_txt('maps_txt/lastmap.txt')
 

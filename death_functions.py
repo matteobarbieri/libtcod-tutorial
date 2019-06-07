@@ -4,7 +4,7 @@ from render_functions import RenderOrder
 
 from game_messages import Message
 
-from game_states import GameStates
+from game_states import GamePhase
 
 
 def kill_player(player):
@@ -12,7 +12,7 @@ def kill_player(player):
     player.color = libtcod.dark_red
 
     # Create and return message for the log
-    return Message('You died!', libtcod.red), GameStates.PLAYER_DEAD
+    return Message('You died!', libtcod.red), GamePhase.PLAYER_DEAD
 
 
 def kill_monster(monster):

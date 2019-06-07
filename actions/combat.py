@@ -1,6 +1,6 @@
 from .action import Action
 
-from game_states import GameStates
+from game_states import GamePhase
 
 import tcod as libtcod
 
@@ -18,17 +18,17 @@ class ShootAction(Action):
             try:
                 messages.extend(
                     self.player.fighter.shoot(self.entity_targeted))
-                next_state = GameStates.ENEMY_TURN
+                next_state = GamePhase.ENEMY_TURN
             except:
                 # TODO implement exceptions
-                next_state = GameStates.PLAYERS_TURN
+                next_state = GamePhase.PLAYERS_TURN
                 pass
             pass
         else:
             messages.append(
                 Message("Target something first!", libtcod.red))
 
-            next_state = GameStates.PLAYERS_TURN
+            next_state = GamePhase.PLAYERS_TURN
 
         # Return outcome
         outcome = {

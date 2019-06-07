@@ -3,7 +3,7 @@ import tcod as libtcod
 
 from enum import Enum, auto
 
-from game_states import GameStates
+from game_states import GamePhase
 
 from menus import character_screen, inventory_menu
 
@@ -322,7 +322,7 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
             main_window, entity_under_mouse,
             top_x, top_y)
 
-    if game_state == GameStates.ENTITY_INFO:
+    if game_state == GamePhase.ENTITY_INFO:
         # TODO to move somewhere else!
         render_entity_frame(entity_frame, entity_focused)
 
@@ -340,8 +340,8 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
         0, 0)
 
     # Show inventory menu
-    if game_state in (GameStates.INVENTORY_MENU, ):
-        if game_state == GameStates.INVENTORY_MENU:
+    if game_state in (GamePhase.INVENTORY_MENU, ):
+        if game_state == GamePhase.INVENTORY_MENU:
             inventory_title = 'Press the key next to an item to use it, '
             'or Esc to cancel.\n'
         else:
@@ -353,7 +353,7 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
             50, screen_width, screen_height)
 
     # Show character screen
-    elif game_state == GameStates.CHARACTER_SCREEN:
+    elif game_state == GamePhase.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
 
     return top_x, top_y

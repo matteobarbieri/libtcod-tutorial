@@ -1,6 +1,6 @@
 from .action import Action
 
-from game_states import GameStates
+from game_states import GamePhase
 
 from entity import get_blocking_entities_at_location
 
@@ -57,7 +57,7 @@ class MoveAction(Action):
 
         # Return outcome
         outcome = {
-            "next_state": GameStates.ENEMY_TURN,
+            "next_state": GamePhase.ENEMY_TURN,
             'fov_recompute': position_changed,  # TODO this might change
             'redraw_terrain': position_changed,
             'messages': messages,

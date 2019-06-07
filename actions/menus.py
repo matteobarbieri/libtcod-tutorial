@@ -1,7 +1,7 @@
 from .action import Action
 from .exceptions import ShowMenuException
 
-from game_states import GameStates
+from game_states import GamePhase
 
 from loader_functions.data_loaders import save_game
 
@@ -14,7 +14,7 @@ class ShowMenuAction(Action):
         # TODO When going back to main game it's always player's turn, maybe
         # consider removing it from the required arguments of `save_game`?
         save_game(self.player, self.game_map, self.message_log,
-                  GameStates.PLAYERS_TURN)
+                  GamePhase.PLAYERS_TURN)
 
         # Raise an exception which will cause the game to exit the main loop
         raise ShowMenuException()
@@ -26,7 +26,7 @@ class ShowCharacterScreenAction(Action):
 
         # Return outcome
         outcome = {
-            'next_state': GameStates.CHARACTER_SCREEN,
+            'next_state': GamePhase.CHARACTER_SCREEN,
         }
 
         return outcome
@@ -49,7 +49,7 @@ class SelectInventoryItemAction(Action):
         # Return outcome
         outcome = {
             'selected_inventory_item': self.item,
-            'next_state': GameStates.INVENTORY_ITEM_MENU,
+            'next_state': GamePhase.INVENTORY_ITEM_MENU,
         }
 
         return outcome
@@ -62,7 +62,7 @@ class ShowInventoryAction(Action):
         # Return outcome
         outcome = {
             'selected_inventory_item': None,
-            'next_state': GameStates.INVENTORY_MENU,
+            'next_state': GamePhase.INVENTORY_MENU,
         }
 
         return outcome
@@ -77,7 +77,7 @@ class BackToGameAction(Action):
 
         # Return outcome
         outcome = {
-            'next_state': GameStates.PLAYERS_TURN,
+            'next_state': GamePhase.PLAYERS_TURN,
             'redraw_terrain': True,
         }
 

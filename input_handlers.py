@@ -1,6 +1,6 @@
 import tcod as libtcod
 
-from game_states import GameStates
+from game_states import GamePhase
 
 from actions import *
 
@@ -10,23 +10,23 @@ def handle_input(key, mouse, game_state):
     """
 
     # TODO refactor as dispatch tables
-    if game_state == GameStates.PLAYERS_TURN:
+    if game_state == GamePhase.PLAYERS_TURN:
         return handle_player_turn_keys(key, mouse)
-    elif game_state in (GameStates.INVENTORY_MENU, ):
+    elif game_state in (GamePhase.INVENTORY_MENU, ):
         return handle_inventory_keys(key, mouse)
-    elif game_state == GameStates.INVENTORY_ITEM_MENU:
+    elif game_state == GamePhase.INVENTORY_ITEM_MENU:
         return handle_inventory_item_keys(key, mouse)
-    elif game_state == GameStates.CHARACTER_SCREEN:
+    elif game_state == GamePhase.CHARACTER_SCREEN:
         return handle_character_screen(key, mouse)
-    elif game_state == GameStates.ENTITY_INFO:
+    elif game_state == GamePhase.ENTITY_INFO:
         return handle_entity_info(key, mouse)
 
     """
-    elif game_state == GameStates.PLAYER_DEAD:
+    elif game_state == GamePhase.PLAYER_DEAD:
         return handle_player_dead_keys(key)
-    elif game_state == GameStates.TARGETING:
+    elif game_state == GamePhase.TARGETING:
         return handle_targeting_keys(key)
-    elif game_state == GameStates.LEVEL_UP:
+    elif game_state == GamePhase.LEVEL_UP:
         return handle_level_up_menu(key)
 
     """

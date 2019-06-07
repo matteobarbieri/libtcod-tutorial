@@ -15,7 +15,7 @@ from equipment_slots import EquipmentSlots
 
 from game_messages import MessageLog
 
-from game_states import GameStates
+from game_states import GamePhase
 
 # from map_objects.old import GameMap
 
@@ -166,6 +166,6 @@ def get_game_variables(constants):
         constants['message_height'])
 
     # Begin the game in player's turn
-    game_state = GameStates.PLAYERS_TURN
+    game_state = GamePhase.PLAYERS_TURN
 
     return player, game_map, message_log, game_state

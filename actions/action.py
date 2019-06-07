@@ -1,4 +1,4 @@
-from game_states import GameStates
+from game_states import GamePhase
 
 
 class Action():
@@ -48,7 +48,7 @@ class WaitAction(Action):
     def _execute(self):
         # Return outcome
         outcome = {
-            "next_state": GameStates.ENEMY_TURN,
+            "next_state": GamePhase.ENEMY_TURN,
             "redraw_terrain": True,
         }
 

@@ -1,6 +1,6 @@
 from .action import Action
 
-from game_states import GameStates
+from game_states import GamePhase
 
 from entity import get_blocking_entities_at_location
 
@@ -31,7 +31,7 @@ class InspectAction(Action):
             self.game_map.entities, target_x, target_y)
 
         if target:
-            next_state = GameStates.ENTITY_INFO
+            next_state = GamePhase.ENTITY_INFO
             # TODO tmp to remove
             messages.append(
                 Message("There's a {} here...".format(
@@ -39,7 +39,7 @@ class InspectAction(Action):
         else:
             messages.append(
                 Message("There's nothing here...", libtcod.yellow))
-            next_state = GameStates.PLAYERS_TURN
+            next_state = GamePhase.PLAYERS_TURN
 
         # Return outcome
         outcome = {

@@ -19,13 +19,14 @@ from fov_functions import initialize_fov, recompute_fov
 
 from render_functions import render_all, check_if_still_in_sight
 
-from game_state import GamePhase
+from game_state import GamePhase, GameState
 from death_functions import kill_monster, kill_player
 
 # TODO temporarily disabled
 # from game_messages import Message
 
 from actions import ShowMenuException
+
 
 def parse_args():
 
@@ -37,8 +38,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def play_game(player, game_map,
-              message_log, game_state,
+def play_game(player, game_map, game_state,
+              message_log,
               terrain_layer,
               panel, entity_frame, main_window, constants):
 
@@ -48,10 +49,10 @@ def play_game(player, game_map,
     redraw_entities = True
 
     # Entity being inspected
-    entity_focused = None
+    game_state.entity_focused = None
 
     # Entity being targeted
-    entity_targeted = None
+    game_state.entity_targeted = None
 
     # Inventory item being selected
     selected_inventory_item = None
@@ -60,8 +61,6 @@ def play_game(player, game_map,
 
     key = libtcod.Key()
     mouse = libtcod.Mouse()
-
-    game_state = GamePhase.PLAYERS_TURN
 
     # TODO temporarily disabled
     # previous_game_state = game_state
@@ -91,13 +90,13 @@ def play_game(player, game_map,
                 constants['fov_algorithm'])
 
         # If the player move, check if targeted entity is still in sight
-        if entity_targeted and redraw_terrain:
-            entity_targeted = check_if_still_in_sight(fov_map, entity_targeted)
+        if game_state.entity_targeted and redraw_terrain:
+            game_state.entity_targeted = check_if_still_in_sight(fov_map, game_state.entity_targeted)
             # Check if by any chance target is dead
             # TODO more generally, if it is no longer targetable for any
             # reason
-            if entity_targeted and not entity_targeted.fighter:
-                entity_targeted = None
+            if game_state.entity_targeted and not game_state.entity_targeted.fighter:
+                game_state.entity_targeted = None
 
             # TODO same for focused entity?
 
@@ -105,7 +104,8 @@ def play_game(player, game_map,
             terrain_layer, panel, entity_frame, main_window,
             player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
-            constants, mouse, game_state, entity_focused, entity_targeted,
+            constants, mouse, game_state.game_phase,
+            game_state.entity_focused, game_state.entity_targeted,
             current_turn)
 
         # TODO find a better place
@@ -121,20 +121,17 @@ def play_game(player, game_map,
         ############################################
         ############## PLAYER'S TURN ###############
         ############################################
-        if game_state in [
-            GamePhase.PLAYERS_TURN,
-            GamePhase.INVENTORY_MENU, GamePhase.INVENTORY_ITEM_MENU,
-            GamePhase.CHARACTER_SCREEN, GamePhase.ENTITY_INFO]:  # noqa
+        if game_state.is_players_turn():
 
             ############################################
             ############# EXECUTE ACTIONS ##############
             ############################################
-            action = handle_input(key, mouse, game_state)
+            action = handle_input(key, mouse, game_state.game_phase)
 
             # Add all objects required to perform any action
             # TODO check, should the message log be passed here?
             action.set_context(
-                game_map, player, message_log, fov_map, entity_targeted)
+                game_map, player, message_log, fov_map, game_state.entity_targeted)
 
             # Execute it
             try:
@@ -150,7 +147,7 @@ def play_game(player, game_map,
 
                 # Update game state
                 if outcome.get('next_state') is not None:
-                    game_state = outcome.get('next_state')
+                    game_state.game_phase = outcome.get('next_state')
 
                 # TODO this should be probably phased out, as effects of actions
                 # are computed elsewhere
@@ -160,11 +157,11 @@ def play_game(player, game_map,
 
                 # Update focused entity
                 if outcome.get('entity_focused') is not None:
-                    entity_focused = outcome.get('entity_focused')
+                    game_state.entity_focused = outcome.get('entity_focused')
 
                 # Update targeted entity
                 if outcome.get('entity_targeted') is not None:
-                    entity_targeted = outcome.get('entity_targeted')
+                    game_state.entity_targeted = outcome.get('entity_targeted')
 
                 # Update selected inventory item
                 if outcome.get('selected_inventory_item') is not None:
@@ -187,7 +184,7 @@ def play_game(player, game_map,
         ############################################
         ############## ENEMIES' TURN ###############
         ############################################
-        elif game_state == GamePhase.ENEMY_TURN:
+        elif game_state.is_enemies_turn():
 
             # Each entity takes a turn
             for entity in game_map.entities:
@@ -204,7 +201,7 @@ def play_game(player, game_map,
                     outcome = entity_action.execute()
 
             # Go back to player's turn state
-            game_state = GamePhase.PLAYERS_TURN
+            game_state.game_phase = GamePhase.PLAYERS_TURN
             # redraw_entities = True
             redraw_terrain = True
 
@@ -264,7 +261,6 @@ def main():
     player = None
     game_map = None
     message_log = None
-    game_state = None
 
     show_main_menu = True
     show_load_error_message = False
@@ -276,14 +272,17 @@ def main():
     mouse = libtcod.Mouse()
 
     while not libtcod.console_is_window_closed():
-        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+        libtcod.sys_check_for_event(
+            libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
 
         if show_main_menu:
-            main_menu(terrain_layer, main_menu_background_image, constants['screen_width'],
-                      constants['screen_height'])
+            main_menu(terrain_layer, main_menu_background_image,
+                      constants['screen_width'], constants['screen_height'])
 
             if show_load_error_message:
-                message_box(terrain_layer, 'No save game to load', 50, constants['screen_width'], constants['screen_height'])
+                message_box(
+                    terrain_layer, 'No save game to load', 50,
+                    constants['screen_width'], constants['screen_height'])
 
             libtcod.console_flush()
 
@@ -293,18 +292,23 @@ def main():
             load_saved_game = action.get('load_game')
             exit_game = action.get('exit')
 
-            if show_load_error_message and (new_game or load_saved_game or exit_game):
+            if (show_load_error_message and
+                (new_game or load_saved_game or exit_game)):
+                # TODO wut?
                 show_load_error_message = False
             elif new_game:
-                player, game_map, message_log, game_state = get_game_variables(constants)
-                game_state = GamePhase.PLAYERS_TURN
+                # Start a new game
+                player, game_map, message_log, game_phase = get_game_variables(
+                    constants)
+                game_phase = GamePhase.PLAYERS_TURN
 
                 game_map.export_txt('maps_txt/lastmap.txt')
 
                 show_main_menu = False
             elif load_saved_game:
+                # Load a previously saved game
                 try:
-                    player, game_map, message_log, game_state = load_game()
+                    player, game_map, message_log, game_phase = load_game()
                     show_main_menu = False
                 except FileNotFoundError:
                     show_load_error_message = True
@@ -316,8 +320,13 @@ def main():
             # libtcod.console_clear(terrain_layer)
             terrain_layer.clear()
 
-            play_game(
-                player, game_map, message_log, game_state,
+            game_state = GameState()
+            # game_state.player = player
+            game_state.game_phase = game_phase
+            # game_state.game_map = game_map
+
+            play_game(player, game_map,
+                game_state, message_log,
                 terrain_layer, panel, entity_frame, main_window, constants)
 
             show_main_menu = True

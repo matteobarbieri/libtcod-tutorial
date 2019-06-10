@@ -6,6 +6,7 @@ import tcod as libtcod
 
 from game_messages import Message
 
+from components.fighter import NoRangedWeaponsEquippedException
 
 class ShootAction(Action):
 
@@ -19,8 +20,10 @@ class ShootAction(Action):
                 messages.extend(
                     self.player.fighter.shoot(self.entity_targeted))
                 next_state = GamePhase.ENEMY_TURN
-            except:
-                # TODO implement exceptions
+            except NoRangedWeaponsEquippedException:
+                messages.append(
+                    Message("You don't have any ranged weapons equipped!",
+                            libtcod.red))
                 next_state = GamePhase.PLAYERS_TURN
                 pass
             pass

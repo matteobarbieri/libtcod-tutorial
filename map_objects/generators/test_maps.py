@@ -58,8 +58,11 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
 
     level = GameMap(width, height)
 
+    xc = int(width/2)
+    yc = int(height/2)
+
     # Collect coordinates in a variable
-    xy = [1, 1, width-1, height-1]
+    xy = [xc-10, yc-6, xc+10, yc+6]
 
     entry_room = Room(xy, list(Direction))
     level.add_part(entry_room)

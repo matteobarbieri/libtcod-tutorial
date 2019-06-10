@@ -55,7 +55,7 @@ def play_game(player, game_map, game_state,
     game_state.entity_targeted = None
 
     # Inventory item being selected
-    selected_inventory_item = None
+    game_state.selected_inventory_item = None
 
     fov_map = initialize_fov(game_map)
 
@@ -165,7 +165,7 @@ def play_game(player, game_map, game_state,
 
                 # Update selected inventory item
                 if outcome.get('selected_inventory_item') is not None:
-                    selected_inventory_item = outcome.get(
+                    game_state.selected_inventory_item = outcome.get(
                         'selected_inventory_item')
 
                 # Determine whether to recompute fov...

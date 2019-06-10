@@ -38,6 +38,48 @@ def parse_args():
     return parser.parse_args()
 
 
+def update_game_state(
+    outcome,
+    game_state: GameState, fov_recompute, redraw_terrain,
+    message_log):  # noqa
+
+    # Update game state
+    if outcome.get('next_state') is not None:
+        game_state.game_phase = outcome.get('next_state')
+
+    # Update focused entity
+    if outcome.get('entity_focused') is not None:
+        game_state.entity_focused = outcome.get('entity_focused')
+
+    # Update targeted entity
+    if outcome.get('entity_targeted') is not None:
+        game_state.entity_targeted = outcome.get('entity_targeted')
+
+    # Update selected inventory item
+    if outcome.get('selected_inventory_item') is not None:
+        game_state.selected_inventory_item = outcome.get(
+            'selected_inventory_item')
+
+    # Determine whether to recompute fov...
+    if outcome.get('fov_recompute') is not None:
+        fov_recompute = outcome.get('fov_recompute')
+    else:
+        fov_recompute = fov_recompute
+
+    # Or redraw terrain
+    if outcome.get('redraw_terrain') is not None:
+        redraw_terrain = outcome.get('redraw_terrain')
+    else:
+        redraw_terrain = redraw_terrain
+
+    # Add messages to the log
+    if outcome.get('messages') is not None:
+        for m in outcome.get('messages'):
+            message_log.add_message(m)
+
+    return fov_recompute, redraw_terrain
+
+
 def play_game(player, game_map, game_state,
               message_log,
               terrain_layer,
@@ -91,11 +133,15 @@ def play_game(player, game_map, game_state,
 
         # If the player move, check if targeted entity is still in sight
         if game_state.entity_targeted and redraw_terrain:
-            game_state.entity_targeted = check_if_still_in_sight(fov_map, game_state.entity_targeted)
+            game_state.entity_targeted = check_if_still_in_sight(
+                fov_map, game_state.entity_targeted)
             # Check if by any chance target is dead
             # TODO more generally, if it is no longer targetable for any
             # reason
-            if game_state.entity_targeted and not game_state.entity_targeted.fighter:
+            if (
+                game_state.entity_targeted and
+                not game_state.entity_targeted.fighter):  # noqa
+
                 game_state.entity_targeted = None
 
             # TODO same for focused entity?
@@ -131,7 +177,8 @@ def play_game(player, game_map, game_state,
             # Add all objects required to perform any action
             # TODO check, should the message log be passed here?
             action.set_context(
-                game_map, player, message_log, fov_map, game_state.entity_targeted)
+                game_map, player, message_log, fov_map,
+                game_state.entity_targeted)
 
             # Execute it
             try:
@@ -145,41 +192,9 @@ def play_game(player, game_map, game_state,
             ############################################
             if outcome is not None:
 
-                # Update game state
-                if outcome.get('next_state') is not None:
-                    game_state.game_phase = outcome.get('next_state')
-
-                # TODO this should be probably phased out, as effects of actions
-                # are computed elsewhere
-                # # Update results
-                # if outcome.get('results') is not None:
-                    # player_turn_results.eytend(outcome['results'])
-
-                # Update focused entity
-                if outcome.get('entity_focused') is not None:
-                    game_state.entity_focused = outcome.get('entity_focused')
-
-                # Update targeted entity
-                if outcome.get('entity_targeted') is not None:
-                    game_state.entity_targeted = outcome.get('entity_targeted')
-
-                # Update selected inventory item
-                if outcome.get('selected_inventory_item') is not None:
-                    game_state.selected_inventory_item = outcome.get(
-                        'selected_inventory_item')
-
-                # Determine whether to recompute fov...
-                if outcome.get('fov_recompute') is not None:
-                    fov_recompute = outcome.get('fov_recompute')
-
-                # Or redraw terrain
-                if outcome.get('redraw_terrain') is not None:
-                    redraw_terrain = outcome.get('redraw_terrain')
-
-                # Add messages to the log
-                if outcome.get('messages') is not None:
-                    for m in outcome.get('messages'):
-                        message_log.add_message(m)
+                fov_recompute, redraw_terrain = update_game_state(
+                    outcome, game_state, fov_recompute, redraw_terrain,
+                    message_log)
 
         ############################################
         ############## ENEMIES' TURN ###############
@@ -230,7 +245,7 @@ def main():
         # 'data/fonts/Yayo-c64-1280x400-83b157.png',
         # 'data/fonts/Alloy-curses-12x12.png',
         # 'data/fonts/terminal16x16_gs_ro.png',
-        'data/fonts/16x16-sb-ascii.png', # good!
+        'data/fonts/16x16-sb-ascii.png',  # good!
         # 'data/fonts/16x16-RogueYun-AgmEdit.png', # good!
         libtcod.FONT_LAYOUT_ASCII_INROW)
 

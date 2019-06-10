@@ -1,1 +1,1 @@
-from .monster import BasicMonster
+from .monster import BasicMonster, MonsterAi

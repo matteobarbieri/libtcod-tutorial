@@ -21,7 +21,11 @@ from game_state import GamePhase
 
 from render_functions import RenderOrder
 
-from map_objects.generators.dungeon import generate_dungeon_level
+from map_objects.generators.dungeon import generate_dungeon_level as \
+    generate_dungeon
+
+from map_objects.generators.test_maps import generate_dungeon_level as \
+    generate_room
 
 def get_constants():
     window_title = 'Rogue 20177'
@@ -109,7 +113,9 @@ def get_constants():
 def get_game_variables(constants):
 
     # TODO use parameters
-    game_map = generate_dungeon_level(
+    # game_map = generate_dungeon_level(
+        # constants['map_width'], constants['map_height'], 10, 20)
+    game_map = generate_room(
         constants['map_width'], constants['map_height'], 10, 20)
 
     # Fighter component for player

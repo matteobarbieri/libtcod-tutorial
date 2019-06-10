@@ -9,7 +9,8 @@ from components.fighter import Fighter
 
 import random
 
-def make_orc(room):
+
+def make_orc(room, AiComponentClass=BasicMonster):
 
     # TODO must change for non square rooms
     # Unpack room coordinates
@@ -21,7 +22,7 @@ def make_orc(room):
         hp=20, defense=0, power=4, xp=35)
 
     # Create the AI for the monster
-    ai_component = BasicMonster(room)
+    ai_component = AiComponentClass(room)
 
     mob = Entity(
         x, y,
@@ -35,4 +36,3 @@ def make_orc(room):
     )
 
     return mob
-

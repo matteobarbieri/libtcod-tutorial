@@ -15,7 +15,19 @@ class DestinationReachedException(Exception):
     pass
 
 
-class BasicMonster:
+class MonsterAi:
+    """
+    A monster which stands still
+    """
+
+    def __init__(self, location, state=MobState.LOITERING):
+        self.state = state
+
+    def pick_action(self, player, game_map):
+        return AIAction()
+
+
+class BasicMonster(MonsterAi):
 
     def __init__(self, location, state=MobState.LOITERING):
 

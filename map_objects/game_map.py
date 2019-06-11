@@ -417,6 +417,19 @@ class GameMap:
             if e.char == '<':
                 return e.x, e.y
 
+    def get_item_at(self, x, y):
+        """
+        If there is an item on the floor at coordinates x, y return it, else
+        return None.
+        """
+
+        for e in self.entities:
+            if e.x == x and e.y == y and e.item:
+                return e
+
+        else:
+            return None
+
     def place_player(self, player):
         """
         Place player in the map

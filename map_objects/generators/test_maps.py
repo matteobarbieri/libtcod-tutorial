@@ -22,6 +22,7 @@ from render_functions import RenderOrder
 from entity import Entity
 
 from prefabs.orc import make_orc
+from prefabs.weapons.pistol import make_pistol
 
 from components.ai import MonsterAi
 
@@ -53,6 +54,22 @@ def add_monsters(level):
             level.entities.append(monster)
 
 
+def add_items(level):
+    """
+    Add a ranged weapon on the floor
+    """
+
+    x = int(level.width/2) - 2
+    y = int(level.height/2) - 2
+
+    pistol = make_pistol()
+    pistol.x = x
+    pistol.y = y
+
+    level.entities.append(pistol)
+
+
+
 def generate_dungeon_level(width, height, min_room_length, max_room_length):
     # TODO add parameters (and use them!)
 
@@ -74,6 +91,9 @@ def generate_dungeon_level(width, height, min_room_length, max_room_length):
     # Populate Dungeon with entities
     # Monsters
     add_monsters(level)
+
+    # Add some items in the room
+    add_items(level)
 
     # Create and add entry stairs '<'
     entry_x, entry_y = entry_room.center

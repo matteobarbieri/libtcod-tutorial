@@ -1,6 +1,10 @@
-import libtcodpy as libtcod
+import tcod as libtcod
 
 from game_messages import Message
+
+
+class InventoryFullException(Exception):
+    pass
 
 
 class Inventory:
@@ -9,6 +13,28 @@ class Inventory:
         self.capacity = capacity
         self.items = []
 
+    def pickup(self, item):
+
+        # Should just be equal, but just in case...
+        if len(self.items) >= self.capacity:
+            raise InventoryFullException()
+
+        # Remove item coordinates (they do not make sense once they're in the
+        # player's inventory
+        item.x = None
+        item.y = None
+
+        # Actually add the item to the inventory
+        self.items.append(item)
+
+        # Return a feedback message
+        return Message("You pick up a {}".format(item),
+                libtcod.white)
+
+    def drop(item):
+        pass
+
+    """
     def add_item(self, item):
         results = []
 
@@ -42,7 +68,7 @@ class Inventory:
                     {
                         'message': Message(
                             'The {0} cannot be used'.format(
-                                item_entity.name), 
+                                item_entity.name),
                             libtcod.yellow)
                     }
                 )
@@ -84,3 +110,4 @@ class Inventory:
                                                                  libtcod.yellow)})
 
         return results
+    """

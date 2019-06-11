@@ -184,6 +184,9 @@ def handle_player_turn_keys(key, mouse):
     elif key_char == 'c':
         return ShowCharacterScreenAction()
 
+    elif key_char == 'g':
+        return PickupAction()
+
     #########################################
     ############ MOUSE ACTIONS ##############
     #########################################

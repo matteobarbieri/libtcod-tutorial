@@ -153,7 +153,8 @@ def draw_entity(terrain_layer, entity,
             terrain_layer, entity.x-top_x, entity.y-top_y, entity.color)
 
 
-def render_all(terrain_layer, panel, entity_frame, main_window,
+def render_all(terrain_layer, panel, entity_frame, inventory_frame,
+               main_window,
                player,
                game_map, fov_map, fov_recompute,
                redraw_terrain, redraw_entities, message_log,
@@ -346,7 +347,7 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
 
         inventory_menu(
             terrain_layer, inventory_title, player,
-            50, screen_width, screen_height)
+            inventory_frame, screen_width, screen_height)
 
     # Show character screen
     elif game_phase == GamePhase.CHARACTER_SCREEN:

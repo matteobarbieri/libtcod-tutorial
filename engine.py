@@ -82,8 +82,8 @@ def update_game_state(
 
 def play_game(player, game_map, game_state,
               message_log,
-              terrain_layer,
-              panel, entity_frame, main_window, constants):
+              terrain_layer, panel, entity_frame, inventory_frame,
+              main_window, constants):
 
     # At the beginning of the game, recompute fov
     fov_recompute = True
@@ -147,7 +147,7 @@ def play_game(player, game_map, game_state,
             # TODO same for focused entity?
 
         top_x, top_y = render_all(
-            terrain_layer, panel, entity_frame, main_window,
+            terrain_layer, panel, entity_frame, inventory_frame, main_window,
             player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state.game_phase,
@@ -273,6 +273,10 @@ def main():
         constants['frame_width'],
         constants['frame_height'])
 
+    inventory_frame = libtcod.console_new(
+        constants['frame_width'],
+        constants['frame_height'])
+
     player = None
     game_map = None
     message_log = None
@@ -342,7 +346,8 @@ def main():
 
             play_game(player, game_map,
                 game_state, message_log,
-                terrain_layer, panel, entity_frame, main_window, constants)
+                terrain_layer, panel, entity_frame, inventory_frame,
+                main_window, constants)
 
             show_main_menu = True
 

@@ -1,4 +1,5 @@
-import libtcodpy as libtcod
+# import libtcodpy as libtcod
+import tcod as libtcod
 
 
 def menu(con, header, options, width, screen_width, screen_height,
@@ -39,23 +40,49 @@ def menu(con, header, options, width, screen_width, screen_height,
 
     libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.4)
 
-
-def inventory_menu(con, header, player, inventory_width,
+def inventory_menu(con, header, player, inventory_frame,
                    screen_width, screen_height):
 
-    # show a menu with each item of the inventory as an option
-    if len(player.inventory.items) == 0:
-        options = ['Inventory is empty.']
-    else:
-        # options = [item.name for item in inventory.items]
-        options = list()
+    # Extract width and height
+    w = inventory_frame.width
+    h = inventory_frame.height
 
-        # Show in the inventory if an item is equipped
-        for item in player.inventory.items:
-            options.append(item.name)
+    # Draw frame
+    inventory_frame.draw_frame(
+        1, 1,
+        w-2, h-2,
+        'Inventory')
 
-    menu(con, header, options, inventory_width, screen_width, screen_height,
-         x=10, y=10)
+    # List the items in the inventory
+    # Starting 
+    item_y = 20
+
+    # TODO items in the inventory should be assigned a letter when picked up for
+    # the first time, in order to avoid constant shuffling
+    letter_index = ord('a')
+
+    if player.inventory.items:
+        for e in player.inventory.items:
+
+            inventory_frame.print(
+                3, item_y, '({}) {}'.format(chr(letter_index), e.name),
+                fg=e.color)
+
+            item_y += 1
+            letter_index += 1
+
+    # Draw entity graphics
+    # TODO
+    # Mockup for entity detail
+    # inventory_frame.draw_rect(
+        # 3, 5, 10, 10, 0, bg=libtcod.red)
+
+    # Blit panel console on root console
+    libtcod.console_blit(
+        inventory_frame,
+        0, 0, w, h,
+        con,
+        0, 0)
 
 
 def main_menu(con, background_image, screen_width, screen_height):

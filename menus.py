@@ -3,7 +3,7 @@ import tcod as libtcod
 
 
 def menu(con, header, options, width, screen_width, screen_height,
-         x=None, y=None):
+         x=None, y=None, header_fg=libtcod.white):
     if len(options) > 26:
         raise ValueError('Cannot have a menu with more than 26 options.')
 
@@ -24,13 +24,17 @@ def menu(con, header, options, width, screen_width, screen_height,
 
     # print all the options
     opt_y = header_height
-    letter_index = ord('a')
-    for option_text in options:
-        text = '(' + chr(letter_index) + ') ' + option_text
+
+    # Add letters if not already present
+    if type(options[0]) != tuple:
+        options = [(chr(i+ord('a')), o_txt) 
+            for i, o_txt in enumerate(options)]
+
+    for option_letter, option_text in options:
+        text = "({}) {}".format(option_letter, option_text)
         libtcod.console_print_ex(
             window, 0, opt_y, libtcod.BKGND_NONE, libtcod.LEFT, text)
         opt_y += 1
-        letter_index += 1
 
     # blit the contents of "window" to the root console
     if x is None:
@@ -39,6 +43,21 @@ def menu(con, header, options, width, screen_width, screen_height,
         y = int(screen_height / 2 - height / 2)
 
     libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.4)
+
+
+def item_submenu(con, header, player, item, screen_width, screen_height):
+    
+    item_position = 10
+    item_options = [
+        ('d', 'Drop'),
+        ('e', 'Equip'),
+        ('u', 'Use'),
+    ]
+
+    width = 15
+
+    menu(con, header, item_options, width, screen_width, screen_height,
+         x=20, y=item_position)
 
 def inventory_menu(con, header, player, inventory_frame,
                    screen_width, screen_height):

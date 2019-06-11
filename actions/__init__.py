@@ -3,7 +3,7 @@ from .inspect import InspectAction
 from .menus import (  # noqa
     ShowMenuAction,
     ShowInventoryAction, SelectInventoryItemAction,
-    BackToGameAction,
+    BackToGameAction, BackToInventoryMenuAction,
     ShowCharacterScreenAction)
 
 from .action import NoopAction, WaitAction  # noqa

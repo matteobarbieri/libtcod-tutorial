@@ -5,7 +5,8 @@ from enum import Enum, auto
 
 from game_state import GamePhase
 
-from menus import character_screen, inventory_menu
+from menus import (
+    character_screen, inventory_menu, item_submenu)
 
 
 class RenderOrder(Enum):
@@ -159,7 +160,7 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
                game_map, fov_map, fov_recompute,
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
-               game_phase, entity_focused, entity_targeted,
+               game_state, entity_focused, entity_targeted,
                current_turn):
 
     ### Extract variables from contants dict
@@ -172,6 +173,9 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
     terrain_layer_height = constants['terrain_layer_height']
     frame_width = constants['frame_width']
     frame_height = constants['frame_height']
+
+    # TODO tmp workaround
+    game_phase = game_state.game_phase
 
     #########################################
     ######### Render terrain first ##########
@@ -341,13 +345,21 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
         0, 0)
 
     # Show inventory menu
-    if game_phase in (GamePhase.INVENTORY_MENU, ):
+    if game_phase in (GamePhase.INVENTORY_MENU, GamePhase.INVENTORY_ITEM_MENU):
 
         inventory_title = 'Inventory'
 
         inventory_menu(
             terrain_layer, inventory_title, player,
             inventory_frame, screen_width, screen_height)
+
+    # Inventory item submenu
+    if game_phase == GamePhase.INVENTORY_ITEM_MENU:
+
+        item_submenu(
+            terrain_layer, 'Actions', player,
+            game_state.selected_inventory_item,
+            screen_width, screen_height)
 
     # Show character screen
     elif game_phase == GamePhase.CHARACTER_SCREEN:

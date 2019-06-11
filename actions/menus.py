@@ -40,16 +40,21 @@ class SelectInventoryItemAction(Action):
     def _execute(self):
 
         try:
-            self.item = self.player.inventory.items[self.inventory_item_index]
-            print("Selected {}!".format(self.item))
+            item = self.player.inventory.items[self.inventory_item_index]
+            print("Selected {}!".format(item))
+            next_phase = GamePhase.INVENTORY_ITEM_MENU
+        except IndexError as e:
+            item = None
+            next_phase = GamePhase.INVENTORY_MENU
+
         except Exception as e:
             print("Uncaught Exception!")
             raise e
 
         # Return outcome
         outcome = {
-            'selected_inventory_item': self.item,
-            'next_state': GamePhase.INVENTORY_ITEM_MENU,
+            'selected_inventory_item': item,
+            'next_state': next_phase
         }
 
         return outcome
@@ -63,6 +68,22 @@ class ShowInventoryAction(Action):
         outcome = {
             'selected_inventory_item': None,
             'next_state': GamePhase.INVENTORY_MENU,
+        }
+
+        return outcome
+
+
+class BackToInventoryMenuAction(Action):
+
+    def _execute(self):
+        """
+        Simply reset the state to show inventory menu
+        """
+
+        # Return outcome
+        outcome = {
+            'next_state': GamePhase.INVENTORY_MENU,
+            'redraw_terrain': True,
         }
 
         return outcome

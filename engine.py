@@ -150,7 +150,7 @@ def play_game(player, game_map, game_state,
             terrain_layer, panel, entity_frame, inventory_frame, main_window,
             player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
-            constants, mouse, game_state.game_phase,
+            constants, mouse, game_state,
             game_state.entity_focused, game_state.entity_targeted,
             current_turn)
 

@@ -51,6 +51,28 @@ def handle_entity_info(key, mouse):
     # No key was pressed
     return NoopAction()
 
+def handle_inventory_item_keys(key, mouse):
+
+    # Code to prevent double input
+    key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
+
+   
+    if key.vk == libtcod.KEY_ENTER and key.lalt:
+        # Alt+Enter: toggle full screen
+        return ToggleFullscreenAction()
+
+    elif key.vk == libtcod.KEY_ESCAPE:
+        # Exit the menu, go back to main game
+        return BackToInventoryMenuAction()
+
+    if key_char == "d":
+        # TODO
+        # implement drop
+        pass
+
+    # No key was pressed
+    return NoopAction()
+
 def handle_inventory_keys(key, mouse):
 
     index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1

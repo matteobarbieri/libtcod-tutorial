@@ -28,7 +28,7 @@ class Entity:
         self.equipped = False
 
         # Its color
-        self.color = color
+        self._color = color
 
         # Its name
         self.name = name
@@ -94,6 +94,10 @@ class Entity:
         Shortcut to components attribute
         """
         return self.components
+
+    @property
+    def color(self):
+        return self._color
 
     def move(self, dx, dy):
         # Move the entity by a given amount

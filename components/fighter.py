@@ -87,7 +87,7 @@ class Fighter:
             libtcod.orange)
 
         self.owner.char = '%'
-        self.owner.color = libtcod.dark_red
+        self.owner._color = libtcod.dark_red
         self.owner.blocks = False
         self.owner.fighter = None
         self.owner.ai = None

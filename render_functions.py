@@ -158,7 +158,7 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
                game_map, fov_map, fov_recompute,
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
-               game_state, entity_focused, entity_targeted,
+               game_phase, entity_focused, entity_targeted,
                current_turn):
 
     ### Extract variables from contants dict
@@ -322,7 +322,7 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
             main_window, entity_under_mouse,
             top_x, top_y)
 
-    if game_state == GamePhase.ENTITY_INFO:
+    if game_phase == GamePhase.ENTITY_INFO:
         # TODO to move somewhere else!
         render_entity_frame(entity_frame, entity_focused)
 
@@ -340,20 +340,16 @@ def render_all(terrain_layer, panel, entity_frame, main_window,
         0, 0)
 
     # Show inventory menu
-    if game_state in (GamePhase.INVENTORY_MENU, ):
-        if game_state == GamePhase.INVENTORY_MENU:
-            inventory_title = 'Press the key next to an item to use it, '
-            'or Esc to cancel.\n'
-        else:
-            inventory_title = 'Press the key next to an item to drop it, '
-            'or Esc to cancel.\n'
+    if game_phase in (GamePhase.INVENTORY_MENU, ):
+
+        inventory_title = 'Inventory'
 
         inventory_menu(
             terrain_layer, inventory_title, player,
             50, screen_width, screen_height)
 
     # Show character screen
-    elif game_state == GamePhase.CHARACTER_SCREEN:
+    elif game_phase == GamePhase.CHARACTER_SCREEN:
         character_screen(player, 30, 10, screen_width, screen_height)
 
     return top_x, top_y

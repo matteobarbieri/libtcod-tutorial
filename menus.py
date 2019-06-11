@@ -1,7 +1,8 @@
 import libtcodpy as libtcod
 
 
-def menu(con, header, options, width, screen_width, screen_height):
+def menu(con, header, options, width, screen_width, screen_height,
+         x=None, y=None):
     if len(options) > 26:
         raise ValueError('Cannot have a menu with more than 26 options.')
 
@@ -21,18 +22,21 @@ def menu(con, header, options, width, screen_width, screen_height):
         window, 0, 0, width, height, libtcod.BKGND_NONE, libtcod.LEFT, header)
 
     # print all the options
-    y = header_height
+    opt_y = header_height
     letter_index = ord('a')
     for option_text in options:
         text = '(' + chr(letter_index) + ') ' + option_text
         libtcod.console_print_ex(
-            window, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, text)
-        y += 1
+            window, 0, opt_y, libtcod.BKGND_NONE, libtcod.LEFT, text)
+        opt_y += 1
         letter_index += 1
 
     # blit the contents of "window" to the root console
-    x = int(screen_width / 2 - width / 2)
-    y = int(screen_height / 2 - height / 2)
+    if x is None:
+        x = int(screen_width / 2 - width / 2)
+    if y is None:
+        y = int(screen_height / 2 - height / 2)
+
     libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.4)
 
 
@@ -50,7 +54,8 @@ def inventory_menu(con, header, player, inventory_width,
         for item in player.inventory.items:
             options.append(item.name)
 
-    menu(con, header, options, inventory_width, screen_width, screen_height)
+    menu(con, header, options, inventory_width, screen_width, screen_height,
+         x=10, y=10)
 
 
 def main_menu(con, background_image, screen_width, screen_height):

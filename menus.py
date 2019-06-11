@@ -47,7 +47,10 @@ def menu(con, header, options, width, screen_width, screen_height,
 
 def item_submenu(con, header, player, item, screen_width, screen_height):
     
-    item_position = 10
+    item_position = player.inventory.get_item_position_in_list(item) + 20
+
+    # TODO
+    # Get the right list of options for specific item
     item_options = [
         ('d', 'Drop'),
         ('e', 'Equip'),
@@ -56,8 +59,10 @@ def item_submenu(con, header, player, item, screen_width, screen_height):
 
     width = 15
 
+    # TODO
+    # X position should depend on frame's width 
     menu(con, header, item_options, width, screen_width, screen_height,
-         x=20, y=item_position)
+         x=31, y=item_position)
 
 def inventory_menu(con, header, player, inventory_frame,
                    screen_width, screen_height):

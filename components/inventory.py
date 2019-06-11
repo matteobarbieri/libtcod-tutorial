@@ -31,9 +31,15 @@ class Inventory:
         return Message("You pick up a {}".format(item),
                 libtcod.white)
 
-    def drop(item):
+    def drop(self, item):
         pass
 
+    def get_item_position_in_list(self, item):
+        """
+        """
+
+        return self.items.index(item)
+    
     """
     def add_item(self, item):
         results = []

@@ -27,7 +27,7 @@ def menu(con, header, options, width, screen_width, screen_height,
 
     # Add letters if not already present
     if type(options[0]) != tuple:
-        options = [(chr(i+ord('a')), o_txt) 
+        options = [(chr(i+ord('a')), o_txt)
             for i, o_txt in enumerate(options)]
 
     for option_letter, option_text in options:
@@ -46,7 +46,7 @@ def menu(con, header, options, width, screen_width, screen_height,
 
 
 def item_submenu(con, header, player, item, screen_width, screen_height):
-    
+
     item_position = player.inventory.get_item_position_in_list(item) + 20
 
     # TODO
@@ -60,7 +60,7 @@ def item_submenu(con, header, player, item, screen_width, screen_height):
     width = 15
 
     # TODO
-    # X position should depend on frame's width 
+    # X position should depend on frame's width
     menu(con, header, item_options, width, screen_width, screen_height,
          x=31, y=item_position)
 
@@ -78,7 +78,7 @@ def inventory_menu(con, header, player, inventory_frame,
         'Inventory')
 
     # List the items in the inventory
-    # Starting 
+    # Starting
     item_y = 20
 
     # TODO items in the inventory should be assigned a letter when picked up for

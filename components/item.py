@@ -9,6 +9,8 @@ from enum import Enum, auto
 
 class ItemType(Enum):
     WEAPON = auto()
+    ARMOR = auto()
+    DEVICE = auto()
     CONSUMABLE = auto()
 
 
@@ -30,6 +32,24 @@ class Item:
         self.item_types = item_types
         self.item_subtypes = item_subtypes
 
+    def get_inventory_options(self):
+        """
+        Return a list of possible actions for the item once it is selected
+        from the inventory.
+        """
+        options = list()
+
+        if self.is_armor() or self.is_weapon() or self.is_device():
+            options.append(('e', 'Equip'))
+
+        if self.is_consumable():
+            options.append(('u', 'Use'))
+
+        # Any item can be dropped
+        options.append(('d', 'Drop'))
+
+        return options
+
     # def __init__(
             # self, item_types=[], item_subtypes=[],
             # use_function=None, targeting=False, targeting_message=None,
@@ -49,8 +69,17 @@ class Item:
         # self.targeting = targeting
         # self.targeting_message = targeting_message
 
+    def is_armor(self):
+        return ItemType.ARMOR in self.item_types
+
     def is_weapon(self):
         return ItemType.WEAPON in self.item_types
+
+    def is_device(self):
+        return ItemType.DEVICE in self.item_types
+
+    def is_consumable(self):
+        return ItemType.CONSUMABLE in self.item_types
 
     def is_melee(self):
         return ItemSubtype.MELEE in self.item_subtypes

@@ -49,13 +49,18 @@ def item_submenu(con, header, player, item, screen_width, screen_height):
 
     item_position = player.inventory.get_item_position_in_list(item) + 20
 
+    # TODO limit the height of the submenu
+    item_position = min(item_position, 20000)
+
     # TODO
     # Get the right list of options for specific item
-    item_options = [
-        ('d', 'Drop'),
-        ('e', 'Equip'),
-        ('u', 'Use'),
-    ]
+    # item_options = [
+        # ('d', 'Drop'),
+        # ('e', 'Equip'),
+        # ('u', 'Use'),
+    # ]
+
+    item_options = item.item.get_inventory_options()
 
     width = 15
 

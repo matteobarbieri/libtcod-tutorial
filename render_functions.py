@@ -316,7 +316,7 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
         0, 0)
 
     #########################################
-    ######### Render entity frame  ##########
+    ######### Render entity label ###########
     #########################################
 
     entity_under_mouse = get_entity_under_mouse(
@@ -328,17 +328,27 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
             main_window, entity_under_mouse,
             top_x, top_y)
 
+    #########################################
+    ######### Render entity frame  ##########
+    #########################################
+
+    # Render the focused entity
     if game_phase == GamePhase.ENTITY_INFO:
-        # TODO to move somewhere else!
         render_entity_frame(entity_frame, game_state.entity_focused)
 
-        # Blit panel console on root console
+    # Render the selected inventory item
+    if game_phase == GamePhase.INVENTORY_ITEM_MENU:
+        render_entity_frame(entity_frame, game_state.selected_inventory_item)
+
+    # Blit the frame on the console below (main window)
+    if game_phase in (GamePhase.ENTITY_INFO, GamePhase.INVENTORY_ITEM_MENU):
         libtcod.console_blit(
             entity_frame,
             0, 0, frame_width, frame_height,
             main_window,
             screen_width - frame_width, 0)
 
+    # Finally blit main window console on root console
     libtcod.console_blit(
         main_window,
         0, 0, terrain_layer_width, terrain_layer_height,

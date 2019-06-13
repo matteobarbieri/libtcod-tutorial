@@ -8,9 +8,6 @@ import random
 
 import sys
 
-# TODO temporarily disabled
-# from entity import get_blocking_entities_at_location
-
 from input_handlers import handle_input, handle_main_menu
 from loader_functions.initialize_new_game import get_constants, get_game_variables
 from loader_functions.data_loaders import load_game, save_game
@@ -21,9 +18,6 @@ from render_functions import render_all, check_if_still_in_sight
 
 from game_state import GamePhase, GameState
 from death_functions import kill_monster, kill_player
-
-# TODO temporarily disabled
-# from game_messages import Message
 
 from actions import ShowMenuException
 

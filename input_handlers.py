@@ -57,7 +57,6 @@ def handle_inventory_item_keys(key, mouse):
     # Code to prevent double input
     key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
 
-
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
         return ToggleFullscreenAction()
@@ -68,6 +67,8 @@ def handle_inventory_item_keys(key, mouse):
 
     if key_char == "d":
         return DropItemAction()
+    if key_char == "e":
+        return EquipItemAction()
 
     # No key was pressed
     return NoopAction()

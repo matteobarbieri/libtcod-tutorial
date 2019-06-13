@@ -11,6 +11,45 @@ from game_messages import Message
 import random
 
 from components.inventory import InventoryFullException
+from components.equipment import UnableToEquipException
+
+
+class EquipItemAction(Action):
+
+    def __init__(self, **kwargs):
+        pass
+
+    def _execute(self):
+
+        messages = list()
+
+        try:
+
+            item_to_equip = self.game_state.selected_inventory_item
+
+            # (try to) equip the item
+            messages.extend(self.player.inventory.equip(
+                item_to_equip))
+
+            # Reset selection
+            self.game_state.selected_inventory_item = None
+
+            # Change game phase (enemies' turn)
+            next_phase = GamePhase.ENEMY_TURN
+        except UnableToEquipException:
+            next_phase = GamePhase.PLAYERS_TURN
+        except Exception as e:
+            raise e
+            # next_phase = GamePhase.PLAYERS_TURN
+
+
+        # Return outcome
+        outcome = {
+            "next_state": next_phase,
+            'messages': messages,
+        }
+
+        return outcome
 
 
 class DropItemAction(Action):
@@ -24,13 +63,14 @@ class DropItemAction(Action):
 
         try:
 
-            item_to_drop = self.game_state.selected_inventory_item
+            item_to_equip = self.game_state.selected_inventory_item
 
             # (try to) add the item to the player's inventory
             messages.append(self.player.inventory.drop(
-                item_to_drop, self.game_map))
+                item_to_equip, self.game_map))
 
-            self.game_state.selected_inventory_item
+            # Reset selection
+            self.game_state.selected_inventory_item = None
 
             # Change game phase (enemies' turn)
             next_phase = GamePhase.ENEMY_TURN
@@ -87,9 +127,6 @@ class PickupAction(Action):
                         libtcod.yellow))
             next_phase = GamePhase.PLAYERS_TURN
             pass
-
-
-
 
         # Return outcome
         outcome = {

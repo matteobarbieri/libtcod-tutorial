@@ -13,6 +13,16 @@ class Inventory:
         self.capacity = capacity
         self.items = []
 
+    def equip(self, item):
+
+        messages = self.owner.equipment.equip(item)
+
+        # Remove the item from the inventory
+        self.items.remove(item)
+
+        # Return a feedback message
+        return messages
+
     def drop(self, item, level):
 
         # TODO

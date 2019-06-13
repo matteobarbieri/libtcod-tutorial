@@ -11,4 +11,4 @@ from .toggle_fullscreen import ToggleFullscreenAction  # noqa
 from .exceptions import ShowMenuException  # noqa
 from .combat import CycleTargetAction, ShootAction  # noqa
 from .items import (  # noqa
-    PickupAction, DropItemAction)
+        PickupAction, DropItemAction, EquipItemAction)

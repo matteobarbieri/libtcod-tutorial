@@ -13,6 +13,42 @@ import random
 from components.inventory import InventoryFullException
 
 
+class DropItemAction(Action):
+
+    def __init__(self, **kwargs):
+        pass
+
+    def _execute(self):
+
+        messages = list()
+
+        try:
+
+            item_to_drop = self.game_state.selected_inventory_item
+
+            # (try to) add the item to the player's inventory
+            messages.append(self.player.inventory.drop(
+                item_to_drop, self.game_map))
+
+            self.game_state.selected_inventory_item
+
+            # Change game phase (enemies' turn)
+            next_phase = GamePhase.ENEMY_TURN
+        except Exception as e:
+            raise e
+            # next_phase = GamePhase.PLAYERS_TURN
+
+
+        # Return outcome
+        outcome = {
+            "next_state": next_phase,
+            'messages': messages,
+        }
+
+        # TODO check terrain/enemies!!!
+
+        return outcome
+
 class PickupAction(Action):
 
     def __init__(self, **kwargs):
@@ -34,10 +70,8 @@ class PickupAction(Action):
         if item_on_floor:
             try:
                 # (try to) add the item to the player's inventory
-                messages.append(self.player.inventory.pickup(item_on_floor))
-
-                # Remove the item from the game map (makes sense)
-                self.game_map.entities.remove(item_on_floor)
+                messages.append(self.player.inventory.pickup(
+                    item_on_floor, self.game_map))
 
                 # Change game phase (enemies' turn)
                 next_phase = GamePhase.ENEMY_TURN

@@ -13,7 +13,25 @@ class Inventory:
         self.capacity = capacity
         self.items = []
 
-    def pickup(self, item):
+    def drop(self, item, level):
+
+        # TODO
+        # For the time being, just drop it on the floor exactly where the
+        # player is.
+        item.x = self.owner.x
+        item.y = self.owner.y
+
+        # Remove the item from the inventory
+        self.items.remove(item)
+
+        # Add it back to the map's entities
+        level.entities.append(item)
+
+        # Return a feedback message
+        return Message("You drop a {} on the floor.".format(item),
+                libtcod.white)
+
+    def pickup(self, item, level):
 
         # Should just be equal, but just in case...
         if len(self.items) >= self.capacity:
@@ -27,37 +45,20 @@ class Inventory:
         # Actually add the item to the inventory
         self.items.append(item)
 
+        # And remove it from the map
+        level.entities.remove(item)
+
         # Return a feedback message
         return Message("You pick up a {}".format(item),
                 libtcod.white)
-
-    def drop(self, item):
-        pass
 
     def get_item_position_in_list(self, item):
         """
         """
 
         return self.items.index(item)
-    
+
     """
-    def add_item(self, item):
-        results = []
-
-        if len(self.items) >= self.capacity:
-            results.append({
-                'item_added': None,
-                'message': Message('You cannot carry any more, your inventory is full', libtcod.yellow)
-            })
-        else:
-            results.append({
-                'item_added': item,
-                'message': Message('You pick up the {0}!'.format(item.name), libtcod.blue)
-            })
-
-            self.items.append(item)
-
-        return results
 
     def use(self, item_entity, **kwargs):
         results = []
@@ -93,27 +94,4 @@ class Inventory:
                 results.extend(item_use_results)
 
         return results
-
-    def remove_item(self, item):
-        self.items.remove(item)
-
-    def drop_item(self, item):
-        results = []
-
-        # When an item is dropped, it is also unequiped
-        if \
-                self.owner.equipment.main_hand == item \
-                or self.owner.equipment.off_hand == item:
-            self.owner.equipment.toggle_equip(item)
-
-        # Set here the coordinates of the item, which will appear again in the
-        # map
-        item.x = self.owner.x
-        item.y = self.owner.y
-
-        self.remove_item(item)
-        results.append({'item_dropped': item, 'message': Message('You dropped the {0}'.format(item.name),
-                                                                 libtcod.yellow)})
-
-        return results
-    """
+        """

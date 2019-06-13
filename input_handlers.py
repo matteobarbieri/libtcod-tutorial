@@ -67,9 +67,7 @@ def handle_inventory_item_keys(key, mouse):
         return BackToInventoryMenuAction()
 
     if key_char == "d":
-        # TODO
-        # implement drop
-        pass
+        return DropItemAction()
 
     # No key was pressed
     return NoopAction()

@@ -8,6 +8,9 @@ from enum import Enum, auto
 
 
 class ItemType(Enum):
+    """
+    The main type of the item.
+    """
     WEAPON = auto()
     ARMOR = auto()
     DEVICE = auto()
@@ -15,6 +18,9 @@ class ItemType(Enum):
 
 
 class ItemSubtype(Enum):
+    """
+    Additional item properties.
+    """
     RANGED = auto()
     MELEE = auto()
 

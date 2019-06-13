@@ -2,8 +2,6 @@ import libtcodpy as libtcod
 
 import math
 
-from components.item import Item
-
 from render_functions import RenderOrder
 
 
@@ -208,9 +206,24 @@ class Entity:
         return math.sqrt(dx ** 2 + dy ** 2)
 
 
-def get_blocking_entities_at_location(entities, destination_x, destination_y):
+def get_inspectable_entities_at_location(
+    entities, destination_x, destination_y):  # noqa
+
     for entity in entities:
-        if entity.blocks and entity.x == destination_x and entity.y == destination_y:
+        if (entity.x == destination_x and
+            entity.y == destination_y):  # noqa
+            return entity
+
+    return None
+
+
+def get_blocking_entities_at_location(
+    entities, destination_x, destination_y):  # noqa
+
+    for entity in entities:
+        if (entity.blocks and
+            entity.x == destination_x and
+            entity.y == destination_y):  # noqa
             return entity
 
     return None

@@ -2,13 +2,11 @@ from .action import Action
 
 from game_state import GamePhase
 
-from entity import get_blocking_entities_at_location
+from entity import get_inspectable_entities_at_location
 
 import tcod as libtcod
 
 from game_messages import Message
-
-import random
 
 
 class InspectAction(Action):
@@ -27,7 +25,8 @@ class InspectAction(Action):
 
         messages = list()
 
-        target = get_blocking_entities_at_location(
+        # Retrieve an entity that can be inspected at target location
+        target = get_inspectable_entities_at_location(
             self.game_map.entities, target_x, target_y)
 
         if target:

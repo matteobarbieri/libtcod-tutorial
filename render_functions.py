@@ -160,8 +160,7 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
                game_map, fov_map, fov_recompute,
                redraw_terrain, redraw_entities, message_log,
                constants, mouse,
-               game_state, entity_focused, entity_targeted,
-               current_turn):
+               game_state, current_turn):
 
     ### Extract variables from contants dict
     screen_width = constants['screen_width']
@@ -213,9 +212,10 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
                     game_map.tiles[x][y].render_at(
                         terrain_layer, x-top_x, y-top_y, visible)
 
-        if entity_targeted:
+        if game_state.entity_targeted:
             visible = libtcod.map_is_in_fov(
-                fov_map, entity_targeted.x, entity_targeted.y)
+                fov_map,
+                game_state.entity_targeted.x, game_state.entity_targeted.y)
 
             if visible:
                 # print("Targeted {} at ({}, {})".format(
@@ -223,7 +223,8 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
 
                 libtcod.console_set_char_background(
                     terrain_layer,
-                    entity_targeted.x-top_x, entity_targeted.y-top_y,
+                    game_state.entity_targeted.x-top_x,
+                    game_state.entity_targeted.y-top_y,
                     libtcod.red, libtcod.BKGND_SET)
 
     #########################################
@@ -329,7 +330,7 @@ def render_all(terrain_layer, panel, entity_frame, inventory_frame,
 
     if game_phase == GamePhase.ENTITY_INFO:
         # TODO to move somewhere else!
-        render_entity_frame(entity_frame, entity_focused)
+        render_entity_frame(entity_frame, game_state.entity_focused)
 
         # Blit panel console on root console
         libtcod.console_blit(

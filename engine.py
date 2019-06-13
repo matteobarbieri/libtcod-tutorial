@@ -151,7 +151,6 @@ def play_game(player, game_map, game_state,
             player, game_map, fov_map, fov_recompute,
             redraw_terrain, redraw_entities, message_log,
             constants, mouse, game_state,
-            game_state.entity_focused, game_state.entity_targeted,
             current_turn)
 
         # TODO find a better place

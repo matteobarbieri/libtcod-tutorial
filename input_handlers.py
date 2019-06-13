@@ -10,36 +10,37 @@ def handle_input(key, mouse, game_state):
     """
 
     # TODO refactor as dispatch tables
+    #########################################
+    ############ PLAYER'S TURN ##############
+    #########################################
     if game_state == GamePhase.PLAYERS_TURN:
         return handle_player_turn_keys(key, mouse)
+    #########################################
+    ############ INVENTORY MENU #############
+    #########################################
     elif game_state in (GamePhase.INVENTORY_MENU, ):
         return handle_inventory_keys(key, mouse)
+    #########################################
+    ########## INVENTORY ITEM MENU ##########
+    #########################################
     elif game_state == GamePhase.INVENTORY_ITEM_MENU:
         return handle_inventory_item_keys(key, mouse)
+    #########################################
+    ########### CHARACTER SCREEN ############
+    #########################################
     elif game_state == GamePhase.CHARACTER_SCREEN:
         return handle_character_screen(key, mouse)
+    #########################################
+    ############## ENTITY INFO ##############
+    #########################################
     elif game_state == GamePhase.ENTITY_INFO:
         return handle_entity_info(key, mouse)
 
-    """
-    elif game_state == GamePhase.PLAYER_DEAD:
-        return handle_player_dead_keys(key)
-    elif game_state == GamePhase.TARGETING:
-        return handle_targeting_keys(key)
-    elif game_state == GamePhase.LEVEL_UP:
-        return handle_level_up_menu(key)
-
-    """
-
+    # Return empty outcome dict
     return {}
 
+
 def handle_entity_info(key, mouse):
-
-    index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1
-
-    # TODO To enable again
-    # if index >= 0:
-        # return {'inventory_index': index}
 
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
@@ -56,7 +57,7 @@ def handle_inventory_item_keys(key, mouse):
     # Code to prevent double input
     key_char = chr(key.c) if key.vk == libtcod.KEY_CHAR else ""
 
-   
+
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
         return ToggleFullscreenAction()

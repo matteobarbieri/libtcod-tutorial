@@ -14,11 +14,11 @@ class ShootAction(Action):
 
         messages = list()
 
-        if self.entity_targeted:
+        if self.game_state.entity_targeted:
             # TODO implement shooting
             try:
                 messages.extend(
-                    self.player.fighter.shoot(self.entity_targeted))
+                    self.player.fighter.shoot(self.game_state.entity_targeted))
                 next_state = GamePhase.ENEMY_TURN
             except NoRangedWeaponsEquippedException:
                 messages.append(
@@ -73,7 +73,7 @@ class CycleTargetAction(Action):
                 # Only enemies in sight
                 enemies_in_sight.append(entity)
 
-                if self.entity_targeted == entity:
+                if self.game_state.entity_targeted == entity:
                     # print("Found old target!")
                     # Remember the entity currently being targeted
                     i_targeted = i
@@ -88,7 +88,6 @@ class CycleTargetAction(Action):
                 # len(enemies_in_sight), i_targeted+1))
             new_target = enemies_in_sight[i_targeted]
         else:
-            # new_target = self.entity_targeted
             new_target = None
             messages.append(
                 Message("No valid targets in sight.", libtcod.red))

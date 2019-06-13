@@ -8,15 +8,14 @@ class Action():
         self.player = None
 
     def set_context(self, game_map, player, message_log, fov_map,
-                    entity_targeted):
-        # self.context['game_map'] = game_map
-        # self.context['player'] = player
+                    game_state):
 
         self.game_map = game_map
         self.player = player
         self.message_log = message_log
         self.fov_map = fov_map
-        self.entity_targeted = entity_targeted
+        # self.entity_targeted = entity_targeted
+        self.game_state = game_state
 
     def _execute(self):
         """

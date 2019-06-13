@@ -177,7 +177,7 @@ def play_game(player, game_map, game_state,
             # TODO check, should the message log be passed here?
             action.set_context(
                 game_map, player, message_log, fov_map,
-                game_state.entity_targeted)
+                game_state)
 
             # Execute it
             try:

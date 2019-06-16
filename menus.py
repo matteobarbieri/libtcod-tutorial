@@ -48,7 +48,14 @@ def menu(con, header, options, width, screen_width, screen_height,
 
 def item_submenu(con, header, player, item, screen_width, screen_height):
 
-    item_position = player.inventory.get_item_position_in_list(item) + 20
+    if item.equipped:
+        starting_menu_y = 30
+    else:
+        starting_menu_y = 5
+
+    item_position = (
+        player.inventory.get_item_position_in_list(item) +
+        starting_menu_y)
 
     # TODO limit the height of the submenu
     item_position = min(item_position, 20000)

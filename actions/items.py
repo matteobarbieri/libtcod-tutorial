@@ -14,6 +14,48 @@ from components.inventory import InventoryFullException
 from components.equipment import UnableToEquipException
 
 
+class UnequipItemAction(Action):
+
+    def __init__(self, **kwargs):
+        pass
+
+    def _execute(self):
+
+        raise Exception("Not implemented")
+
+        messages = list()
+
+        try:
+
+            item_to_equip = self.game_state.selected_inventory_item
+
+            # (try to) equip the item
+            messages.extend(self.player.inventory.equip(
+                item_to_equip))
+
+            # Reset selection
+            self.game_state.selected_inventory_item = None
+
+            # Change game phase (enemies' turn)
+            # next_phase = GamePhase.ENEMY_TURN
+            # TODO changing equipment should require some time, but keep the
+            # menu open
+            next_phase = GamePhase.INVENTORY_MENU
+        except UnableToEquipException:
+            next_phase = GamePhase.PLAYERS_TURN
+        except Exception as e:
+            raise e
+            # next_phase = GamePhase.PLAYERS_TURN
+
+        # Return outcome
+        outcome = {
+            "next_state": next_phase,
+            'messages': messages,
+        }
+
+        return outcome
+
+
 class EquipItemAction(Action):
 
     def __init__(self, **kwargs):

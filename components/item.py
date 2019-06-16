@@ -45,8 +45,11 @@ class Item:
         """
         options = list()
 
-        if self.is_armor() or self.is_weapon() or self.is_device():
-            options.append(('e', 'Equip'))
+        if self.is_equippable():
+            if self.owner.equipped:
+                options.append(('u', 'Unequip'))
+            else:
+                options.append(('e', 'Equip'))
 
         if self.is_consumable():
             options.append(('u', 'Use'))
@@ -83,6 +86,9 @@ class Item:
 
     def is_device(self):
         return ItemType.DEVICE in self.item_types
+
+    def is_equippable(self):
+        return self.is_armor() or self.is_weapon() or self.is_device()
 
     def is_consumable(self):
         return ItemType.CONSUMABLE in self.item_types

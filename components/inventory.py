@@ -99,6 +99,8 @@ class Inventory:
         """
         """
 
+        viable_list = [x for x in self.items if x.equipped == item.equipped]
+
         return self.items.index(item)
 
     """

@@ -36,7 +36,6 @@ class SelectInventoryItemAction(Action):
 
     def __init__(self, item_letter):
         self.item_letter = item_letter
-        print("Item letter from action: {}".format(item_letter))
 
     def _execute(self):
 

@@ -2,6 +2,7 @@ from game_messages import Message
 
 import tcod as libtcod
 
+from equipment_slots import SLOT_NAMES
 
 class UnableToEquipException(Exception):
     """
@@ -149,7 +150,8 @@ class Equipment:
                 self.slots[slot] = equippable_entity
 
                 messages.append(Message(
-                    "Equipped {} in {}".format(equippable_entity, slot),
+                    "Equipped {} in {}".format(
+                        equippable_entity, SLOT_NAMES[slot]),
                     libtcod.white))
 
                 return messages

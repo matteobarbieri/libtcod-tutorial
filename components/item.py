@@ -51,7 +51,7 @@ class Item:
         if self.is_equippable():
             if self.owner.item.equipped:
                 # TODO change letter!
-                options.append(('u', 'Unequip'))
+                options.append(('t', 'Unequip'))
             else:
                 options.append(('e', 'Equip'))
 

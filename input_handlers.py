@@ -69,7 +69,7 @@ def handle_inventory_item_keys(key, mouse):
         return DropItemAction()
     elif key_char == "e":
         return EquipItemAction()
-    elif key_char == "u":
+    elif key_char == "t":
         return UnequipItemAction()
 
     # No key was pressed

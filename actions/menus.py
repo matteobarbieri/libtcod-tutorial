@@ -34,16 +34,25 @@ class ShowCharacterScreenAction(Action):
 
 class SelectInventoryItemAction(Action):
 
-    def __init__(self, inventory_item_index):
-        self.inventory_item_index = inventory_item_index
+    def __init__(self, item_letter):
+        self.item_letter = item_letter
+        print("Item letter from action: {}".format(item_letter))
 
     def _execute(self):
 
         try:
-            item = self.player.inventory.items[self.inventory_item_index]
-            print("Selected {}!".format(item))
+            item_index = self.player.inventory.item_letters.index(
+                self.item_letter)
+            item = self.player.inventory.items[item_index]
+            # print("Selected {}!".format(item))
             next_phase = GamePhase.INVENTORY_ITEM_MENU
+        except ValueError as e:
+            # print("Value error!")
+            item = None
+            next_phase = GamePhase.INVENTORY_MENU
+
         except IndexError as e:
+            # print("Index error!")
             item = None
             next_phase = GamePhase.INVENTORY_MENU
 

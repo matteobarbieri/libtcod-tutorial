@@ -75,11 +75,12 @@ def handle_inventory_item_keys(key, mouse):
 
 def handle_inventory_keys(key, mouse):
 
-    index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1
+    # letter_index = key.c - ord('a') if key.vk == libtcod.KEY_CHAR else -1
+    letter_index = key.c if key.vk == libtcod.KEY_CHAR else -1
 
     # TODO To enable again
-    if index >= 0:
-        return SelectInventoryItemAction(index)
+    if letter_index >= 0:
+        return SelectInventoryItemAction(chr(letter_index))
 
     if key.vk == libtcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen

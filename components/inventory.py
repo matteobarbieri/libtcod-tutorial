@@ -11,7 +11,16 @@ class Inventory:
 
     def __init__(self, capacity):
         self.capacity = capacity
-        self.items = []
+
+        # Keep track separately of items and their associated letters
+        self.items = list()
+        self.item_letters = list()
+
+        # The list of all letters available for an item
+        # TODO limit to the maximum number of items a player can have on him,
+        # between equipped and in inventory
+        self.available_letters = [
+            chr(i) for i in range(ord('a'), ord('z') + 1)]
 
     def equip(self, item):
 
@@ -33,6 +42,12 @@ class Inventory:
 
         # Remove the item from the inventory
         self.items.remove(item)
+        self.item_letters.remove(item.item_letter)
+
+        # Re-add the used letter to the list of available ones
+        self.available_letters.append(item.item_letter)
+        self.available_letters.sort()
+        item.item_letter = None
 
         # Add it back to the map's entities
         level.entities.append(item)
@@ -52,8 +67,13 @@ class Inventory:
         item.x = None
         item.y = None
 
-        # Actually add the item to the inventory
+        # Actually add the item to the inventory, Associating it with the
+        # first available letter
+        item_letter = self.available_letters.pop(0)
+        item.item_letter = item_letter
         self.items.append(item)
+        self.item_letters.append(item_letter)
+        print("Item letter: {}".format(item_letter))
 
         # And remove it from the map
         level.entities.remove(item)

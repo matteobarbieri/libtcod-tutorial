@@ -155,13 +155,15 @@ def get_game_variables(constants):
 
     # Create the dagger from the prefab
     dagger = make_dagger()
-    dagger2 = make_dagger()
 
     # Equip it
     # player.equipment.toggle_equip(dagger)
-    player.equipment.equip(dagger)
 
-    player.inventory.items.append(dagger2)
+    # Required to prevent Exception on pickup
+    game_map.entities.append(dagger)
+
+    # Add dagger to player's inventory
+    player.inventory.pickup(dagger, game_map)
 
     # Place player in the map
     game_map.place_player(player)

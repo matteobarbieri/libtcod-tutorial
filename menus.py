@@ -86,19 +86,14 @@ def inventory_menu(con, header, player, inventory_frame,
     # Starting
     item_y = 20
 
-    # TODO items in the inventory should be assigned a letter when picked up for
-    # the first time, in order to avoid constant shuffling
-    letter_index = ord('a')
-
     if player.inventory.items:
         for e in player.inventory.items:
 
             inventory_frame.print(
-                3, item_y, '({}) {}'.format(chr(letter_index), e.name),
+                3, item_y, '({}) {}'.format(e.item_letter, e.name),
                 fg=e.color)
 
             item_y += 1
-            letter_index += 1
 
     # Draw entity graphics
     # TODO

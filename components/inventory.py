@@ -46,6 +46,10 @@ class Inventory:
 
     def drop(self, item, level):
 
+        # Run the unequip procedure to remove object in a clean way
+        if item.item.equipped:
+            self.unequip(item)
+
         # TODO
         # For the time being, just drop it on the floor exactly where the
         # player is.

@@ -38,6 +38,9 @@ class Item:
         self.item_types = item_types
         self.item_subtypes = item_subtypes
 
+        # Is the item being equipped?
+        self.equipped = False
+
     def get_inventory_options(self):
         """
         Return a list of possible actions for the item once it is selected
@@ -46,7 +49,7 @@ class Item:
         options = list()
 
         if self.is_equippable():
-            if self.owner.equipped:
+            if self.owner.item.equipped:
                 # TODO change letter!
                 options.append(('u', 'Unequip'))
             else:
@@ -63,9 +66,9 @@ class Item:
     def can_perform_action(self, action):
 
         if action == 'unequip':
-            return self.is_equippable() and self.owner.equipped
+            return self.is_equippable() and self.owner.item.equipped
         if action == 'equip':
-            return self.is_equippable() and not self.owner.equipped
+            return self.is_equippable() and not self.owner.item.equipped
         if action == 'use':
             # TODO not only consumables can be used
             return self.is_consumable

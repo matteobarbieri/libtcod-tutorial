@@ -100,7 +100,7 @@ class Equipment:
         # Search for the item among equipped items
         for slot, item in self.slots.items():
             if item == equippable_entity:
-                item.equipped = False
+                item.item.equipped = False
                 # self.slots[slot] = None
                 del self.slots[slot]
 
@@ -143,7 +143,7 @@ class Equipment:
                 # Slot available, equip the item!
 
                 # Set the `equippable` property as true
-                equippable_entity.equipped = True
+                equippable_entity.item.equipped = True
 
                 # Add the entity to slots
                 self.slots[slot] = equippable_entity

@@ -48,7 +48,7 @@ def menu(con, header, options, width, screen_width, screen_height,
 
 def item_submenu(con, header, player, item, screen_width, screen_height):
 
-    if item.equipped:
+    if item.item.equipped:
         starting_menu_y = 30
     else:
         starting_menu_y = 5
@@ -96,7 +96,7 @@ def inventory_menu(con, header, player, inventory_frame,
 
     if player.inventory.items:
         for e in player.inventory.items:
-            if not e.equipped:
+            if not e.item.equipped:
                 inventory_frame.print(
                     3, item_y, '({}) {}'.format(e.item_letter, e.name),
                     fg=e.color)

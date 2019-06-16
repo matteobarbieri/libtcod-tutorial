@@ -101,7 +101,8 @@ class Equipment:
         for slot, item in self.slots.items():
             if item == equippable_entity:
                 item.equipped = False
-                self.slots[slot] = None
+                # self.slots[slot] = None
+                del self.slots[slot]
 
                 # Add item to the owner's inventory
                 self.owner.inventory.items.append(item)

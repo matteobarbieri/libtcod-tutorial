@@ -22,12 +22,25 @@ class Inventory:
         self.available_letters = [
             chr(i) for i in range(ord('a'), ord('z') + 1)]
 
+    def unequip(self, item):
+
+        raise Exception("Not implemented!")
+        messages = self.owner.equipment.equip(item)
+
+        # Remove the item from the inventory
+        self.items.remove(item)
+        self.item_letters.remove(item.item_letter)
+
+        # Return a feedback message
+        return messages
+
     def equip(self, item):
 
         messages = self.owner.equipment.equip(item)
 
         # Remove the item from the inventory
-        self.items.remove(item)
+        # self.items.remove(item)
+        # self.item_letters.remove(item.item_letter)
 
         # Return a feedback message
         return messages

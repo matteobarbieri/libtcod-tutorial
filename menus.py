@@ -1,6 +1,7 @@
 # import libtcodpy as libtcod
 import tcod as libtcod
 
+from equipment_slots import SLOT_NAMES
 
 def menu(con, header, options, width, screen_width, screen_height,
          x=None, y=None, header_fg=libtcod.white):
@@ -84,22 +85,37 @@ def inventory_menu(con, header, player, inventory_frame,
 
     # List the items in the inventory
     # Starting
-    item_y = 20
+    item_y = 5
 
     if player.inventory.items:
         for e in player.inventory.items:
+            if not e.equipped:
+                inventory_frame.print(
+                    3, item_y, '({}) {}'.format(e.item_letter, e.name),
+                    fg=e.color)
 
+                item_y += 1
+
+    # List equipped items
+    if player.equipment.slots:
+
+        inventory_frame.print(
+                3, 28, 'Equipped items:',
+            fg=libtcod.white)
+
+        item_y = 30
+        for slot, e in player.equipment.slots.items():
             inventory_frame.print(
-                3, item_y, '({}) {}'.format(e.item_letter, e.name),
+                3, item_y, '({}) {} ({})'.format(
+                    e.item_letter, e.name, SLOT_NAMES[slot]),
                 fg=e.color)
 
             item_y += 1
 
-    # Draw entity graphics
-    # TODO
-    # Mockup for entity detail
-    # inventory_frame.draw_rect(
-        # 3, 5, 10, 10, 0, bg=libtcod.red)
+    else:
+        inventory_frame.print(
+                3, 28, 'No items equipped!',
+            fg=libtcod.white)
 
     # Blit panel console on root console
     libtcod.console_blit(

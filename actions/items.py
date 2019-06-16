@@ -35,7 +35,10 @@ class EquipItemAction(Action):
             self.game_state.selected_inventory_item = None
 
             # Change game phase (enemies' turn)
-            next_phase = GamePhase.ENEMY_TURN
+            # next_phase = GamePhase.ENEMY_TURN
+            # TODO changing equipment should require some time, but keep the
+            # menu open
+            next_phase = GamePhase.INVENTORY_MENU
         except UnableToEquipException:
             next_phase = GamePhase.PLAYERS_TURN
         except Exception as e:

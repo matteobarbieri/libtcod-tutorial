@@ -29,6 +29,9 @@ class UnequipItemAction(Action):
 
             item_to_unequip = self.game_state.selected_inventory_item
 
+            if not item_to_unequip.item.can_perform_action('unequip'):
+                return {'messages': messages}
+
             # (try to) equip the item
             messages.extend(self.player.inventory.unequip(
                 item_to_unequip))
@@ -68,6 +71,9 @@ class EquipItemAction(Action):
         try:
 
             item_to_equip = self.game_state.selected_inventory_item
+
+            if not item_to_equip.item.can_perform_action('equip'):
+                return {'messages': messages}
 
             # (try to) equip the item
             messages.extend(self.player.inventory.equip(

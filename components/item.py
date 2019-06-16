@@ -59,6 +59,18 @@ class Item:
 
         return options
 
+    def can_perform_action(self, action):
+
+        if action == 'unequip':
+            return self.is_equippable() and self.owner.equipped
+        if action == 'equip':
+            return self.is_equippable() and not self.owner.equipped
+        if action == 'use':
+            # TODO not only consumables can be used
+            return self.is_consumable
+
+
+
     # def __init__(
             # self, item_types=[], item_subtypes=[],
             # use_function=None, targeting=False, targeting_message=None,

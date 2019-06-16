@@ -104,11 +104,9 @@ class Equipment:
                 # self.slots[slot] = None
                 del self.slots[slot]
 
-                # Add item to the owner's inventory
-                self.owner.inventory.items.append(item)
-
                 messages.append(Message(
-                    "{} unequipped".format(equippable_entity),
+                    "{} unequipped (was in {})".format(
+                        equippable_entity, SLOT_NAMES[slot]),
                     libtcod.white))
                 return messages
             pass

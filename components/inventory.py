@@ -24,12 +24,11 @@ class Inventory:
 
     def unequip(self, item):
 
-        raise Exception("Not implemented!")
-        messages = self.owner.equipment.equip(item)
+        messages = self.owner.equipment.unequip(item)
 
         # Remove the item from the inventory
-        self.items.remove(item)
-        self.item_letters.remove(item.item_letter)
+        # self.items.remove(item)
+        # self.item_letters.remove(item.item_letter)
 
         # Return a feedback message
         return messages

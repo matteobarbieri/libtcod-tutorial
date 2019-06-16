@@ -67,8 +67,10 @@ def handle_inventory_item_keys(key, mouse):
 
     if key_char == "d":
         return DropItemAction()
-    if key_char == "e":
+    elif key_char == "e":
         return EquipItemAction()
+    elif key_char == "u":
+        return UnequipItemAction()
 
     # No key was pressed
     return NoopAction()

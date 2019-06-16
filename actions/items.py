@@ -21,17 +21,17 @@ class UnequipItemAction(Action):
 
     def _execute(self):
 
-        raise Exception("Not implemented")
+        # raise Exception("Not implemented")
 
         messages = list()
 
         try:
 
-            item_to_equip = self.game_state.selected_inventory_item
+            item_to_unequip = self.game_state.selected_inventory_item
 
             # (try to) equip the item
-            messages.extend(self.player.inventory.equip(
-                item_to_equip))
+            messages.extend(self.player.inventory.unequip(
+                item_to_unequip))
 
             # Reset selection
             self.game_state.selected_inventory_item = None

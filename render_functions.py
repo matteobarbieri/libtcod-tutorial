@@ -100,8 +100,10 @@ def render_entity_frame(entity_frame, entity):
     # Draw entity graphics
     # TODO
     # Mockup for entity detail
+    # entity_frame.draw_rect(
+        # 3, 5, 10, 10, 0, bg=libtcod.red)
     entity_frame.draw_rect(
-        3, 5, 10, 10, 0, bg=libtcod.red)
+        3, 5, 10, 10, 0, bg=entity.color)
 
 
 def render_bar(panel, x, y, total_width,
